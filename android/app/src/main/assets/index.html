@@ -154,6 +154,41 @@
                 </div>
             </section>
 
+            <!-- SECTION 2.5: MIRROR -->
+            <section id="section-mirror" class="app-section">
+                <div class="card mirror-card">
+                    <h3 class="gold-title">Espejo Inteligente</h3>
+                    <p class="section-desc">Usa la cámara frontal de tu celular con luz de relleno para verte claramente.</p>
+                    
+                    <!-- Outer Ring Light simulator -->
+                    <div class="mirror-ring-container">
+                        <div id="mirror-ring-light" class="mirror-ring-light"></div>
+                        <div class="mirror-view-wrapper">
+                            <video id="mirror-video" autoplay playsinline muted></video>
+                            <div id="mirror-placeholder" class="mirror-placeholder">
+                                <span class="placeholder-icon">✨</span>
+                                <span class="placeholder-text">Espejo apagado</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mirror-controls">
+                        <button id="btn-toggle-mirror" class="action-btn gold-full" style="width: 100%;">
+                            <span>📹 Encender Espejo</span>
+                        </button>
+                        
+                        <div class="ring-light-settings">
+                            <h4 class="settings-subtitle">Simulador de Aro de Luz</h4>
+                            <div class="ring-light-buttons">
+                                <button id="btn-ring-off" class="ring-btn active" data-mode="off">Apagado</button>
+                                <button id="btn-ring-white" class="ring-btn" data-mode="white">Luz Blanca</button>
+                                <button id="btn-ring-warm" class="ring-btn" data-mode="warm">Luz Cálida</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- SECTION 3: HISTORY -->
             <section id="section-history" class="app-section">
                 <div class="card history-container">
@@ -237,6 +272,12 @@
                     <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
                 </svg>
                 <span>Calendario</span>
+            </button>
+            <button class="nav-tab" data-target="section-mirror">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M12 2C8.69 2 6 4.69 6 8c0 2.97 2.16 5.43 5 5.91V19h-2c-.55 0-1 .45-1 1s.45 1 1 1h6c.55 0 1-.45 1-1s-.45-1-1-1h-2v-5.09c2.84-.48 5-2.94 5-5.91 0-3.31-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+                </svg>
+                <span>Espejo</span>
             </button>
             <button class="nav-tab" data-target="section-history">
                 <svg viewBox="0 0 24 24" class="nav-icon">

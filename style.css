@@ -797,7 +797,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.65rem;
     font-weight: 500;
-    width: 22%;
+    width: 19%;
     height: 100%;
     transition: all 0.25s ease;
 }
@@ -1066,4 +1066,141 @@ body {
     to {
         transform: translateY(0);
     }
+}
+
+/* --- SECTION 2.5: MIRROR STYLES --- */
+.mirror-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.mirror-ring-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.mirror-ring-light {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 12px solid rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.mirror-ring-light.mode-white {
+    border-color: #FFFFFF;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.mirror-ring-light.mode-warm {
+    border-color: #FFE5B4;
+    box-shadow: 0 0 25px rgba(255, 229, 180, 0.8), inset 0 0 15px rgba(255, 229, 180, 0.5);
+}
+
+.mirror-view-wrapper {
+    position: relative;
+    width: calc(100% - 24px);
+    height: calc(100% - 24px);
+    border-radius: 50%;
+    overflow: hidden;
+    background: #000000;
+    border: 1.5px solid #000000;
+    z-index: 1;
+}
+
+#mirror-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    display: none;
+}
+
+.mirror-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background: #111115;
+}
+
+.placeholder-icon {
+    font-size: 2.5rem;
+    animation: float 4s ease-in-out infinite;
+}
+
+.placeholder-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.mirror-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.ring-light-settings {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1.5px solid #000000;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.settings-subtitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.ring-light-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.ring-btn {
+    background: #FFFFFF;
+    border: 1.5px solid #000000;
+    border-radius: 8px;
+    padding: 8px 4px;
+    font-size: 0.75rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.ring-btn.active {
+    background: #000000;
+    color: #FFFFFF;
+    font-weight: 600;
 }

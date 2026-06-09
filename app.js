@@ -65,7 +65,14 @@ const els = {
     btnCloseModal: document.getElementById('btn-close-modal'),
     
     // Toast
-    toast: document.getElementById('toast-notification')
+    toast: document.getElementById('toast-notification'),
+
+    // Mirror
+    mirrorVideo: document.getElementById('mirror-video'),
+    mirrorPlaceholder: document.getElementById('mirror-placeholder'),
+    btnToggleMirror: document.getElementById('btn-toggle-mirror'),
+    mirrorRingLight: document.getElementById('mirror-ring-light'),
+    ringButtons: document.querySelectorAll('.ring-btn')
 };
 
 // --- TIMEZONE-SAFE DATE UTILITIES ---
@@ -328,6 +335,11 @@ function setupNavigation() {
                 }
             });
             
+            // Stop mirror if switching away from mirror section
+            if (target !== 'section-mirror') {
+                stopMirror();
+            }
+            
             // Section-specific re-render
             if (target === 'section-calendar') {
                 renderCalendar();
@@ -335,6 +347,71 @@ function setupNavigation() {
                 renderHistory();
             } else if (target === 'section-dashboard') {
                 updateDashboard();
+            }
+        });
+    });
+}
+
+// --- MIRROR SYSTEM ---
+let mirrorStream = null;
+let isMirrorOn = false;
+
+function startMirror() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+            .then(stream => {
+                mirrorStream = stream;
+                els.mirrorVideo.srcObject = stream;
+                els.mirrorVideo.style.display = "block";
+                els.mirrorPlaceholder.style.display = "none";
+                isMirrorOn = true;
+                els.btnToggleMirror.innerHTML = "<span>🛑 Apagar Espejo</span>";
+                els.btnToggleMirror.className = "action-btn danger";
+            })
+            .catch(err => {
+                console.error("Error al acceder a la cámara:", err);
+                alert("No se pudo acceder a la cámara. Asegúrate de otorgar los permisos necesarios.");
+            });
+    } else {
+        alert("Tu dispositivo no soporta el acceso a la cámara en esta versión.");
+    }
+}
+
+function stopMirror() {
+    if (mirrorStream) {
+        mirrorStream.getTracks().forEach(track => track.stop());
+        mirrorStream = null;
+    }
+    els.mirrorVideo.srcObject = null;
+    els.mirrorVideo.style.display = "none";
+    els.mirrorPlaceholder.style.display = "flex";
+    isMirrorOn = false;
+    els.btnToggleMirror.innerHTML = "<span>📹 Encender Espejo</span>";
+    els.btnToggleMirror.className = "action-btn gold-full";
+}
+
+function setupMirror() {
+    if (!els.btnToggleMirror) return;
+    
+    els.btnToggleMirror.addEventListener('click', () => {
+        if (isMirrorOn) {
+            stopMirror();
+        } else {
+            startMirror();
+        }
+    });
+
+    els.ringButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            els.ringButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const mode = btn.getAttribute('data-mode');
+            els.mirrorRingLight.className = "mirror-ring-light"; // reset
+            if (mode === 'white') {
+                els.mirrorRingLight.classList.add('mode-white');
+            } else if (mode === 'warm') {
+                els.mirrorRingLight.classList.add('mode-warm');
             }
         });
     });
@@ -978,6 +1055,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNavigation();
     updateDashboard();
     checkForUpdates();
+    setupMirror();
     
     // Unregister any active Service Worker inside the APK to prevent caching bugs
     if ('serviceWorker' in navigator) {

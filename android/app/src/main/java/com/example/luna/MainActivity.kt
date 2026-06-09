@@ -53,10 +53,21 @@ class MainActivity : ComponentActivity() {
         filePathCallback = null
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ -> }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.CAMERA
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+        }
         setContent {
             LunaTheme {
                 androidx.compose.material3.Surface(
@@ -136,6 +147,11 @@ class MainActivity : ComponentActivity() {
                                             return false
                                         }
                                         return true
+                                    }
+                                    override fun onPermissionRequest(request: android.webkit.PermissionRequest?) {
+                                        runOnUiThread {
+                                            request?.grant(request.resources)
+                                        }
                                     }
                                 }
                                 loadUrl("file:///android_asset/index.html")

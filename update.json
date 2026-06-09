@@ -1,6 +1,6 @@
 {
-  "versionCode": 3,
-  "versionName": "1.0.2",
+  "versionCode": 4,
+  "versionName": "1.0.3",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "- Nuevo diseño del logo e icono dorado de la app.\n- Botón para buscar actualizaciones en Ajustes.\n- Ajustes estéticos con bordes negros minimalistas."
+  "whatsNew": "- Nueva función de Espejo Inteligente con simulador de Aro de Luz.\n- Permisos de cámara nativos en Android.\n- Pequeñas mejoras de rendimiento en el menú."
 }
