@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                                         result: JsResult?
                                     ): Boolean {
                                         AlertDialog.Builder(this@MainActivity)
-                                            .setTitle("Luna")
+                                            .setTitle("Ciserli-app")
                                             .setMessage(message)
                                             .setPositiveButton(android.R.string.ok) { _, _ -> result?.confirm() }
                                             .setCancelable(false)
@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                         result: JsResult?
                                     ): Boolean {
                                         AlertDialog.Builder(this@MainActivity)
-                                            .setTitle("Luna")
+                                            .setTitle("Ciserli-app")
                                             .setMessage(message)
                                             .setPositiveButton(android.R.string.ok) { _, _ -> result?.confirm() }
                                             .setNegativeButton(android.R.string.cancel) { _, _ -> result?.cancel() }
