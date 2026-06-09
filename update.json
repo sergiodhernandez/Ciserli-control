@@ -1,6 +1,6 @@
 {
-  "versionCode": 8,
-  "versionName": "1.0.7",
+  "versionCode": 9,
+  "versionName": "1.0.8",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "Personalización romántica y citas de amor para Citlali Guadalupe Castañeda Alcaraz ❤️"
+  "whatsNew": "Sincronización en tiempo real con Google Sheets y mejoras de privacidad en Ajustes. 💕"
 }
