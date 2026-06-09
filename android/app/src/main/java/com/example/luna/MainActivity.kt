@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.JsResult
 import android.webkit.ValueCallback
@@ -19,7 +20,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import com.example.luna.theme.LunaTheme
 
@@ -64,9 +64,15 @@ class MainActivity : ComponentActivity() {
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     androidx.compose.ui.viewinterop.AndroidView(
-                        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+                        modifier = Modifier.fillMaxSize(),
                         factory = { context ->
                             WebView(context).apply {
+                                // Enforce full screen layout parameters to prevent height collapse
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                )
+                                
                                 settings.javaScriptEnabled = true
                                 settings.domStorageEnabled = true
                                 settings.allowFileAccess = true
