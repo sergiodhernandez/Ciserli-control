@@ -1206,3 +1206,149 @@ body {
     color: #FFFFFF;
     font-weight: 600;
 }
+
+/* --- SPLASH SCREEN CUSTOM ROMANTIC STYLES --- */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #FFFFFF 0%, #F5F7FA 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+}
+
+.splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.splash-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 10px rgba(184, 144, 91, 0.2));
+    animation: pulseGlow 2.5s infinite ease-in-out;
+}
+
+.splash-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+
+.splash-dedication {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold-primary);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    border-bottom: 1.5px solid #000000;
+    padding-bottom: 5px;
+    line-height: 1.4;
+}
+
+.splash-quote-container {
+    background: rgba(184, 144, 91, 0.05);
+    border: 1.5px solid #000000;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 10px rgba(184, 144, 91, 0.05);
+}
+
+.splash-quote {
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.splash-spinner {
+    width: 32px;
+    height: 32px;
+    border: 2.5px solid rgba(184, 144, 91, 0.1);
+    border-top: 2.5px solid var(--gold-primary);
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+}
+
+/* Quote Card Styles */
+.quote-card {
+    border: 1.5px solid #000000 !important;
+    background: rgba(184, 144, 91, 0.03) !important;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 15px 20px;
+    border-radius: 18px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: inset 0 0 8px rgba(184, 144, 91, 0.02);
+}
+
+.quote-heart {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+    animation: heartbeat 1.5s infinite ease-in-out;
+}
+
+.dashboard-love-quote {
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 8px rgba(184, 144, 91, 0.15));
+    }
+    50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 20px rgba(184, 144, 91, 0.35));
+    }
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1); }
+    40% { transform: scale(1.05); }
+    60% { transform: scale(1.15); }
+}

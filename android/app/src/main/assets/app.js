@@ -3,6 +3,51 @@
 // ej: "https://raw.githubusercontent.com/TU_USUARIO/Ciserli-control/main/update.json"
 const UPDATE_CONFIG_URL = "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/update.json";
 
+// --- CITAS ROMÁNTICAS PARA CITLALI ---
+const BEAUTIFUL_QUOTES = [
+    "Eres la casualidad más hermosa que ha llegado a mi vida, Citlali.",
+    "En cada fase de la luna, y en cada latido de mi corazón, te elijo a ti.",
+    "Tu sonrisa es mi parte favorita de cada uno de mis días.",
+    "Haces que mi mundo sea infinitamente más bello con solo existir.",
+    "Te amo no solo por lo que eres, sino por lo feliz que me haces al estar a tu lado.",
+    "Eres mi sol, mi luna y cada una de las estrellas en mi cielo.",
+    "Cada segundo a tu lado es un regalo que agradezco con toda el alma.",
+    "No hay distancia, ni tiempo, ni espacio que pueda medir cuánto te amo.",
+    "A tu lado, Citlali, cualquier rincón del mundo se siente como estar en casa.",
+    "Eres el amor de mi vida y el sueño más hermoso del que no quiero despertar.",
+    "Amarte es la decisión más fácil y maravillosa que he tomado.",
+    "Mi lugar favorito en el universo entero siempre será a tu lado.",
+    "Eres mi presente más brillante, mi futuro y mi felicidad entera.",
+    "Gracias por colmar mis días de tanta luz, ternura y alegría infinita.",
+    "De todas las maravillas creadas en este planeta, tú siempre serás mi favorita."
+];
+
+// --- ROMANTIC QUOTES & SPLASH SCREEN SYSTEM ---
+function initQuotesAndSplash() {
+    const splashQuoteEl = document.getElementById('splash-quote');
+    const dashboardQuoteEl = document.getElementById('dashboard-love-quote');
+    const splashScreenEl = document.getElementById('splash-screen');
+    
+    const randomIdx1 = Math.floor(Math.random() * BEAUTIFUL_QUOTES.length);
+    let randomIdx2 = Math.floor(Math.random() * BEAUTIFUL_QUOTES.length);
+    if (randomIdx1 === randomIdx2) {
+        randomIdx2 = (randomIdx1 + 1) % BEAUTIFUL_QUOTES.length;
+    }
+    
+    if (splashQuoteEl) {
+        splashQuoteEl.textContent = BEAUTIFUL_QUOTES[randomIdx1];
+    }
+    if (dashboardQuoteEl) {
+        dashboardQuoteEl.textContent = BEAUTIFUL_QUOTES[randomIdx2];
+    }
+    
+    if (splashScreenEl) {
+        setTimeout(() => {
+            splashScreenEl.classList.add('fade-out');
+        }, 3500);
+    }
+}
+
 // --- STATE MANAGEMENT ---
 let appState = {
     settings: {
@@ -1054,6 +1099,7 @@ function showUpdateModal(updateData) {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    initQuotesAndSplash();
     loadState();
     loadSettingsUI();
     setupNavigation();

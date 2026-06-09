@@ -26,6 +26,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- SPLASH SCREEN -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <svg class="splash-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gold-grad-splash" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#FFE082" />
+                        <stop offset="50%" stop-color="#FFB300" />
+                        <stop offset="100%" stop-color="#8D6E63" />
+                    </linearGradient>
+                </defs>
+                <path d="M12 3c.132 0 .263 0 .393.007a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z" fill="url(#gold-grad-splash)"/>
+                <path d="M12 1a11 11 0 1 0 11 11 11.013 11.013 0 0 0-3.475-7.986 8.5 8.5 0 0 1-9.52 14.975A9.5 9.5 0 0 1 12 3c.097 0 .193.003.29.008A11.025 11.025 0 0 0 12 1z" fill="url(#gold-grad-splash)" opacity="0.3"/>
+            </svg>
+            <h1 class="splash-title">Ciserli-app</h1>
+            <div class="splash-dedication">Para el amor de mi vida: Citlali Guadalupe Castañeda Alcaraz</div>
+            <div class="splash-quote-container">
+                <p id="splash-quote" class="splash-quote">Cargando tus citas bonitas...</p>
+            </div>
+            <div class="splash-spinner"></div>
+        </div>
+    </div>
+
     <!-- App Container -->
     <div class="app-container">
         <!-- Header -->
@@ -70,6 +93,12 @@
                         <p id="countdown-text">Iniciando aplicación...</p>
                         <div id="fertility-status" class="fertility-pill">Fase de ciclo</div>
                     </div>
+                </div>
+
+                <!-- Love Quote Card -->
+                <div class="card quote-card">
+                    <span class="quote-heart">❤️</span>
+                    <p id="dashboard-love-quote" class="dashboard-love-quote">Cargando frase bonita...</p>
                 </div>
 
                 <!-- Quick Actions Card -->
