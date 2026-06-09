@@ -1,6 +1,6 @@
 {
-  "versionCode": 10,
-  "versionName": "1.0.9",
+  "versionCode": 11,
+  "versionName": "1.1.0",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "Sincronización completa con Google Sheets y desactivación de la zona de peligro. 💕"
+  "whatsNew": "Silenciamiento del aviso de sincronización en el encabezado. Interfaz más limpia. 💕"
 }
