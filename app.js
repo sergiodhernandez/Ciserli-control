@@ -51,6 +51,7 @@ const els = {
     btnExport: document.getElementById('btn-export'),
     fileImport: document.getElementById('file-import'),
     btnResetData: document.getElementById('btn-reset-data'),
+    btnCheckUpdate: document.getElementById('btn-check-update'),
     
     // Log Modal
     logModal: document.getElementById('log-modal'),
@@ -899,11 +900,17 @@ els.btnResetData.addEventListener('click', () => {
     }
 });
 
+// Check Updates manual trigger
+els.btnCheckUpdate.addEventListener('click', () => {
+    checkForUpdates(true);
+});
+
 
 // --- UPDATE SYSTEM ---
-function checkForUpdates() {
+function checkForUpdates(isManual = false) {
     if (window.AndroidApp) {
         const localVersionCode = window.AndroidApp.getAppVersionCode();
+        const localVersionName = window.AndroidApp.getAppVersionName();
         console.log("Versión local (Code):", localVersionCode);
         
         fetch(UPDATE_CONFIG_URL)
@@ -914,11 +921,22 @@ function checkForUpdates() {
             .then(data => {
                 if (data && data.versionCode > localVersionCode) {
                     showUpdateModal(data);
+                } else {
+                    if (isManual) {
+                        showToast(`¡Estás al día! Versión: v${localVersionName}`);
+                    }
                 }
             })
             .catch(err => {
                 console.log("No se pudo verificar actualización (sin internet o URL inválida):", err);
+                if (isManual) {
+                    alert("No se pudo verificar la actualización. Revisa tu conexión a internet.");
+                }
             });
+    } else {
+        if (isManual) {
+            showToast("Buscar actualizaciones solo funciona dentro de la app Android.");
+        }
     }
 }
 
