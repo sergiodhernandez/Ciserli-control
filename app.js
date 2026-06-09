@@ -130,12 +130,7 @@ const els = {
 
     // Google Sheets Sync
     syncStatus: document.getElementById('sync-status'),
-    syncText: document.getElementById('sync-text'),
-
-    // Quotes Settings Manager
-    inputNewQuote: document.getElementById('input-new-quote'),
-    btnAddQuote: document.getElementById('btn-add-quote'),
-    settingsQuotesList: document.getElementById('settings-quotes-list')
+    syncText: document.getElementById('sync-text')
 };
 
 // --- TIMEZONE-SAFE DATE UTILITIES ---
@@ -1166,7 +1161,6 @@ function fetchFromGoogleSheet() {
                 rebuildCyclesFromLogs(false);
                 updateDashboard();
                 loadSettingsUI();
-                renderQuotesList();
                 displayRandomQuotes();
                 
                 const calendarActive = document.getElementById('section-calendar').classList.contains('active');
@@ -1227,156 +1221,16 @@ function saveToGoogleSheet() {
     });
 }
 
-function addQuoteToGoogleSheet(quoteText) {
-    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
-        alert("Configura la URL de Google Sheets en app.js para poder agregar frases.");
-        return;
-    }
-    
-    updateSyncStatus("loading", "Agregando frase...");
-    
-    const payload = {
-        action: "addQuote",
-        quote: quoteText
-    };
-    
-    fetch(GOOGLE_SHEET_URL, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Error al agregar frase");
-        return response.json();
-    })
-    .then(data => {
-        if (data && data.status === "success") {
-            appState.quotes.push(quoteText);
-            try {
-                localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes));
-            } catch(e) {}
-            
-            els.inputNewQuote.value = "";
-            renderQuotesList();
-            showToast("¡Frase agregada!");
-            updateSyncStatus("success", "Sincronizado");
-        } else {
-            throw new Error(data.message || "Error al agregar");
-        }
-    })
-    .catch(err => {
-        console.error("Error al agregar frase:", err);
-        updateSyncStatus("error", "Error al guardar frase");
-        alert("No se pudo guardar la frase. Intenta de nuevo.");
-    });
-}
-
-function deleteQuoteFromGoogleSheet(quoteText) {
-    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
-        alert("Configura la URL de Google Sheets en app.js para poder borrar frases.");
-        return;
-    }
-    
-    if (!confirm("¿Seguro que deseas eliminar esta frase?")) return;
-    
-    updateSyncStatus("loading", "Eliminando frase...");
-    
-    const payload = {
-        action: "deleteQuote",
-        quote: quoteText
-    };
-    
-    fetch(GOOGLE_SHEET_URL, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'text/plain'
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Error al borrar frase");
-        return response.json();
-    })
-    .then(data => {
-        if (data && data.status === "success") {
-            appState.quotes = appState.quotes.filter(q => q !== quoteText);
-            try {
-                localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes));
-            } catch(e) {}
-            
-            renderQuotesList();
-            showToast("Frase eliminada.");
-            updateSyncStatus("success", "Sincronizado");
-        } else {
-            throw new Error(data.message || "Error al borrar");
-        }
-    })
-    .catch(err => {
-        console.error("Error al eliminar frase:", err);
-        updateSyncStatus("error", "Error al borrar frase");
-        alert("No se pudo eliminar la frase. Intenta de nuevo.");
-    });
-}
-
-function renderQuotesList() {
-    if (!els.settingsQuotesList) return;
-    els.settingsQuotesList.innerHTML = "";
-    
-    const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : [];
-    
-    if (quotesSource.length === 0) {
-        els.settingsQuotesList.innerHTML = `<div class="empty-state" style="padding: 10px 0;">No hay frases guardadas en Google Sheets. ¡Agrega la primera!</div>`;
-        return;
-    }
-    
-    quotesSource.forEach(quote => {
-        const item = document.createElement('div');
-        item.className = "settings-quote-item";
-        
-        const textSpan = document.createElement('span');
-        textSpan.textContent = quote;
-        
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = "btn-delete-quote";
-        deleteBtn.innerHTML = "🗑️";
-        deleteBtn.title = "Eliminar frase";
-        deleteBtn.addEventListener('click', () => {
-            deleteQuoteFromGoogleSheet(quote);
-        });
-        
-        item.appendChild(textSpan);
-        item.appendChild(deleteBtn);
-        els.settingsQuotesList.appendChild(item);
-    });
-}
-
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     loadState();
     initQuotesAndSplash();
     loadSettingsUI();
-    renderQuotesList();
     setupNavigation();
     updateDashboard();
     checkForUpdates();
     setupMirror();
-    
-    // Configurar event listener para agregar frases
-    if (els.btnAddQuote && els.inputNewQuote) {
-        els.btnAddQuote.addEventListener('click', () => {
-            const quoteText = els.inputNewQuote.value.trim();
-            if (!quoteText) {
-                alert("Escribe una frase primero.");
-                return;
-            }
-            addQuoteToGoogleSheet(quoteText);
-        });
-    }
     
     // Iniciar sincronización de segundo plano con Google Sheets
     fetchFromGoogleSheet();
