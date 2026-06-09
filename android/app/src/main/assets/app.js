@@ -117,6 +117,31 @@ function formatDateSpanish(dateStr) {
     return `${day} de ${month}, ${year}`;
 }
 
+function isPeriodActiveOnDate(dateStr) {
+    if (appState.cycles.length === 0) return false;
+    const lastCycle = appState.cycles[0];
+    const daysSinceStart = diffDays(lastCycle.startDate, dateStr);
+    
+    if (daysSinceStart < 0) return false;
+    
+    if (dateStr <= lastCycle.endDate) {
+        return true;
+    }
+    
+    const defaultLength = appState.settings.periodLength;
+    if (daysSinceStart < defaultLength) {
+        for (let i = 1; i <= daysSinceStart; i++) {
+            const checkDate = addDays(lastCycle.startDate, i);
+            if (appState.logs[checkDate] && appState.logs[checkDate].flow === 'none') {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    return false;
+}
+
 // --- LOCAL STORAGE & DATA STATE ---
 function loadState() {
     try {
@@ -349,7 +374,7 @@ function updateDashboard() {
     
     // Check if period is active today
     const lastCycle = appState.cycles[0];
-    const isPeriodActive = (todayStr >= lastCycle.startDate && todayStr <= lastCycle.endDate);
+    const isPeriodActive = isPeriodActiveOnDate(todayStr);
     
     // Calculate current cycle day
     // A cycle starts on cycleStartDate. Day 1 is cycleStartDate.
@@ -365,14 +390,14 @@ function updateDashboard() {
     // Ring progress calculation
     let progressPercent = 0;
     
-    if (isPeriodActive || (daysSinceStart >= 0 && daysSinceStart < averages.periodLength)) {
+    if (isPeriodActive) {
         // 1. Period Phase
         cyclePhase = "Período";
         countdownText = `Día ${cycleDayNum} del período. ¡Cuídate mucho! ❤️`;
         fertilityPillText = "Fertilidad Muy Baja";
         fertilityClass = "period";
         ringColorClass = "period-active";
-        progressPercent = Math.min(1, cycleDayNum / averages.periodLength);
+        progressPercent = Math.min(1, cycleDayNum / Math.max(averages.periodLength, appState.settings.periodLength));
     } else {
         // Calculate phases and countdown based on cycle rules
         progressPercent = (daysSinceStart % averages.cycleLength) / averages.cycleLength;
@@ -444,14 +469,25 @@ els.btnTogglePeriod.addEventListener('click', () => {
     
     if (appState.cycles.length > 0) {
         const lastCycle = appState.cycles[0];
-        const isPeriodActive = (todayStr >= lastCycle.startDate && todayStr <= lastCycle.endDate);
+        const isPeriodActive = isPeriodActiveOnDate(todayStr);
         
         if (isPeriodActive) {
-            // End period: mark today as flow none to limit the cycle, or if they click to end, we shorten it to today
-            // If they are logging flow on the dates, we can just stop logging. But let's set the end of this cycle to yesterday or today.
-            // Let's set flow of tomorrow to 'none' and make sure we save.
-            if (appState.logs[todayStr]) {
-                appState.logs[todayStr].flow = 'none';
+            // End period: fill in flow for all days from lastCycle.startDate to todayStr
+            const daysCount = diffDays(lastCycle.startDate, todayStr);
+            for (let i = 0; i <= daysCount; i++) {
+                const date = addDays(lastCycle.startDate, i);
+                if (!appState.logs[date]) {
+                    appState.logs[date] = { flow: 'medium', symptoms: [], mood: '', notes: '' };
+                } else if (!appState.logs[date].flow || appState.logs[date].flow === 'none') {
+                    appState.logs[date].flow = 'medium';
+                }
+            }
+            // Mark tomorrow as flow: 'none' to stop auto-extension
+            const tomorrowStr = addDays(todayStr, 1);
+            if (!appState.logs[tomorrowStr]) {
+                appState.logs[tomorrowStr] = { flow: 'none', symptoms: [], mood: '', notes: '' };
+            } else {
+                appState.logs[tomorrowStr].flow = 'none';
             }
             showToast("Período finalizado.");
             rebuildCyclesFromLogs();
