@@ -1352,3 +1352,79 @@ body {
     40% { transform: scale(1.05); }
     60% { transform: scale(1.15); }
 }
+
+/* --- GOOGLE SHEETS SYNC STATUS --- */
+.sync-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1.5px solid #000000;
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 0.65rem;
+    font-weight: 600;
+}
+
+.sync-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #718096;
+    transition: background-color 0.3s ease;
+}
+
+.sync-status-badge.loading .sync-dot {
+    background-color: #B8905B; /* Gold */
+    animation: pulse 1.2s infinite ease-in-out;
+}
+
+.sync-status-badge.success .sync-dot {
+    background-color: #2F855A; /* Green */
+}
+
+.sync-status-badge.error .sync-dot {
+    background-color: #C53030; /* Red */
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.4); opacity: 1; }
+}
+
+/* --- SETTINGS QUOTE LIST --- */
+.settings-quote-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #F8FAFC;
+    border: 1.5px solid #000000;
+    border-radius: 10px;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.settings-quote-item span {
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.btn-delete-quote {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+    color: #e53e3e;
+    transition: transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-quote:active {
+    transform: scale(0.9);
+}

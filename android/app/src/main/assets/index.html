@@ -68,6 +68,10 @@
                 <h1>Ciserli-app</h1>
             </div>
             <div class="header-subtitle">Control de Ciclo</div>
+            <div id="sync-status" class="sync-status-badge">
+                <span class="sync-dot"></span>
+                <span id="sync-text">Sin sincronizar</span>
+            </div>
         </header>
 
         <!-- Main Content Area -->
@@ -258,6 +262,8 @@
                     <button id="btn-save-settings" class="action-btn gold-full">Guardar Configuración</button>
                 </div>
 
+
+
                 <!-- Backup & Restore -->
                 <div class="card settings-card">
                     <h3 class="gold-title">Copia de Seguridad</h3>
@@ -279,12 +285,7 @@
                     <button id="btn-check-update" class="action-btn outline small">🔄 Buscar Actualización</button>
                 </div>
 
-                <!-- Danger Zone -->
-                <div class="card settings-card danger-zone">
-                    <h3 class="red-title">Zona de Peligro</h3>
-                    <p class="setting-desc">Borra de forma permanente todos los registros y configuraciones guardados en este dispositivo.</p>
-                    <button id="btn-reset-data" class="action-btn danger">Borrar Todos los Datos</button>
-                </div>
+
             </section>
         </main>
 
