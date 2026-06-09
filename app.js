@@ -104,7 +104,6 @@ const els = {
     btnSaveSettings: document.getElementById('btn-save-settings'),
     btnExport: document.getElementById('btn-export'),
     fileImport: document.getElementById('file-import'),
-    btnResetData: document.getElementById('btn-reset-data'),
     btnCheckUpdate: document.getElementById('btn-check-update'),
     
     // Log Modal
@@ -1021,28 +1020,7 @@ els.fileImport.addEventListener('change', (e) => {
     reader.readAsText(file);
 });
 
-// Reset Data
-els.btnResetData.addEventListener('click', () => {
-    if (confirm("⚠️ ¿Estás absolutamente seguro de que quieres borrar todos los datos registrados? Esta acción no se puede deshacer.")) {
-        try {
-            localStorage.removeItem('luna_settings');
-            localStorage.removeItem('luna_logs');
-            localStorage.removeItem('luna_cycles');
-        } catch (e) {
-            console.error("localStorage cleaning failed:", e);
-        }
-        
-        appState = {
-            settings: { cycleLength: 28, periodLength: 5 },
-            logs: {},
-            cycles: []
-        };
-        
-        loadSettingsUI();
-        updateDashboard();
-        showToast("Todos los datos han sido borrados.");
-    }
-});
+
 
 // Check Updates manual trigger
 els.btnCheckUpdate.addEventListener('click', () => {
