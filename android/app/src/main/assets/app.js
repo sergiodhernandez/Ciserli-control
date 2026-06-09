@@ -918,12 +918,21 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDashboard();
     checkForUpdates();
     
-    // Register PWA Service Worker
+    // Unregister any active Service Worker inside the APK to prevent caching bugs
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker registrado con éxito', reg.scope))
-                .catch(err => console.log('Fallo al registrar Service Worker', err));
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            for (let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
+    
+    // Clear caches to force loading fresh asset files
+    if ('caches' in window) {
+        caches.keys().then(names => {
+            for (let name of names) {
+                caches.delete(name);
+            }
         });
     }
 });

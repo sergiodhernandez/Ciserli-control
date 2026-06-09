@@ -79,7 +79,8 @@ class MainActivity : ComponentActivity() {
                                 settings.allowContentAccess = true
                                 settings.allowFileAccessFromFileURLs = true
                                 settings.allowUniversalAccessFromFileURLs = true
-                                settings.cacheMode = WebSettings.LOAD_DEFAULT
+                                settings.cacheMode = WebSettings.LOAD_NO_CACHE
+                                clearCache(true)
 
                                 // Register Javascript Interface
                                 addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidApp")
