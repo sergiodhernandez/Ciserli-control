@@ -119,25 +119,35 @@ function formatDateSpanish(dateStr) {
 
 // --- LOCAL STORAGE & DATA STATE ---
 function loadState() {
-    const savedSettings = localStorage.getItem('luna_settings');
-    const savedLogs = localStorage.getItem('luna_logs');
-    const savedCycles = localStorage.getItem('luna_cycles');
-    
-    if (savedSettings) appState.settings = JSON.parse(savedSettings);
-    if (savedLogs) appState.logs = JSON.parse(savedLogs);
-    if (savedCycles) appState.cycles = JSON.parse(savedCycles);
+    try {
+        const savedSettings = localStorage.getItem('luna_settings');
+        const savedLogs = localStorage.getItem('luna_logs');
+        const savedCycles = localStorage.getItem('luna_cycles');
+        
+        if (savedSettings) appState.settings = JSON.parse(savedSettings);
+        if (savedLogs) appState.logs = JSON.parse(savedLogs);
+        if (savedCycles) appState.cycles = JSON.parse(savedCycles);
+    } catch (e) {
+        console.error("localStorage reading failed:", e);
+    }
     
     // Auto-update cycles based on logged flow if clean
-    rebuildCyclesFromLogs(false);
+    try {
+        rebuildCyclesFromLogs(false);
+    } catch (e) {
+        console.error("rebuildCyclesFromLogs failed:", e);
+    }
 }
 
 function saveState() {
-    localStorage.setItem('luna_settings', JSON.stringify(appState.settings));
-    localStorage.setItem('luna_logs', JSON.stringify(appState.logs));
-    localStorage.setItem('luna_cycles', JSON.stringify(appState.cycles));
-}
-
-// Rebuild cycles list from symptom logs where flow is registered
+    try {
+        localStorage.setItem('luna_settings', JSON.stringify(appState.settings));
+        localStorage.setItem('luna_logs', JSON.stringify(appState.logs));
+        localStorage.setItem('luna_cycles', JSON.stringify(appState.cycles));
+    } catch (e) {
+        console.error("localStorage writing failed:", e);
+    }
+}// Rebuild cycles list from symptom logs where flow is registered
 function rebuildCyclesFromLogs(triggerSave = true) {
     // 1. Gather all logged dates with active flow
     const flowDates = Object.keys(appState.logs)
@@ -826,9 +836,13 @@ els.fileImport.addEventListener('change', (e) => {
 // Reset Data
 els.btnResetData.addEventListener('click', () => {
     if (confirm("⚠️ ¿Estás absolutamente seguro de que quieres borrar todos los datos registrados? Esta acción no se puede deshacer.")) {
-        localStorage.removeItem('luna_settings');
-        localStorage.removeItem('luna_logs');
-        localStorage.removeItem('luna_cycles');
+        try {
+            localStorage.removeItem('luna_settings');
+            localStorage.removeItem('luna_logs');
+            localStorage.removeItem('luna_cycles');
+        } catch (e) {
+            console.error("localStorage cleaning failed:", e);
+        }
         
         appState = {
             settings: { cycleLength: 28, periodLength: 5 },
