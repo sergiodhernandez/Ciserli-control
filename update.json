@@ -1,6 +1,6 @@
 {
-  "versionCode": 5,
-  "versionName": "1.0.4",
+  "versionCode": 6,
+  "versionName": "1.0.5",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "- Solución al problema de descarga de actualizaciones desde el celular.\n- Los enlaces de descarga ahora se abren de forma nativa en tu navegador predeterminado."
+  "whatsNew": "- Vista del espejo inteligente un 40% más grande y adaptativo.\n- Ajustes menores de diseño en el marco circular."
 }

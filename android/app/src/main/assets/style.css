@@ -1078,9 +1078,11 @@ body {
 
 .mirror-ring-container {
     position: relative;
-    width: 280px;
-    height: 280px;
-    margin: 20px 0;
+    width: 92vw;
+    height: 92vw;
+    max-width: 330px;
+    max-height: 330px;
+    margin: 15px 0;
     display: flex;
     justify-content: center;
     align-items: center;
