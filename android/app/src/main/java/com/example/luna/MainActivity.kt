@@ -96,7 +96,41 @@ class MainActivity : ComponentActivity() {
                                 // Register Javascript Interface
                                 addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidApp")
 
-                                webViewClient = WebViewClient()
+                                webViewClient = object : WebViewClient() {
+                                    override fun shouldOverrideUrlLoading(
+                                        view: WebView?,
+                                        request: android.webkit.WebResourceRequest?
+                                    ): Boolean {
+                                        val url = request?.url?.toString()
+                                        if (url != null && !url.startsWith("file:///")) {
+                                            try {
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                                context.startActivity(intent)
+                                                return true
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                        return false
+                                    }
+
+                                    @Deprecated("Deprecated in Java")
+                                    override fun shouldOverrideUrlLoading(
+                                        view: WebView?,
+                                        url: String?
+                                    ): Boolean {
+                                        if (url != null && !url.startsWith("file:///")) {
+                                            try {
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                                context.startActivity(intent)
+                                                return true
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        }
+                                        return false
+                                    }
+                                }
                                 webChromeClient = object : WebChromeClient() {
                                     override fun onJsAlert(
                                         view: WebView?,
@@ -187,6 +221,16 @@ class MainActivity : ComponentActivity() {
                 pInfo.versionName ?: "1.0.0"
             } catch (e: Exception) {
                 "1.0.0"
+            }
+        }
+
+        @JavascriptInterface
+        fun openInBrowser(url: String) {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

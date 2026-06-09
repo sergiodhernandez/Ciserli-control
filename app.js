@@ -1031,7 +1031,11 @@ function showUpdateModal(updateData) {
     updateWhatsnewLabel.textContent = updateData.whatsNew || "Mejoras generales y correcciones de errores.";
     
     btnDownloadUpdate.onclick = () => {
-        window.open(updateData.apkUrl, "_blank");
+        if (window.AndroidApp && window.AndroidApp.openInBrowser) {
+            window.AndroidApp.openInBrowser(updateData.apkUrl);
+        } else {
+            window.open(updateData.apkUrl, "_blank");
+        }
         updateModal.classList.remove('active');
     };
     

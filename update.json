@@ -1,6 +1,6 @@
 {
-  "versionCode": 4,
-  "versionName": "1.0.3",
+  "versionCode": 5,
+  "versionName": "1.0.4",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "- Nueva función de Espejo Inteligente con simulador de Aro de Luz.\n- Permisos de cámara nativos en Android.\n- Pequeñas mejoras de rendimiento en el menú."
+  "whatsNew": "- Solución al problema de descarga de actualizaciones desde el celular.\n- Los enlaces de descarga ahora se abren de forma nativa en tu navegador predeterminado."
 }
