@@ -1,6 +1,6 @@
 {
-  "versionCode": 2,
-  "versionName": "1.0.1",
+  "versionCode": 3,
+  "versionName": "1.0.2",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "- Se habilitó el soporte para actualizaciones automáticas desde el celular.\n- Correcciones de errores menores y mejoras en el WebView."
+  "whatsNew": "- Nuevo diseño del logo e icono dorado de la app.\n- Botón para buscar actualizaciones en Ajustes.\n- Ajustes estéticos con bordes negros minimalistas."
 }
