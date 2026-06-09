@@ -990,7 +990,7 @@ function checkForUpdates(isManual = false) {
         const localVersionName = window.AndroidApp.getAppVersionName();
         console.log("Versión local (Code):", localVersionCode);
         
-        fetch(UPDATE_CONFIG_URL)
+        fetch(UPDATE_CONFIG_URL + "?t=" + Date.now())
             .then(res => {
                 if (!res.ok) throw new Error("Error al consultar actualizaciones");
                 return res.json();

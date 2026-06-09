@@ -1,6 +1,6 @@
 {
-  "versionCode": 6,
-  "versionName": "1.0.5",
+  "versionCode": 7,
+  "versionName": "1.0.6",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk",
-  "whatsNew": "- Vista del espejo inteligente un 40% más grande y adaptativo.\n- Ajustes menores de diseño en el marco circular."
+  "whatsNew": "- Búsqueda instantánea de actualizaciones sin retardo de caché.\n- Ajustes internos de red y optimización en espejo."
 }
