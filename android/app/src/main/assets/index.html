@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Luna - Control de Ciclo</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <svg class="gold-moon-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#FFE082" />
+                            <stop offset="50%" stop-color="#FFB300" />
+                            <stop offset="100%" stop-color="#8D6E63" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 3c.132 0 .263 0 .393.007a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z" fill="url(#gold-grad)"/>
+                    <path d="M12 1a11 11 0 1 0 11 11 11.013 11.013 0 0 0-3.475-7.986 8.5 8.5 0 0 1-9.52 14.975A9.5 9.5 0 0 1 12 3c.097 0 .193.003.29.008A11.025 11.025 0 0 0 12 1z" fill="url(#gold-grad)" opacity="0.3"/>
+                </svg>
+                <h1>Luna</h1>
+            </div>
+            <div class="header-subtitle">Control de Ciclo</div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-content">
+            
+            <!-- SECTION 1: DASHBOARD -->
+            <section id="section-dashboard" class="app-section active">
+                <div class="dashboard-card">
+                    <!-- Ring indicator -->
+                    <div class="status-ring-container">
+                        <svg class="status-ring" viewBox="0 0 200 200">
+                            <circle class="ring-bg" cx="100" cy="100" r="85"></circle>
+                            <circle class="ring-fill" cx="100" cy="100" r="85" stroke-dasharray="534" stroke-dashoffset="534"></circle>
+                        </svg>
+                        <div class="ring-text-container">
+                            <span id="cycle-day-label" class="cycle-day">Día --</span>
+                            <span id="cycle-phase-label" class="cycle-phase">Calculando...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Prediction Text -->
+                    <div class="prediction-box">
+                        <p id="countdown-text">Iniciando aplicación...</p>
+                        <div id="fertility-status" class="fertility-pill">Fase de ciclo</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="card quick-actions">
+                    <h3 class="gold-title">Registro Rápido</h3>
+                    <div class="quick-buttons">
+                        <button id="btn-toggle-period" class="action-btn">
+                            <span class="icon-drop">🩸</span>
+                            <span id="toggle-period-text">Iniciar Período Hoy</span>
+                        </button>
+                        <button id="btn-log-symptoms" class="action-btn outline">
+                            <span>📝 Registrar Síntomas</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Insight Summary Card -->
+                <div class="card summary-card">
+                    <h3 class="gold-title">Resumen del Ciclo</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="label">Ciclo Promedio</span>
+                            <span id="summary-avg-cycle" class="value">-- días</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Duración Período</span>
+                            <span id="summary-avg-period" class="value">-- días</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Próximo Período</span>
+                            <span id="summary-next-date" class="value">--/--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: CALENDAR -->
+            <section id="section-calendar" class="app-section">
+                <div class="card calendar-container">
+                    <div class="calendar-header">
+                        <button id="btn-prev-month" class="nav-month-btn">&larr;</button>
+                        <h2 id="calendar-title" class="calendar-month-year">Junio 2026</h2>
+                        <button id="btn-next-month" class="nav-month-btn">&rarr;</button>
+                    </div>
+                    
+                    <div class="weekdays-grid">
+                        <div>Dom</div>
+                        <div>Lun</div>
+                        <div>Mar</div>
+                        <div>Mié</div>
+                        <div>Jue</div>
+                        <div>Vie</div>
+                        <div>Sáb</div>
+                    </div>
+                    
+                    <div id="calendar-days" class="days-grid">
+                        <!-- Filled dynamically by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Calendar Legend -->
+                <div class="card legend-card">
+                    <h4 class="gold-title">Guía de Colores</h4>
+                    <div class="legend-grid">
+                        <div class="legend-item">
+                            <span class="dot period"></span>
+                            <span class="legend-text">Período Registrado</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot predicted-period"></span>
+                            <span class="legend-text">Predicción de Período</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot fertile"></span>
+                            <span class="legend-text">Ventana Fértil</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot ovulation"></span>
+                            <span class="legend-text">Día de Ovulación</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: HISTORY -->
+            <section id="section-history" class="app-section">
+                <div class="card history-container">
+                    <h3 class="gold-title">Historial de Ciclos</h3>
+                    <p class="section-desc">Historial de los períodos que has registrado. Ayuda a calcular predicciones más precisas.</p>
+                    
+                    <div id="history-list" class="history-list">
+                        <!-- Filled dynamically by JavaScript -->
+                        <div class="empty-state">No hay períodos registrados aún. Usa el botón "Iniciar Período Hoy" o toca un día en el calendario para registrar.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: SETTINGS -->
+            <section id="section-settings" class="app-section">
+                <!-- Average Cycle and Period Settings -->
+                <div class="card settings-card">
+                    <h3 class="gold-title">Parámetros del Ciclo</h3>
+                    
+                    <div class="setting-group">
+                        <label for="input-cycle-length">Duración promedio del ciclo (días)</label>
+                        <div class="input-number-wrapper">
+                            <input type="number" id="input-cycle-length" min="20" max="45" value="28">
+                            <span class="unit">días</span>
+                        </div>
+                        <small class="helper-text">Tiempo entre el primer día de un período y el primer día del siguiente (normalmente 28 días).</small>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="input-period-length">Duración promedio del período (días)</label>
+                        <div class="input-number-wrapper">
+                            <input type="number" id="input-period-length" min="2" max="12" value="5">
+                            <span class="unit">días</span>
+                        </div>
+                        <small class="helper-text">Cuántos días suele durar el sangrado (normalmente 5 días).</small>
+                    </div>
+                    
+                    <button id="btn-save-settings" class="action-btn gold-full">Guardar Configuración</button>
+                </div>
+
+                <!-- Backup & Restore -->
+                <div class="card settings-card">
+                    <h3 class="gold-title">Copia de Seguridad</h3>
+                    <p class="setting-desc">Todos los datos se guardan de forma privada en tu teléfono. Descarga una copia de seguridad para no perderlos si cambias de celular.</p>
+                    
+                    <div class="backup-buttons">
+                        <button id="btn-export" class="action-btn outline small">📤 Exportar Datos (JSON)</button>
+                        <label for="file-import" class="action-btn outline small file-label">
+                            📥 Importar Datos (JSON)
+                            <input type="file" id="file-import" accept=".json" style="display:none">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="card settings-card danger-zone">
+                    <h3 class="red-title">Zona de Peligro</h3>
+                    <p class="setting-desc">Borra de forma permanente todos los registros y configuraciones guardados en este dispositivo.</p>
+                    <button id="btn-reset-data" class="action-btn danger">Borrar Todos los Datos</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Navigation Bar -->
+        <nav class="app-nav">
+            <button class="nav-tab active" data-target="section-dashboard">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M12 3L4 9v11h6v-6h4v6h6V9L12 3z"/>
+                </svg>
+                <span>Inicio</span>
+            </button>
+            <button class="nav-tab" data-target="section-calendar">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                </svg>
+                <span>Calendario</span>
+            </button>
+            <button class="nav-tab" data-target="section-history">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                </svg>
+                <span>Historial</span>
+            </button>
+            <button class="nav-tab" data-target="section-settings">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+                <span>Ajustes</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- LOG MODAL (Symptom & Mood Logger) -->
+    <div id="log-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-date-title" class="gold-title">Registrar Día</h3>
+                <button id="btn-close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Flow selection -->
+                <div class="modal-section">
+                    <h4>Flujo de Período</h4>
+                    <div class="flow-selector">
+                        <button class="flow-btn" data-flow="none">
+                            <span class="flow-icon">⚪</span>
+                            <span class="flow-label">Ninguno</span>
+                        </button>
+                        <button class="flow-btn" data-flow="light">
+                            <span class="flow-icon">🩸</span>
+                            <span class="flow-label">Ligero</span>
+                        </button>
+                        <button class="flow-btn" data-flow="medium">
+                            <span class="flow-icon">🩸🩸</span>
+                            <span class="flow-label">Medio</span>
+                        </button>
+                        <button class="flow-btn" data-flow="heavy">
+                            <span class="flow-icon">🩸🩸🩸</span>
+                            <span class="flow-label">Abundante</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Symptoms -->
+                <div class="modal-section">
+                    <h4>Síntomas</h4>
+                    <div class="checkbox-grid">
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="cramps">
+                            <span>⚡ Cólicos</span>
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="headache">
+                            <span>🧠 Dolor de Cabeza</span>
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="bloating">
+                            <span>🎈 Hinchazón</span>
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="fatigue">
+                            <span>💤 Fatiga</span>
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="breast-tenderness">
+                            <span>🌸 Sensibilidad</span>
+                        </label>
+                        <label class="check-item">
+                            <input type="checkbox" name="symptom" value="acne">
+                            <span>✨ Acné</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Moods -->
+                <div class="modal-section">
+                    <h4>Estado de Ánimo</h4>
+                    <div class="checkbox-grid">
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="happy">
+                            <span>😊 Feliz</span>
+                        </label>
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="calm">
+                            <span>😌 Tranquila</span>
+                        </label>
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="sensitive">
+                            <span>🥺 Sensible</span>
+                        </label>
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="irritable">
+                            <span>😠 Irritable</span>
+                        </label>
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="tired">
+                            <span>😴 Cansada</span>
+                        </label>
+                        <label class="check-item mood">
+                            <input type="radio" name="mood" value="anxious">
+                            <span>😰 Ansiosa</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="modal-section">
+                    <h4>Notas Personales</h4>
+                    <textarea id="modal-notes" placeholder="Escribe cómo te sientes, notas de medicamentos u observaciones..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-delete-log" class="action-btn danger small outline" style="margin-right: auto;">Eliminar Registro</button>
+                <button id="btn-save-log" class="action-btn gold-full">Guardar Registro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE MODAL -->
+    <div id="update-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="gold-title">✨ Actualización Disponible</h3>
+                <button id="btn-close-update-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #c5a880; font-weight: 500; font-size: 1.1rem; margin-bottom: 10px;">¡Hay una nueva versión de Luna disponible!</p>
+                <div style="background: rgba(197, 168, 128, 0.1); border: 1px solid rgba(197, 168, 128, 0.2); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                    <p style="font-size: 0.9rem; color: #a0a0a8; margin-bottom: 5px;"><strong>Versión:</strong> <span id="update-version-label">v1.0.0</span></p>
+                    <p style="font-size: 0.9rem; color: #a0a0a8; margin: 0;"><strong>Novedades:</strong></p>
+                    <p id="update-whatsnew-label" style="font-size: 0.85rem; color: #e0e0e0; margin: 5px 0 0 0; white-space: pre-wrap; font-style: italic;">Mejoras generales.</p>
+                </div>
+                <p style="font-size: 0.8rem; color: #808088; margin: 0 0 10px 0;">La descarga se iniciará en tu navegador web. Una vez finalizada, abre el archivo descargado para instalar la actualización.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-close-update-action" class="action-btn outline small" style="margin-right: auto;">Después</button>
+                <button id="btn-download-update" class="action-btn gold-full">Descargar e Instalar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="toast">¡Guardado con éxito!</div>
+
+    <!-- Core Script -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "versionCode": 2,
+  "versionName": "1.0.1",
+  "apkUrl": "https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/android/app/build/outputs/apk/debug/app-debug.apk",
+  "whatsNew": "- Se habilitó el soporte para actualizaciones automáticas desde el celular.\n- Correcciones de errores menores y mejoras en el WebView."
+}

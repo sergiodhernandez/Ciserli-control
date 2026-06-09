@@ -1,0 +1,19 @@
+# IDE and local configurations
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Android local configurations & builds
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+android/.idea/
+
+# Local backup or generated files
+luna-backup-*.json
+*.log
