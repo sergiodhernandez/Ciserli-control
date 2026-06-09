@@ -2,8 +2,8 @@
 :root {
     --bg-dark: #F7F9FC;
     --bg-card: #FFFFFF;
-    --border-gold: rgba(184, 144, 91, 0.18);
-    --border-gold-glow: rgba(184, 144, 91, 0.4);
+    --border-gold: #000000;
+    --border-gold-glow: rgba(0, 0, 0, 0.2);
     --gold-primary: #B8905B;
     --gold-light: #4A3E31;
     --gold-gradient: linear-gradient(135deg, #DFBA8F 0%, #B8905B 50%, #8C6239 100%);
@@ -62,7 +62,7 @@ body {
 /* Notch & Safe Area Support */
 @supports (padding-top: env(safe-area-inset-top)) {
     .app-header {
-        padding-top: calc(15px + env(safe-area-inset-top));
+        padding-top: calc(40px + env(safe-area-inset-top));
     }
     .app-nav {
         padding-bottom: calc(10px + env(safe-area-inset-bottom));
@@ -74,8 +74,8 @@ body {
 .app-header {
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-gold);
-    padding: 15px 20px;
+    border-bottom: 1.5px solid #000000;
+    padding: 40px 20px 15px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -145,7 +145,7 @@ body {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border-gold);
+    border: 1.5px solid #000000;
     border-radius: 18px;
     padding: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -192,7 +192,7 @@ body {
     flex-direction: column;
     align-items: center;
     background: radial-gradient(circle at center, #FFFFFF 0%, #F5F7FA 100%);
-    border: 1px solid var(--border-gold);
+    border: 1.5px solid #000000;
     border-radius: 24px;
     padding: 30px 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
@@ -344,8 +344,8 @@ body {
 
 .action-btn.outline {
     background: transparent;
-    border: 1px solid var(--gold-primary);
-    color: var(--gold-light);
+    border: 1.5px solid #000000;
+    color: #000000;
     box-shadow: none;
 }
 
@@ -393,7 +393,7 @@ body {
 
 .summary-item {
     background: #FFFFFF;
-    border: 1px solid rgba(184, 144, 91, 0.15);
+    border: 1.5px solid #000000;
     border-radius: 12px;
     padding: 12px 5px;
     text-align: center;
@@ -425,8 +425,8 @@ body {
 
 .nav-month-btn {
     background: transparent;
-    border: 1px solid var(--border-gold);
-    color: var(--gold-light);
+    border: 1.5px solid #000000;
+    color: #000000;
     border-radius: 50%;
     width: 38px;
     height: 38px;
@@ -493,10 +493,10 @@ body {
 }
 
 .calendar-day-cell.today {
-    border: 1px solid var(--gold-primary);
+    border: 1.5px solid #000000;
     font-weight: 700;
-    color: var(--gold-light);
-    box-shadow: inset 0 0 6px rgba(184, 144, 91, 0.15);
+    color: #000000;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.05);
 }
 
 /* Registered Period Day */
@@ -618,7 +618,7 @@ body {
 
 .history-item-card {
     background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1.5px solid #000000;
     border-radius: 14px;
     padding: 16px;
     display: flex;
@@ -703,7 +703,7 @@ body {
     display: flex;
     align-items: center;
     background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1.5px solid #000000;
     border-radius: 10px;
     padding: 5px 12px;
 }
@@ -775,7 +775,7 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: 1.5px solid #000000;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -844,9 +844,9 @@ body {
 
 .modal-content {
     background: #FFFFFF;
-    border-top: 3px solid var(--gold-primary);
-    border-left: 1px solid rgba(0, 0, 0, 0.06);
-    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: 3.5px solid #000000;
+    border-left: 1.5px solid #000000;
+    border-right: 1.5px solid #000000;
     border-radius: 24px 24px 0 0;
     width: 100%;
     max-height: 85%;
@@ -908,7 +908,7 @@ body {
 
 .flow-btn {
     background: #F8FAFC;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1.5px solid #000000;
     border-radius: 10px;
     padding: 10px 4px;
     cursor: pointer;
@@ -953,7 +953,7 @@ body {
 
 .check-item {
     background: #F8FAFC;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1.5px solid #000000;
     border-radius: 10px;
     padding: 12px;
     cursor: pointer;
@@ -994,7 +994,7 @@ body {
     width: 100%;
     height: 90px;
     background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1.5px solid #000000;
     border-radius: 10px;
     padding: 12px;
     color: var(--text-primary);

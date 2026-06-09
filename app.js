@@ -54,7 +54,7 @@ const els = {
     
     // Log Modal
     logModal: document.getElementById('log-modal'),
-    modalDateTitle: document.getElementById('modal-date-title'),
+    modalDatePicker: document.getElementById('modal-date-picker'),
     flowButtons: document.querySelectorAll('.flow-btn'),
     symptomCheckboxes: document.querySelectorAll('input[name="symptom"]'),
     moodRadios: document.querySelectorAll('input[name="mood"]'),
@@ -589,7 +589,7 @@ els.btnNextMonth.addEventListener('click', () => {
 // --- MODAL SYMPTOMS LOGGER ---
 function openLogModal(dateStr) {
     selectedDateStr = dateStr;
-    els.modalDateTitle.textContent = formatDateSpanish(dateStr);
+    els.modalDatePicker.value = dateStr;
     
     // Reset inputs
     els.flowButtons.forEach(btn => btn.classList.remove('active'));
@@ -645,6 +645,13 @@ function closeModal() {
 els.btnCloseModal.addEventListener('click', closeModal);
 els.logModal.addEventListener('click', (e) => {
     if (e.target === els.logModal) closeModal();
+});
+
+// Date picker change listener
+els.modalDatePicker.addEventListener('change', (e) => {
+    if (e.target.value) {
+        openLogModal(e.target.value);
+    }
 });
 
 // Flow selector click

@@ -249,8 +249,11 @@
     <!-- LOG MODAL (Symptom & Mood Logger) -->
     <div id="log-modal" class="modal-backdrop">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-date-title" class="gold-title">Registrar Día</h3>
+            <div class="modal-header" style="align-items: center;">
+                <div class="modal-date-container" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="gold-title" style="margin-bottom: 0; border-left: 3px solid var(--gold-primary); padding-left: 10px;">Fecha:</span>
+                    <input type="date" id="modal-date-picker" style="background: #ffffff; border: 1.5px solid #000000; border-radius: 8px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; padding: 4px 8px; outline: none; font-weight: 600;">
+                </div>
                 <button id="btn-close-modal" class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
