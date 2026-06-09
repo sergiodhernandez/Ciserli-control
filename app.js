@@ -1,7 +1,10 @@
 // --- UPDATE CONFIGURATION ---
 // Reemplaza esta URL con la ruta cruda de tu archivo en GitHub:
-// ej: "https://raw.githubusercontent.com/TU_USUARIO/Ciserli-control/main/update.json"
 const UPDATE_CONFIG_URL = "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/update.json";
+
+// --- GOOGLE SHEETS SYNC CONFIGURATION ---
+// Reemplaza esta URL con la URL de tu aplicación web publicada en Google Apps Script
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxdYsr2NLAnbORnGuwrbw99r45x5KMvlYSePau17WaXnKM0VKsUfrJ5HAc-1KJz_hAL/exec";
 
 // --- CITAS ROMÁNTICAS PARA CITLALI ---
 const BEAUTIFUL_QUOTES = [
@@ -23,23 +26,28 @@ const BEAUTIFUL_QUOTES = [
 ];
 
 // --- ROMANTIC QUOTES & SPLASH SCREEN SYSTEM ---
+function displayRandomQuotes() {
+    const dashboardQuoteEl = document.getElementById('dashboard-love-quote');
+    if (!dashboardQuoteEl) return;
+    const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : BEAUTIFUL_QUOTES;
+    if (quotesSource.length === 0) return;
+    const randomIdx = Math.floor(Math.random() * quotesSource.length);
+    dashboardQuoteEl.textContent = quotesSource[randomIdx];
+}
+
 function initQuotesAndSplash() {
     const splashQuoteEl = document.getElementById('splash-quote');
-    const dashboardQuoteEl = document.getElementById('dashboard-love-quote');
     const splashScreenEl = document.getElementById('splash-screen');
     
-    const randomIdx1 = Math.floor(Math.random() * BEAUTIFUL_QUOTES.length);
-    let randomIdx2 = Math.floor(Math.random() * BEAUTIFUL_QUOTES.length);
-    if (randomIdx1 === randomIdx2) {
-        randomIdx2 = (randomIdx1 + 1) % BEAUTIFUL_QUOTES.length;
+    const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : BEAUTIFUL_QUOTES;
+    if (quotesSource.length > 0) {
+        const randomIdx1 = Math.floor(Math.random() * quotesSource.length);
+        if (splashQuoteEl) {
+            splashQuoteEl.textContent = quotesSource[randomIdx1];
+        }
     }
     
-    if (splashQuoteEl) {
-        splashQuoteEl.textContent = BEAUTIFUL_QUOTES[randomIdx1];
-    }
-    if (dashboardQuoteEl) {
-        dashboardQuoteEl.textContent = BEAUTIFUL_QUOTES[randomIdx2];
-    }
+    displayRandomQuotes();
     
     if (splashScreenEl) {
         setTimeout(() => {
@@ -55,7 +63,8 @@ let appState = {
         periodLength: 5
     },
     logs: {},      // Format: { "YYYY-MM-DD": { flow: 'light'|'medium'|'heavy'|'none', symptoms: [], mood: '', notes: '' } }
-    cycles: []     // Format: [ { startDate: "YYYY-MM-DD", endDate: "YYYY-MM-DD", manual: boolean } ]
+    cycles: [],    // Format: [ { startDate: "YYYY-MM-DD", endDate: "YYYY-MM-DD", manual: boolean } ]
+    quotes: []     // Frases dinámicas obtenidas desde Google Sheets
 };
 
 // Current view state
@@ -117,7 +126,16 @@ const els = {
     mirrorPlaceholder: document.getElementById('mirror-placeholder'),
     btnToggleMirror: document.getElementById('btn-toggle-mirror'),
     mirrorRingLight: document.getElementById('mirror-ring-light'),
-    ringButtons: document.querySelectorAll('.ring-btn')
+    ringButtons: document.querySelectorAll('.ring-btn'),
+
+    // Google Sheets Sync
+    syncStatus: document.getElementById('sync-status'),
+    syncText: document.getElementById('sync-text'),
+
+    // Quotes Settings Manager
+    inputNewQuote: document.getElementById('input-new-quote'),
+    btnAddQuote: document.getElementById('btn-add-quote'),
+    settingsQuotesList: document.getElementById('settings-quotes-list')
 };
 
 // --- TIMEZONE-SAFE DATE UTILITIES ---
@@ -201,12 +219,18 @@ function loadState() {
         const savedSettings = localStorage.getItem('luna_settings');
         const savedLogs = localStorage.getItem('luna_logs');
         const savedCycles = localStorage.getItem('luna_cycles');
+        const savedQuotes = localStorage.getItem('luna_quotes');
         
         if (savedSettings) appState.settings = JSON.parse(savedSettings);
         if (savedLogs) appState.logs = JSON.parse(savedLogs);
         if (savedCycles) appState.cycles = JSON.parse(savedCycles);
+        if (savedQuotes) appState.quotes = JSON.parse(savedQuotes);
     } catch (e) {
         console.error("localStorage reading failed:", e);
+    }
+    
+    if (!appState.quotes) {
+        appState.quotes = [];
     }
     
     // Auto-update cycles based on logged flow if clean
@@ -222,9 +246,12 @@ function saveState() {
         localStorage.setItem('luna_settings', JSON.stringify(appState.settings));
         localStorage.setItem('luna_logs', JSON.stringify(appState.logs));
         localStorage.setItem('luna_cycles', JSON.stringify(appState.cycles));
+        localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes || []));
     } catch (e) {
         console.error("localStorage writing failed:", e);
     }
+    
+    saveToGoogleSheet();
 }// Rebuild cycles list from symptom logs where flow is registered
 function rebuildCyclesFromLogs(triggerSave = true) {
     // 1. Gather all logged dates with active flow
@@ -1097,15 +1124,262 @@ function showUpdateModal(updateData) {
 }
 
 
+// --- GOOGLE SHEETS SYNC SYSTEM ---
+function updateSyncStatus(status, text) {
+    if (!els.syncStatus || !els.syncText) return;
+    els.syncStatus.className = "sync-status-badge " + status;
+    els.syncText.textContent = text;
+}
+
+function fetchFromGoogleSheet() {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
+        updateSyncStatus("error", "URL sin configurar");
+        return;
+    }
+    
+    updateSyncStatus("loading", "Sincronizando...");
+    
+    fetch(GOOGLE_SHEET_URL)
+        .then(response => {
+            if (!response.ok) throw new Error("Error en la respuesta de red");
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.appState) {
+                // Actualizar estado local
+                appState.settings = data.appState.settings || appState.settings;
+                appState.logs = data.appState.logs || appState.logs;
+                appState.cycles = data.appState.cycles || appState.cycles;
+                appState.quotes = data.quotes || [];
+                
+                // Guardar copia local en caché
+                try {
+                    localStorage.setItem('luna_settings', JSON.stringify(appState.settings));
+                    localStorage.setItem('luna_logs', JSON.stringify(appState.logs));
+                    localStorage.setItem('luna_cycles', JSON.stringify(appState.cycles));
+                    localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes));
+                } catch (e) {
+                    console.error("localStorage writing failed:", e);
+                }
+                
+                // Reconstruir ciclos y actualizar UI
+                rebuildCyclesFromLogs(false);
+                updateDashboard();
+                loadSettingsUI();
+                renderQuotesList();
+                displayRandomQuotes();
+                
+                const calendarActive = document.getElementById('section-calendar').classList.contains('active');
+                const historyActive = document.getElementById('section-history').classList.contains('active');
+                if (calendarActive) renderCalendar();
+                if (historyActive) renderHistory();
+                
+                updateSyncStatus("success", "Sincronizado");
+            } else {
+                throw new Error("Formato de respuesta incorrecto");
+            }
+        })
+        .catch(err => {
+            console.error("Error al sincronizar con Google Sheets:", err);
+            updateSyncStatus("error", "Error de conexión");
+        });
+}
+
+function saveToGoogleSheet() {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
+        return;
+    }
+    
+    updateSyncStatus("loading", "Guardando...");
+    
+    const payload = {
+        action: "saveState",
+        state: {
+            settings: appState.settings,
+            logs: appState.logs,
+            cycles: appState.cycles
+        }
+    };
+    
+    // Enviamos el contenido como text/plain para evitar solicitudes preflight OPTIONS de CORS en Google Sheets
+    fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Error al guardar");
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.status === "success") {
+            updateSyncStatus("success", "Sincronizado");
+        } else {
+            throw new Error(data.message || "Guardado fallido");
+        }
+    })
+    .catch(err => {
+        console.error("Error al guardar en Google Sheets:", err);
+        updateSyncStatus("error", "Error de guardado");
+    });
+}
+
+function addQuoteToGoogleSheet(quoteText) {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
+        alert("Configura la URL de Google Sheets en app.js para poder agregar frases.");
+        return;
+    }
+    
+    updateSyncStatus("loading", "Agregando frase...");
+    
+    const payload = {
+        action: "addQuote",
+        quote: quoteText
+    };
+    
+    fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Error al agregar frase");
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.status === "success") {
+            appState.quotes.push(quoteText);
+            try {
+                localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes));
+            } catch(e) {}
+            
+            els.inputNewQuote.value = "";
+            renderQuotesList();
+            showToast("¡Frase agregada!");
+            updateSyncStatus("success", "Sincronizado");
+        } else {
+            throw new Error(data.message || "Error al agregar");
+        }
+    })
+    .catch(err => {
+        console.error("Error al agregar frase:", err);
+        updateSyncStatus("error", "Error al guardar frase");
+        alert("No se pudo guardar la frase. Intenta de nuevo.");
+    });
+}
+
+function deleteQuoteFromGoogleSheet(quoteText) {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL === "TU_URL_DE_GOOGLE_SHEETS_AQUI") {
+        alert("Configura la URL de Google Sheets en app.js para poder borrar frases.");
+        return;
+    }
+    
+    if (!confirm("¿Seguro que deseas eliminar esta frase?")) return;
+    
+    updateSyncStatus("loading", "Eliminando frase...");
+    
+    const payload = {
+        action: "deleteQuote",
+        quote: quoteText
+    };
+    
+    fetch(GOOGLE_SHEET_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Error al borrar frase");
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.status === "success") {
+            appState.quotes = appState.quotes.filter(q => q !== quoteText);
+            try {
+                localStorage.setItem('luna_quotes', JSON.stringify(appState.quotes));
+            } catch(e) {}
+            
+            renderQuotesList();
+            showToast("Frase eliminada.");
+            updateSyncStatus("success", "Sincronizado");
+        } else {
+            throw new Error(data.message || "Error al borrar");
+        }
+    })
+    .catch(err => {
+        console.error("Error al eliminar frase:", err);
+        updateSyncStatus("error", "Error al borrar frase");
+        alert("No se pudo eliminar la frase. Intenta de nuevo.");
+    });
+}
+
+function renderQuotesList() {
+    if (!els.settingsQuotesList) return;
+    els.settingsQuotesList.innerHTML = "";
+    
+    const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : [];
+    
+    if (quotesSource.length === 0) {
+        els.settingsQuotesList.innerHTML = `<div class="empty-state" style="padding: 10px 0;">No hay frases guardadas en Google Sheets. ¡Agrega la primera!</div>`;
+        return;
+    }
+    
+    quotesSource.forEach(quote => {
+        const item = document.createElement('div');
+        item.className = "settings-quote-item";
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = quote;
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = "btn-delete-quote";
+        deleteBtn.innerHTML = "🗑️";
+        deleteBtn.title = "Eliminar frase";
+        deleteBtn.addEventListener('click', () => {
+            deleteQuoteFromGoogleSheet(quote);
+        });
+        
+        item.appendChild(textSpan);
+        item.appendChild(deleteBtn);
+        els.settingsQuotesList.appendChild(item);
+    });
+}
+
+
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    initQuotesAndSplash();
     loadState();
+    initQuotesAndSplash();
     loadSettingsUI();
+    renderQuotesList();
     setupNavigation();
     updateDashboard();
     checkForUpdates();
     setupMirror();
+    
+    // Configurar event listener para agregar frases
+    if (els.btnAddQuote && els.inputNewQuote) {
+        els.btnAddQuote.addEventListener('click', () => {
+            const quoteText = els.inputNewQuote.value.trim();
+            if (!quoteText) {
+                alert("Escribe una frase primero.");
+                return;
+            }
+            addQuoteToGoogleSheet(quoteText);
+        });
+    }
+    
+    // Iniciar sincronización de segundo plano con Google Sheets
+    fetchFromGoogleSheet();
     
     // Unregister any active Service Worker inside the APK to prevent caching bugs
     if ('serviceWorker' in navigator) {

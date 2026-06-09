@@ -68,6 +68,10 @@
                 <h1>Ciserli-app</h1>
             </div>
             <div class="header-subtitle">Control de Ciclo</div>
+            <div id="sync-status" class="sync-status-badge">
+                <span class="sync-dot"></span>
+                <span id="sync-text">Sin sincronizar</span>
+            </div>
         </header>
 
         <!-- Main Content Area -->
@@ -256,6 +260,27 @@
                     </div>
                     
                     <button id="btn-save-settings" class="action-btn gold-full">Guardar Configuración</button>
+                </div>
+
+                <!-- Love Quotes Settings -->
+                <div class="card settings-card">
+                    <h3 class="gold-title">Frases Románticas</h3>
+                    <p class="setting-desc">Administra las frases de amor que aparecen en la pantalla de inicio. Se guardarán en Google Sheets.</p>
+                    
+                    <div class="setting-group">
+                        <label for="input-new-quote">Agregar nueva frase de amor</label>
+                        <div style="border: 1.5px solid #000000; border-radius: 10px; padding: 10px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px;">
+                            <textarea id="input-new-quote" placeholder="Escribe algo lindo..." style="background: transparent; border: none; outline: none; width: 100%; font-family: inherit; font-size: 0.9rem; color: var(--text-primary); resize: vertical; min-height: 60px;"></textarea>
+                            <button id="btn-add-quote" class="action-btn gold-full small" style="align-self: flex-end; width: auto; padding: 6px 12px; font-size: 0.8rem;">❤️ Agregar Frase</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Frases Guardadas</label>
+                        <div id="settings-quotes-list" class="settings-quotes-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                            <div class="empty-state" style="padding: 10px 0;">Cargando frases...</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Backup & Restore -->
