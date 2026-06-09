@@ -1,7 +1,7 @@
 // --- UPDATE CONFIGURATION ---
 // Reemplaza esta URL con la ruta cruda de tu archivo en GitHub:
-// ej: "https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/update.json"
-const UPDATE_CONFIG_URL = "https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/update.json";
+// ej: "https://raw.githubusercontent.com/TU_USUARIO/Ciserli-control/main/update.json"
+const UPDATE_CONFIG_URL = "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/update.json";
 
 // --- STATE MANAGEMENT ---
 let appState = {
