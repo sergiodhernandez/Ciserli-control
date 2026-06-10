@@ -3,10 +3,13 @@ package com.example.luna
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.JsResult
@@ -15,6 +18,7 @@ import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -231,6 +235,31 @@ class MainActivity : ComponentActivity() {
                 activity.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+
+        @JavascriptInterface
+        fun downloadApk(url: String) {
+            try {
+                val request = DownloadManager.Request(Uri.parse(url))
+                request.setTitle("Ciserli App Actualizacion")
+                request.setDescription("Descargando actualizacion...")
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                
+                // Save to downloads directory with unique name
+                val fileName = "ciserli-update-${System.currentTimeMillis()}.apk"
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                
+                val manager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                manager.enqueue(request)
+                
+                activity.runOnUiThread {
+                    Toast.makeText(activity, "Iniciando descarga en segundo plano...", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Fallback to opening in browser
+                openInBrowser(url)
             }
         }
     }

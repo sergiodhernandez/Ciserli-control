@@ -1,6 +1,6 @@
 {
-  "versionCode": 12,
-  "versionName": "1.2.0",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=12",
-  "whatsNew": "Espejo más grande y rectangular para mayor visión, con luz de pantalla completa (blanca o cálida) para iluminar tu rostro. 💕"
+  "versionCode": 13,
+  "versionName": "1.3.0",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=13",
+  "whatsNew": "Descargas internas: ¡Las nuevas actualizaciones ahora se descargan en segundo plano directamente dentro de la app sin abrir el navegador! 💕"
 }
