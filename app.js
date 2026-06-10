@@ -22,7 +22,97 @@ const BEAUTIFUL_QUOTES = [
     "Mi lugar favorito en el universo entero siempre será a tu lado.",
     "Eres mi presente más brillante, mi futuro y mi felicidad entera.",
     "Gracias por colmar mis días de tanta luz, ternura y alegría infinita.",
-    "De todas las maravillas creadas en este planeta, tú siempre serás mi favorita."
+    "De todas las maravillas creadas en este planeta, tú siempre serás mi favorita.",
+    "Tu amor es el faro que ilumina mis días más oscuros.",
+    "Cada vez que te miro, confirmo que eres todo lo que siempre soñé.",
+    "Eres la melodía que hace que mi vida suene perfecta.",
+    "Mi amor por ti crece con cada respiración, Citlali.",
+    "Eres mi refugio seguro, mi paz y mi eterna felicidad.",
+    "No hay nada más hermoso en este mundo que ver tu sonrisa iluminando el día.",
+    "Eres el motivo de mis mejores pensamientos y de mis suspiros más profundos.",
+    "A tu lado aprendí el verdadero significado de la palabra felicidad.",
+    "Eres mi hoy, mi mañana y el amor de todas mis vidas.",
+    "Tu ternura y dulzura son el alimento de mi alma.",
+    "Eres la luz que disipa toda la neblina en mi mente.",
+    "Caminar de tu mano es el viaje más hermoso que he emprendido.",
+    "En tu mirada encuentro toda la calma que mi corazón necesita.",
+    "Te amo con una fuerza que no conoce límites ni fronteras.",
+    "Eres la pieza que faltaba para completar el rompecabezas de mi vida.",
+    "Agradezco a la vida cada día por haberte puesto en mi camino.",
+    "Tu voz es la canción más hermosa que mis oídos podrían escuchar.",
+    "Eres mi inspiración diaria, el motor que me impulsa a ser mejor.",
+    "Estar contigo es como vivir en una eterna primavera.",
+    "Tu amor me da la fuerza para enfrentar cualquier tormenta.",
+    "En tus abrazos encuentro el único lugar donde quiero quedarme para siempre.",
+    "Eres mi compañera, mi cómplice y mi amor eterno.",
+    "Tu presencia llena de magia y color cada rincón de mi existencia.",
+    "Eres mi deseo cumplido en cada estrella fugaz.",
+    "Cada día te amo un poco más de lo que te amaba ayer.",
+    "Eres el tesoro más valioso que la vida me ha regalado.",
+    "A tu lado, el tiempo vuela pero los recuerdos se quedan para siempre.",
+    "Tu dulzura hace que la vida sea infinitamente más bella.",
+    "Eres mi hogar, el lugar al que siempre quiero regresar.",
+    "En tu corazón encontré el refugio perfecto para el mío.",
+    "Tu amor es el mejor regalo que jamás he recibido.",
+    "Eres la razón por la que mi corazón late con tanta alegría.",
+    "A tu lado cada instante se convierte en una obra de arte.",
+    "Eres mi sueño hecho realidad, Citlali.",
+    "Te amo con todo mi ser, con cada fibra de mi corazón.",
+    "Tu amor me envuelve y me llena de una paz incomparable.",
+    "Eres la casualidad más bonita y el acierto más grande de mi vida.",
+    "En el cielo de mi vida, tú eres la estrella que más brilla.",
+    "No hay palabras suficientes para expresar cuánto te amo y te admiro.",
+    "Eres el latido constante que le da ritmo a mi vida.",
+    "A tu lado he descubierto lo hermoso que es el amor verdadero.",
+    "Eres el calor que abriga mi alma en los días más fríos.",
+    "Tu mirada tiene el poder de sanar cualquier tristeza en mí.",
+    "Te elegiría a ti una y mil veces en esta y en cualquier otra vida.",
+    "Eres la inspiración detrás de cada una de mis sonrisas.",
+    "Tu amor me hace sentir que puedo lograr lo imposible.",
+    "Eres mi felicidad de todos los días, mi amor eterno.",
+    "En el libro de mi vida, tú eres el capítulo más hermoso.",
+    "Cada beso tuyo es un poema escrito en mis labios.",
+    "Eres el rayo de sol que ilumina mi mañana cada día.",
+    "A tu lado el mundo entero se ve más brillante y hermoso.",
+    "Tu amor es la magia que transforma la rutina en poesía.",
+    "Eres el pensamiento más dulce de todos mis días.",
+    "En tus brazos el mundo exterior deja de existir.",
+    "Te amo por cómo eres cuando estás conmigo y por cómo me haces sentir.",
+    "Eres mi amor platónico hecho realidad en el mundo real.",
+    "Tu presencia le da un sentido único a mi vida.",
+    "Eres mi norte, mi guía y mi destino final.",
+    "A tu lado cada día es una nueva aventura llena de amor.",
+    "Eres la persona que llena mi alma de felicidad absoluta.",
+    "Tu amor es el faro que me guía a puerto seguro.",
+    "Eres el sueño del que nunca quiero despertar.",
+    "Te amo más de lo que las palabras pueden llegar a describir.",
+    "A tu lado el silencio es cómodo y las palabras son música.",
+    "Eres mi complemento perfecto, mi alma gemela.",
+    "Tu amor es el motor que le da fuerza a mis días.",
+    "Eres mi persona favorita en todo el universo.",
+    "A tu lado he aprendido a ver la belleza en los detalles más pequeños.",
+    "Eres la melodía de fondo que acompaña mis días más felices.",
+    "Tu sonrisa es el sol que derrite cualquier hielo en mi corazón.",
+    "Te amo de una forma tan pura que el tiempo no podrá marchitar.",
+    "Eres mi compañera de camino, mi amor y mi vida entera.",
+    "A tu lado he encontrado mi verdadero hogar.",
+    "Eres la poesía más bella que el destino ha escrito para mí.",
+    "Tu amor llena mi vida de un aroma de felicidad eterna.",
+    "Eres la luz que guía mis pasos en los caminos más difíciles.",
+    "Te amo con la locura de un niño y la certeza de un adulto.",
+    "A tu lado la vida es un viaje lleno de magia y sonrisas.",
+    "Eres el refugio donde mi corazón descansa en paz.",
+    "Tu mirada es la ventana por la que asomo a mi felicidad.",
+    "Eres el regalo más hermoso que el universo me ha concedido.",
+    "Te amo en cada detalle, en cada mirada y en cada palabra.",
+    "A tu lado el amor se siente fácil, natural y eterno.",
+    "Eres mi sol en días nublados y mi estrella en noches oscuras.",
+    "Mi amor por ti es un viaje que comienza en el 'para siempre'.",
+    "Eres la casualidad más linda que el destino planeó para mí.",
+    "En tu mirada se refleja el universo entero que quiero explorar contigo.",
+    "A tu lado he descubierto que la felicidad no es un destino, sino un camino que recorro contigo.",
+    "Tu amor es la música que hace bailar a mi corazón todos los días.",
+    "Eres mi principio, mi fin y el amor más grande de toda mi vida."
 ];
 
 // --- ROMANTIC QUOTES & SPLASH SCREEN SYSTEM ---
@@ -413,6 +503,8 @@ function setupNavigation() {
                 renderHistory();
             } else if (target === 'section-dashboard') {
                 updateDashboard();
+            } else if (target === 'section-mirror') {
+                updateBackgroundLight();
             }
         });
     });
@@ -421,6 +513,27 @@ function setupNavigation() {
 // --- MIRROR SYSTEM ---
 let mirrorStream = null;
 let isMirrorOn = false;
+
+function updateBackgroundLight() {
+    const body = document.body;
+    if (!body) return;
+
+    body.classList.remove('ring-active-white', 'ring-active-warm');
+
+    const mirrorSection = document.getElementById('section-mirror');
+    const isMirrorTabActive = mirrorSection && mirrorSection.classList.contains('active');
+
+    if (isMirrorTabActive) {
+        const activeBtn = document.querySelector('.ring-btn.active');
+        const mode = activeBtn ? activeBtn.getAttribute('data-mode') : 'off';
+        
+        if (mode === 'white') {
+            body.classList.add('ring-active-white');
+        } else if (mode === 'warm') {
+            body.classList.add('ring-active-warm');
+        }
+    }
+}
 
 function startMirror() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -433,6 +546,7 @@ function startMirror() {
                 isMirrorOn = true;
                 els.btnToggleMirror.innerHTML = "<span>🛑 Apagar Espejo</span>";
                 els.btnToggleMirror.className = "action-btn danger";
+                updateBackgroundLight();
             })
             .catch(err => {
                 console.error("Error al acceder a la cámara:", err);
@@ -454,6 +568,7 @@ function stopMirror() {
     isMirrorOn = false;
     els.btnToggleMirror.innerHTML = "<span>📹 Encender Espejo</span>";
     els.btnToggleMirror.className = "action-btn gold-full";
+    updateBackgroundLight();
 }
 
 function setupMirror() {
@@ -479,6 +594,7 @@ function setupMirror() {
             } else if (mode === 'warm') {
                 els.mirrorRingLight.classList.add('mode-warm');
             }
+            updateBackgroundLight();
         });
     });
 }

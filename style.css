@@ -1078,15 +1078,14 @@ body {
 
 .mirror-ring-container {
     position: relative;
-    width: 92vw;
-    height: 92vw;
-    max-width: 330px;
-    max-height: 330px;
-    margin: 15px 0;
+    width: 100%;
+    height: 52vh;
+    max-width: 420px;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
+    border-radius: 24px;
     overflow: hidden;
 }
 
@@ -1096,8 +1095,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    border: 12px solid rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
+    border: 14px solid rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
     transition: all 0.3s ease;
     z-index: 2;
@@ -1116,9 +1115,9 @@ body {
 
 .mirror-view-wrapper {
     position: relative;
-    width: calc(100% - 24px);
-    height: calc(100% - 24px);
-    border-radius: 50%;
+    width: calc(100% - 28px);
+    height: calc(100% - 28px);
+    border-radius: 12px;
     overflow: hidden;
     background: #000000;
     border: 1.5px solid #000000;
@@ -1427,4 +1426,67 @@ body {
 
 .btn-delete-quote:active {
     transform: scale(0.9);
+}
+
+/* --- TRANSITIONS FOR LIGHT-UP REFLECTION --- */
+.app-container, .app-header, .app-content, .app-nav, .mirror-card, .ring-light-settings {
+    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease;
+}
+
+/* White Ring Light Mode */
+.app-container.ring-active-white {
+    background: #FFFFFF !important;
+}
+.app-container.ring-active-white .app-header {
+    background: #FFFFFF !important;
+    border-color: #E2E8F0 !important;
+}
+.app-container.ring-active-white .app-content {
+    background: #FFFFFF !important;
+}
+.app-container.ring-active-white .app-nav {
+    background: #FFFFFF !important;
+    border-top: 1.5px solid #E2E8F0 !important;
+}
+.app-container.ring-active-white .mirror-card {
+    background: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    box-shadow: none !important;
+}
+.app-container.ring-active-white .ring-light-settings {
+    background: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+}
+.app-container.ring-active-white .mirror-ring-light {
+    border-color: #FFFFFF !important;
+    box-shadow: 0 0 45px rgba(255, 255, 255, 1), inset 0 0 25px rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Warm Ring Light Mode */
+.app-container.ring-active-warm {
+    background: #FFE5B4 !important;
+}
+.app-container.ring-active-warm .app-header {
+    background: #FFE5B4 !important;
+    border-color: #E2D3B8 !important;
+}
+.app-container.ring-active-warm .app-content {
+    background: #FFE5B4 !important;
+}
+.app-container.ring-active-warm .app-nav {
+    background: #FFE5B4 !important;
+    border-top: 1.5px solid #E2D3B8 !important;
+}
+.app-container.ring-active-warm .mirror-card {
+    background: #FFE5B4 !important;
+    border-color: #FFE5B4 !important;
+    box-shadow: none !important;
+}
+.app-container.ring-active-warm .ring-light-settings {
+    background: #FFF2D6 !important;
+    border-color: #E2D3B8 !important;
+}
+.app-container.ring-active-warm .mirror-ring-light {
+    border-color: #FFE5B4 !important;
+    box-shadow: 0 0 45px rgba(255, 229, 180, 1), inset 0 0 25px rgba(255, 229, 180, 0.8) !important;
 }
