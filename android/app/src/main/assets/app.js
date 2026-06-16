@@ -1249,7 +1249,18 @@ function fetchFromGoogleSheet() {
         .then(data => {
             if (data && data.appState) {
                 // Actualizar estado local
+                const previousCat = appState.settings.cat;
                 appState.settings = data.appState.settings || appState.settings;
+                if (previousCat) {
+                    appState.settings.cat = previousCat;
+                } else if (!appState.settings.cat) {
+                    appState.settings.cat = {
+                        enabled: true,
+                        overlayEnabled: false,
+                        skin: 'patched',
+                        size: 'medium'
+                    };
+                }
                 appState.logs = data.appState.logs || appState.logs;
                 appState.cycles = data.appState.cycles || appState.cycles;
                 appState.quotes = data.quotes || [];
