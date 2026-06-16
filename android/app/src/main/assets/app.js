@@ -1418,18 +1418,18 @@ class CatAudio {
             const outputGain = ctx.createGain();
             
             osc.type = 'sawtooth';
-            osc.frequency.value = 26;
+            osc.frequency.value = 85; // Increased frequency for phone speaker audibility
             
             filter.type = 'lowpass';
-            filter.frequency.value = 75;
+            filter.frequency.value = 250; // Increased filter cut-off to allow harmonics
             
             const lfo = ctx.createOscillator();
             const lfoGain = ctx.createGain();
             lfo.type = 'sine';
             lfo.frequency.value = 3.8;
-            lfoGain.gain.value = 0.12;
+            lfoGain.gain.value = 0.22; // Increased modulation depth
             
-            mainGain.gain.value = 0.16;
+            mainGain.gain.value = 0.35; // Increased base volume
             
             lfo.connect(lfoGain);
             lfoGain.connect(mainGain.gain);
