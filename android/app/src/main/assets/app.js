@@ -1326,7 +1326,6 @@ function saveToGoogleSheet() {
     .then(response => {
         if (!response.ok) throw new Error("Error al guardar");
         return response.json();
-    })
     .then(data => {
         if (data && data.status === "success") {
             updateSyncStatus("success", "Sincronizado");
@@ -1341,6 +1340,120 @@ function saveToGoogleSheet() {
 }
 
 // --- VIRTUAL CAT SYSTEM (IN-APP & NATIVE OVERLAY) ---
+class CatAudio {
+    static getContext() {
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+        return this.ctx;
+    }
+
+    static playMeow() {
+        try {
+            const ctx = this.getContext();
+            const now = ctx.currentTime;
+            
+            const osc1 = ctx.createOscillator();
+            const osc2 = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+            const filter = ctx.createBiquadFilter();
+            
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(320, now);
+            osc1.frequency.exponentialRampToValueAtTime(750, now + 0.15);
+            osc1.frequency.exponentialRampToValueAtTime(450, now + 0.4);
+            osc1.frequency.exponentialRampToValueAtTime(280, now + 0.7);
+            
+            osc2.type = 'sawtooth';
+            osc2.frequency.setValueAtTime(640, now);
+            osc2.frequency.exponentialRampToValueAtTime(1500, now + 0.15);
+            osc2.frequency.exponentialRampToValueAtTime(900, now + 0.4);
+            osc2.frequency.exponentialRampToValueAtTime(560, now + 0.7);
+            
+            filter.type = 'bandpass';
+            filter.Q.value = 2.0;
+            filter.frequency.setValueAtTime(900, now);
+            filter.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
+            filter.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
+            filter.frequency.exponentialRampToValueAtTime(500, now + 0.7);
+            
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.15, now + 0.08);
+            gainNode.gain.setValueAtTime(0.15, now + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.10, now + 0.4);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+            
+            const oscGain2 = ctx.createGain();
+            oscGain2.gain.value = 0.35;
+            
+            osc1.connect(filter);
+            osc2.connect(oscGain2);
+            oscGain2.connect(filter);
+            
+            filter.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            
+            osc1.start(now);
+            osc2.start(now);
+            
+            osc1.stop(now + 0.75);
+            osc2.stop(now + 0.75);
+        } catch (e) {
+            console.error("Web Audio Meow error:", e);
+        }
+    }
+
+    static playPurr(duration = 3.0) {
+        try {
+            const ctx = this.getContext();
+            const now = ctx.currentTime;
+            
+            const osc = ctx.createOscillator();
+            const filter = ctx.createBiquadFilter();
+            const mainGain = ctx.createGain();
+            const outputGain = ctx.createGain();
+            
+            osc.type = 'sawtooth';
+            osc.frequency.value = 26;
+            
+            filter.type = 'lowpass';
+            filter.frequency.value = 75;
+            
+            const lfo = ctx.createOscillator();
+            const lfoGain = ctx.createGain();
+            lfo.type = 'sine';
+            lfo.frequency.value = 3.8;
+            lfoGain.gain.value = 0.12;
+            
+            mainGain.gain.value = 0.16;
+            
+            lfo.connect(lfoGain);
+            lfoGain.connect(mainGain.gain);
+            
+            outputGain.gain.setValueAtTime(0, now);
+            outputGain.gain.linearRampToValueAtTime(1.0, now + 0.2);
+            outputGain.gain.setValueAtTime(1.0, now + duration - 0.25);
+            outputGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+            
+            osc.connect(filter);
+            filter.connect(mainGain);
+            mainGain.connect(outputGain);
+            outputGain.connect(ctx.destination);
+            
+            lfo.start(now);
+            osc.start(now);
+            
+            lfo.stop(now + duration);
+            osc.stop(now + duration);
+        } catch (e) {
+            console.error("Web Audio Purr error:", e);
+        }
+    }
+}
+
 let localCatState = {
     x: 20,
     y: 80,
@@ -1370,18 +1483,23 @@ function initVirtualCat() {
             enabled: true,
             overlayEnabled: false,
             skin: 'patched',
-            size: 'medium'
+            size: 'medium',
+            hideInGames: false
         };
+    } else if (appState.settings.cat.hideInGames === undefined) {
+        appState.settings.cat.hideInGames = false;
     }
 
     // Apply settings to UI inputs
     const swLocal = document.getElementById('switch-cat-local');
     const swOverlay = document.getElementById('switch-cat-overlay');
+    const swHideGames = document.getElementById('switch-cat-hide-games');
     const selSkin = document.getElementById('select-cat-skin');
     const selSize = document.getElementById('select-cat-size');
 
     if (swLocal) swLocal.checked = appState.settings.cat.enabled;
     if (swOverlay) swOverlay.checked = appState.settings.cat.overlayEnabled;
+    if (swHideGames) swHideGames.checked = appState.settings.cat.hideInGames;
     if (selSkin) selSkin.value = appState.settings.cat.skin;
     if (selSize) selSize.value = appState.settings.cat.size;
 
@@ -1416,6 +1534,15 @@ function initVirtualCat() {
 
             // Random action: walk=50%, idle=30%, sleep=20%
             const roll = Math.floor(Math.random() * 100);
+            
+            // Random meow chance (15%) when transitioning to active states
+            if (roll < 80 && Math.random() < 0.15) {
+                if (!localBubble.classList.contains('visible')) {
+                    CatAudio.playMeow();
+                    showLocalCatBubble(Math.random() < 0.5 ? "¡Miau! ❤️" : "¡Miau! 🐾", 2000);
+                }
+            }
+
             if (roll < 50) {
                 walkLocalCat();
             } else if (roll < 80) {
@@ -1493,10 +1620,113 @@ function initVirtualCat() {
         }, duration * 1000);
     }
 
+    function showLocalCatBubble(text, duration = 4000) {
+        const appContainer = document.querySelector('.app-container');
+        const appWidth = appContainer ? appContainer.clientWidth : 360;
+
+        let catSize = 80;
+        if (appState.settings.cat.size === 'small') catSize = 60;
+        if (appState.settings.cat.size === 'large') catSize = 100;
+
+        const centerX = localCatState.x + catSize / 2;
+        let bubbleLeft = centerX - 85;
+        bubbleLeft = Math.max(5, Math.min(appWidth - 175, bubbleLeft));
+
+        localBubble.style.left = `${bubbleLeft - localCatState.x}px`;
+        localBubble.style.marginLeft = '0px';
+        localBubble.style.setProperty('--arrow-left', `${centerX - bubbleLeft}px`);
+
+        localBubble.textContent = text;
+        localBubble.classList.add('visible');
+
+        clearTimeout(localCatState.bubbleTimeout);
+        localCatState.bubbleTimeout = setTimeout(() => {
+            localBubble.classList.remove('visible');
+            setLocalCatAnimation('idle');
+        }, duration);
+    }
+
+    let isLocalDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let containerStartX = 0;
+    let containerStartY = 0;
+    let dragHasMoved = false;
+
+    localWrapper.addEventListener('pointerdown', (e) => {
+        // Cancel ongoing movement/walk
+        clearTimeout(localCatState.walkTimeout);
+        localCatState.isWalking = false;
+        
+        // Disable transitions during dragging
+        localContainer.style.transition = 'none';
+
+        isLocalDragging = true;
+        dragHasMoved = false;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        containerStartX = localCatState.x;
+        containerStartY = localCatState.y;
+        
+        localWrapper.setPointerCapture(e.pointerId);
+        e.stopPropagation();
+    });
+
+    localWrapper.addEventListener('pointermove', (e) => {
+        if (!isLocalDragging) return;
+        
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+
+        if (Math.hypot(dx, dy) > 8) {
+            dragHasMoved = true;
+        }
+
+        let targetX = containerStartX + dx;
+        // bottom increases upwards, clientY increases downwards
+        let targetY = containerStartY - dy;
+
+        const appContainer = document.querySelector('.app-container');
+        if (!appContainer) return;
+        const appWidth = appContainer.clientWidth;
+        const appHeight = appContainer.clientHeight;
+
+        let catSize = 80;
+        if (appState.settings.cat.size === 'small') catSize = 60;
+        if (appState.settings.cat.size === 'large') catSize = 100;
+
+        // Bound within container
+        targetX = Math.max(0, Math.min(appWidth - catSize, targetX));
+        targetY = Math.max(65, Math.min(appHeight - catSize - 155, targetY));
+
+        localContainer.style.left = `${targetX}px`;
+        localContainer.style.bottom = `${targetY}px`;
+
+        localCatState.x = targetX;
+        localCatState.y = targetY;
+        
+        e.stopPropagation();
+    });
+
+    localWrapper.addEventListener('pointerup', (e) => {
+        if (!isLocalDragging) return;
+        isLocalDragging = false;
+        
+        localWrapper.releasePointerCapture(e.pointerId);
+        e.stopPropagation();
+    });
+
     // Tap/Click local cat interaction
     localWrapper.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (dragHasMoved) {
+            // Dragged, don't show bubble or play purr
+            return;
+        }
         
+        // Play purr sound
+        CatAudio.playPurr(4.0);
+
         // Spawn hearts
         for (let i = 0; i < 4; i++) {
             setTimeout(() => {
@@ -1511,21 +1741,14 @@ function initVirtualCat() {
             }, i * 150);
         }
 
-        // Show random quote
-        const currentAnimation = localWrapper.className;
+        // Show happy animation
         setLocalCatAnimation('happy');
 
+        // Show quote
         const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : BEAUTIFUL_QUOTES;
         const randomQuote = quotesSource[Math.floor(Math.random() * quotesSource.length)];
         
-        localBubble.textContent = randomQuote;
-        localBubble.classList.add('visible');
-
-        clearTimeout(localCatState.bubbleTimeout);
-        localCatState.bubbleTimeout = setTimeout(() => {
-            localBubble.classList.remove('visible');
-            setLocalCatAnimation('idle');
-        }, 4000);
+        showLocalCatBubble(randomQuote, 4000);
     });
 
     if (appState.settings.cat.enabled) {
@@ -1576,6 +1799,34 @@ function initVirtualCat() {
         });
     }
 
+    if (swHideGames) {
+        swHideGames.addEventListener('change', () => {
+            const requested = swHideGames.checked;
+            if (requested) {
+                if (window.AndroidApp && window.AndroidApp.checkUsageStatsPermission) {
+                    const hasPermission = window.AndroidApp.checkUsageStatsPermission();
+                    if (!hasPermission) {
+                        alert("Para ocultar al gatito en los juegos, necesitas conceder el permiso de acceso de uso en la siguiente pantalla.");
+                        window.AndroidApp.requestUsageStatsPermission();
+                    }
+                } else {
+                    alert("Esta opción solo está disponible en dispositivos Android.");
+                    swHideGames.checked = false;
+                    return;
+                }
+            }
+
+            appState.settings.cat.hideInGames = requested;
+            saveState();
+            
+            // Sync immediately to Android preferences
+            if (window.AndroidApp && window.AndroidApp.saveSetting) {
+                window.AndroidApp.saveSetting("hideInGames", requested);
+            }
+            syncOverlayCatNative();
+        });
+    }
+
     if (selSkin) {
         selSkin.addEventListener('change', () => {
             appState.settings.cat.skin = selSkin.value;
@@ -1601,6 +1852,10 @@ function initVirtualCat() {
             // First save latest quotes to Android shared prefs
             syncQuotesToAndroid();
             
+            if (window.AndroidApp.saveSetting) {
+                window.AndroidApp.saveSetting("hideInGames", catSettings.hideInGames || false);
+            }
+
             window.AndroidApp.toggleOverlayCat(
                 catSettings.overlayEnabled,
                 catSettings.skin,

@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         :root {
             /* Patched (Blanco con Negro) - Predeterminado */
@@ -376,6 +377,120 @@
 </div>
 
 <script>
+    class CatAudio {
+        static getContext() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+            return this.ctx;
+        }
+
+        static playMeow() {
+            try {
+                const ctx = this.getContext();
+                const now = ctx.currentTime;
+                
+                const osc1 = ctx.createOscillator();
+                const osc2 = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                const filter = ctx.createBiquadFilter();
+                
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(320, now);
+                osc1.frequency.exponentialRampToValueAtTime(750, now + 0.15);
+                osc1.frequency.exponentialRampToValueAtTime(450, now + 0.4);
+                osc1.frequency.exponentialRampToValueAtTime(280, now + 0.7);
+                
+                osc2.type = 'sawtooth';
+                osc2.frequency.setValueAtTime(640, now);
+                osc2.frequency.exponentialRampToValueAtTime(1500, now + 0.15);
+                osc2.frequency.exponentialRampToValueAtTime(900, now + 0.4);
+                osc2.frequency.exponentialRampToValueAtTime(560, now + 0.7);
+                
+                filter.type = 'bandpass';
+                filter.Q.value = 2.0;
+                filter.frequency.setValueAtTime(900, now);
+                filter.frequency.exponentialRampToValueAtTime(2000, now + 0.15);
+                filter.frequency.exponentialRampToValueAtTime(1000, now + 0.4);
+                filter.frequency.exponentialRampToValueAtTime(500, now + 0.7);
+                
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.15, now + 0.08);
+                gainNode.gain.setValueAtTime(0.15, now + 0.15);
+                gainNode.gain.exponentialRampToValueAtTime(0.10, now + 0.4);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+                
+                const oscGain2 = ctx.createGain();
+                oscGain2.gain.value = 0.35;
+                
+                osc1.connect(filter);
+                osc2.connect(oscGain2);
+                oscGain2.connect(filter);
+                
+                filter.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                
+                osc1.start(now);
+                osc2.start(now);
+                
+                osc1.stop(now + 0.75);
+                osc2.stop(now + 0.75);
+            } catch (e) {
+                console.error("Web Audio Meow error:", e);
+            }
+        }
+
+        static playPurr(duration = 3.0) {
+            try {
+                const ctx = this.getContext();
+                const now = ctx.currentTime;
+                
+                const osc = ctx.createOscillator();
+                const filter = ctx.createBiquadFilter();
+                const mainGain = ctx.createGain();
+                const outputGain = ctx.createGain();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.value = 26;
+                
+                filter.type = 'lowpass';
+                filter.frequency.value = 75;
+                
+                const lfo = ctx.createOscillator();
+                const lfoGain = ctx.createGain();
+                lfo.type = 'sine';
+                lfo.frequency.value = 3.8;
+                lfoGain.gain.value = 0.12;
+                
+                mainGain.gain.value = 0.16;
+                
+                lfo.connect(lfoGain);
+                lfoGain.connect(mainGain.gain);
+                
+                outputGain.gain.setValueAtTime(0, now);
+                outputGain.gain.linearRampToValueAtTime(1.0, now + 0.2);
+                outputGain.gain.setValueAtTime(1.0, now + duration - 0.25);
+                outputGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+                
+                osc.connect(filter);
+                filter.connect(mainGain);
+                mainGain.connect(outputGain);
+                outputGain.connect(ctx.destination);
+                
+                lfo.start(now);
+                osc.start(now);
+                
+                lfo.stop(now + duration);
+                osc.stop(now + duration);
+            } catch (e) {
+                console.error("Web Audio Purr error:", e);
+            }
+        }
+    }
+
     const wrapper = document.getElementById('cat-wrapper');
     const bubble = document.getElementById('bubble');
     const container = document.getElementById('container');
@@ -431,6 +546,13 @@
         if (state === 'sleep') {
             startZzzLoop();
         }
+
+        // Random meow chance (15%) when transitioning to idle or walk
+        if ((state === 'idle' || state === 'walk') && Math.random() < 0.15) {
+            if (!bubble.classList.contains('visible')) {
+                playRandomMeowOverlay();
+            }
+        }
     };
 
     function startZzzLoop() {
@@ -445,8 +567,30 @@
         }, 1500);
     }
 
+    function playRandomMeowOverlay() {
+        CatAudio.playMeow();
+        bubble.textContent = Math.random() < 0.5 ? "¡Miau! ❤️" : "¡Miau! 🐾";
+        bubble.classList.add('visible');
+        
+        clearTimeout(bubbleTimeout);
+        
+        if (window.AndroidAppOverlay && window.AndroidAppOverlay.onCatTapped) {
+            window.AndroidAppOverlay.onCatTapped();
+        }
+        
+        bubbleTimeout = setTimeout(() => {
+            bubble.classList.remove('visible');
+            if (window.AndroidAppOverlay && window.AndroidAppOverlay.onBubbleHidden) {
+                window.AndroidAppOverlay.onBubbleHidden();
+            }
+        }, 2000);
+    }
+
     // Handle Taps / Clicks
     wrapper.addEventListener('click', () => {
+        // Play purr sound
+        CatAudio.playPurr(4.0);
+
         // Notify native android code to expand overlay window boundaries
         if (window.AndroidAppOverlay && window.AndroidAppOverlay.onCatTapped) {
             window.AndroidAppOverlay.onCatTapped();

@@ -1,6 +1,6 @@
 {
-  "versionCode": 15,
-  "versionName": "1.4.1",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=15",
-  "whatsNew": "¡Mascota Virtual (Michi) - Corrección! Se corrige el error al cargar la app que causaba un cierre de la configuración del gatito. ¡El michi ya camina libremente de nuevo! 💕"
+  "versionCode": 16,
+  "versionName": "1.4.2",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=16",
+  "whatsNew": "¡Nueva Actualización! Ahora puedes arrastrar al gatito por tu pantalla con el dedo. Añadidos maullidos espontáneos, ronroneo táctil y ocultamiento automático cuando juegas. 💕"
 }

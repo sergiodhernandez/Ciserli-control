@@ -34,6 +34,11 @@ class FloatingCatService : Service() {
     private var skin = "patched"
     private var sizeStr = "medium"
 
+    private val expandedWidthDp = 240
+    private val expandedHeightDp = 180
+    private var gameCheckRunnable: Runnable? = null
+    private var isCatHiddenForGame = false
+
     private val handler = Handler(Looper.getMainLooper())
     private var movementRunnable: Runnable? = null
     private var isWalking = false
@@ -52,6 +57,7 @@ class FloatingCatService : Service() {
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         updateScreenBounds()
         createNotificationChannel()
+        startGameCheckLoop()
     }
 
     private fun updateScreenBounds() {
@@ -147,10 +153,77 @@ class FloatingCatService : Service() {
         webView = WebView(this).apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
+            settings.mediaPlaybackRequiresUserGesture = false
             setBackgroundColor(Color.TRANSPARENT)
             webViewClient = WebViewClient()
             addJavascriptInterface(OverlayInterface(), "AndroidAppOverlay")
             loadUrl("file:///android_asset/cat_overlay.html?skin=$skin&size=$sizeStr")
+        }
+
+        var initialX = 0
+        var initialY = 0
+        var initialTouchX = 0f
+        var initialTouchY = 0f
+        var isDragging = false
+        var clickStartTime = 0L
+
+        webView.setOnTouchListener { view, event ->
+            when (event.action) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    // Cancel walking animations
+                    animator?.cancel()
+                    isWalking = false
+                    
+                    initialX = layoutParams.x
+                    initialY = layoutParams.y
+                    initialTouchX = event.rawX
+                    initialTouchY = event.rawY
+                    isDragging = false
+                    clickStartTime = System.currentTimeMillis()
+                    true
+                }
+                android.view.MotionEvent.ACTION_MOVE -> {
+                    val dx = event.rawX - initialTouchX
+                    val dy = event.rawY - initialTouchY
+                    
+                    // Consider it dragging if movement exceeds 10 pixels
+                    if (Math.hypot(dx.toDouble(), dy.toDouble()) > 10) {
+                        isDragging = true
+                        layoutParams.x = (initialX + dx).toInt()
+                        layoutParams.y = (initialY + dy).toInt()
+                        
+                        // Keep within bounds
+                        layoutParams.x = max(0, min(screenWidth - layoutParams.width, layoutParams.x))
+                        layoutParams.y = max(dpToPx(50), min(screenHeight - layoutParams.height - dpToPx(50), layoutParams.y))
+                        
+                        try {
+                            windowManager.updateViewLayout(webView, layoutParams)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    true
+                }
+                android.view.MotionEvent.ACTION_UP -> {
+                    val duration = System.currentTimeMillis() - clickStartTime
+                    val dx = event.rawX - initialTouchX
+                    val dy = event.rawY - initialTouchY
+                    val distance = Math.hypot(dx.toDouble(), dy.toDouble())
+
+                    if (!isDragging && duration < 300 && distance < 10) {
+                        view.performClick()
+                        webView.post {
+                            webView.evaluateJavascript("wrapper.click()", null)
+                        }
+                    } else {
+                        // Drag completed, lock in new starting point
+                        originalX = layoutParams.x
+                        originalY = layoutParams.y
+                    }
+                    true
+                }
+                else -> false
+            }
         }
 
         // Window Layout Params
@@ -270,8 +343,8 @@ class FloatingCatService : Service() {
         isWalking = false
 
         val sizePx = dpToPx(catSizeDp)
-        val expandedWidth = dpToPx(180)
-        val expandedHeight = dpToPx(130)
+        val expandedWidth = dpToPx(expandedWidthDp)
+        val expandedHeight = dpToPx(expandedHeightDp)
 
         originalX = layoutParams.x
         originalY = layoutParams.y
@@ -296,8 +369,8 @@ class FloatingCatService : Service() {
 
     private fun shrinkWindowAfterBubble() {
         val sizePx = dpToPx(catSizeDp)
-        val expandedWidth = dpToPx(180)
-        val expandedHeight = dpToPx(130)
+        val expandedWidth = dpToPx(expandedWidthDp)
+        val expandedHeight = dpToPx(expandedHeightDp)
 
         // Restore window positions from expanded bottom center back to normal
         layoutParams.x = layoutParams.x + (expandedWidth - sizePx) / 2
@@ -320,9 +393,124 @@ class FloatingCatService : Service() {
         return (dp * resources.displayMetrics.density).toInt()
     }
 
+    private fun startGameCheckLoop() {
+        stopGameCheckLoop()
+        gameCheckRunnable = object : Runnable {
+            override fun run() {
+                checkForegroundForGame()
+                handler.postDelayed(this, 1500)
+            }
+        }
+        handler.post(gameCheckRunnable!!)
+    }
+
+    private fun stopGameCheckLoop() {
+        if (gameCheckRunnable != null) {
+            handler.removeCallbacks(gameCheckRunnable!!)
+            gameCheckRunnable = null
+        }
+    }
+
+    private fun checkForegroundForGame() {
+        val prefs = getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+        val hideInGames = prefs.getBoolean("hideInGames", false)
+
+        if (!hideInGames) {
+            if (isCatHiddenForGame) {
+                isCatHiddenForGame = false
+                webView.post {
+                    webView.visibility = android.view.View.VISIBLE
+                }
+            }
+            return
+        }
+
+        if (hasUsageStatsPermission()) {
+            val foregroundPkg = getForegroundPackage()
+            if (foregroundPkg != null && foregroundPkg != packageName) {
+                val isGame = isPackageGame(foregroundPkg)
+                if (isGame && !isCatHiddenForGame) {
+                    isCatHiddenForGame = true
+                    webView.post {
+                        webView.visibility = android.view.View.GONE
+                    }
+                } else if (!isGame && isCatHiddenForGame) {
+                    isCatHiddenForGame = false
+                    webView.post {
+                        webView.visibility = android.view.View.VISIBLE
+                    }
+                }
+            } else if (isCatHiddenForGame) {
+                isCatHiddenForGame = false
+                webView.post {
+                    webView.visibility = android.view.View.VISIBLE
+                }
+            }
+        } else if (isCatHiddenForGame) {
+            isCatHiddenForGame = false
+            webView.post {
+                webView.visibility = android.view.View.VISIBLE
+            }
+        }
+    }
+
+    private fun hasUsageStatsPermission(): Boolean {
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                packageName
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            appOps.checkOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                packageName
+            )
+        }
+        return mode == android.app.AppOpsManager.MODE_ALLOWED
+    }
+
+    private fun getForegroundPackage(): String? {
+        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as android.app.usage.UsageStatsManager
+        val time = System.currentTimeMillis()
+        val stats = usageStatsManager.queryUsageStats(
+            android.app.usage.UsageStatsManager.INTERVAL_DAILY,
+            time - 10000,
+            time
+        )
+        if (stats != null && stats.isNotEmpty()) {
+            var recentActiveUsageStats: android.app.usage.UsageStats? = null
+            for (usageStats in stats) {
+                if (recentActiveUsageStats == null || usageStats.lastTimeUsed > recentActiveUsageStats.lastTimeUsed) {
+                    recentActiveUsageStats = usageStats
+                }
+            }
+            return recentActiveUsageStats?.packageName
+        }
+        return null
+    }
+
+    private fun isPackageGame(pkgName: String): Boolean {
+        return try {
+            val appInfo = packageManager.getApplicationInfo(pkgName, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                appInfo.category == android.content.pm.ApplicationInfo.CATEGORY_GAME
+            } else {
+                @Suppress("DEPRECATION")
+                (appInfo.flags and android.content.pm.ApplicationInfo.FLAG_IS_GAME) != 0
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         animator?.cancel()
+        stopGameCheckLoop()
         if (movementRunnable != null) {
             handler.removeCallbacks(movementRunnable!!)
         }

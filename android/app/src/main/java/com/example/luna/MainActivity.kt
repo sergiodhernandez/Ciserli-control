@@ -305,5 +305,48 @@ class MainActivity : ComponentActivity() {
             val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
             prefs.edit().putString("quotes", quotesJson).apply()
         }
+
+        @JavascriptInterface
+        fun checkUsageStatsPermission(): Boolean {
+            val appOps = activity.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    activity.packageName
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                appOps.checkOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    activity.packageName
+                )
+            }
+            return mode == android.app.AppOpsManager.MODE_ALLOWED
+        }
+
+        @JavascriptInterface
+        fun requestUsageStatsPermission() {
+            try {
+                val intent = Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                    data = Uri.parse("package:" + activity.packageName)
+                }
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                try {
+                    val intent = Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                    activity.startActivity(intent)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun saveSetting(key: String, value: Boolean) {
+            val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean(key, value).apply()
+        }
     }
 }
