@@ -1326,6 +1326,7 @@ function saveToGoogleSheet() {
     .then(response => {
         if (!response.ok) throw new Error("Error al guardar");
         return response.json();
+    })
     .then(data => {
         if (data && data.status === "success") {
             updateSyncStatus("success", "Sincronizado");
