@@ -1342,6 +1342,60 @@ function saveToGoogleSheet() {
 
 // --- VIRTUAL CAT SYSTEM (IN-APP & NATIVE OVERLAY) ---
 class CatAudio {
+    static playMeow() {
+        try {
+            const audio = new Audio('meow.ogg');
+            audio.play().catch(e => {
+                console.warn("Failed to play local meow.ogg, falling back to Web Audio synthesis:", e);
+                this.playSynthesizedMeow();
+            });
+        } catch (e) {
+            console.warn("Audio constructor failed, falling back to Web Audio synthesis:", e);
+            this.playSynthesizedMeow();
+        }
+    }
+
+    static playPurr(duration = 3.0) {
+        try {
+            if (this.currentPurr) {
+                try { this.currentPurr.pause(); } catch(err) {}
+            }
+            const audio = new Audio('purr.ogg');
+            this.currentPurr = audio;
+            audio.loop = true;
+            audio.play().then(() => {
+                const fadeTime = 500;
+                const stopTime = duration * 1000;
+                setTimeout(() => {
+                    if (this.currentPurr !== audio) return;
+                    let volume = 1.0;
+                    const fadeInterval = setInterval(() => {
+                        if (this.currentPurr !== audio) {
+                            clearInterval(fadeInterval);
+                            return;
+                        }
+                        volume -= 0.1;
+                        if (volume <= 0) {
+                            clearInterval(fadeInterval);
+                            audio.pause();
+                            if (this.currentPurr === audio) {
+                                this.currentPurr = null;
+                            }
+                        } else {
+                            audio.volume = volume;
+                        }
+                    }, fadeTime / 10);
+                }, stopTime - fadeTime);
+            }).catch(e => {
+                console.warn("Failed to play local purr.ogg, falling back to Web Audio synthesis:", e);
+                this.playSynthesizedPurr(duration);
+            });
+        } catch (e) {
+            console.warn("Audio constructor failed, falling back to Web Audio synthesis:", e);
+            this.playSynthesizedPurr(duration);
+        }
+    }
+
     static getContext() {
         if (!this.ctx) {
             this.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1352,7 +1406,7 @@ class CatAudio {
         return this.ctx;
     }
 
-    static playMeow() {
+    static playSynthesizedMeow() {
         try {
             const ctx = this.getContext();
             const now = ctx.currentTime;
@@ -1407,7 +1461,7 @@ class CatAudio {
         }
     }
 
-    static playPurr(duration = 3.0) {
+    static playSynthesizedPurr(duration = 3.0) {
         try {
             const ctx = this.getContext();
             const now = ctx.currentTime;
@@ -1418,18 +1472,18 @@ class CatAudio {
             const outputGain = ctx.createGain();
             
             osc.type = 'sawtooth';
-            osc.frequency.value = 85; // Increased frequency for phone speaker audibility
+            osc.frequency.value = 85;
             
             filter.type = 'lowpass';
-            filter.frequency.value = 250; // Increased filter cut-off to allow harmonics
+            filter.frequency.value = 250;
             
             const lfo = ctx.createOscillator();
             const lfoGain = ctx.createGain();
             lfo.type = 'sine';
             lfo.frequency.value = 3.8;
-            lfoGain.gain.value = 0.22; // Increased modulation depth
+            lfoGain.gain.value = 0.22;
             
-            mainGain.gain.value = 0.35; // Increased base volume
+            mainGain.gain.value = 0.35;
             
             lfo.connect(lfoGain);
             lfoGain.connect(mainGain.gain);
