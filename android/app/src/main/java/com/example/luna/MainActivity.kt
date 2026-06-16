@@ -262,5 +262,48 @@ class MainActivity : ComponentActivity() {
                 openInBrowser(url)
             }
         }
+
+        @JavascriptInterface
+        fun checkOverlayPermission(): Boolean {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                android.provider.Settings.canDrawOverlays(activity)
+            } else {
+                true
+            }
+        }
+
+        @JavascriptInterface
+        fun requestOverlayPermission() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val intent = Intent(
+                    android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + activity.packageName)
+                )
+                activity.startActivity(intent)
+            }
+        }
+
+        @JavascriptInterface
+        fun toggleOverlayCat(enabled: Boolean, skin: String, size: String) {
+            val intent = Intent(activity, FloatingCatService::class.java).apply {
+                putExtra("skin", skin)
+                putExtra("size", size)
+            }
+            if (enabled) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    activity.startForegroundService(intent)
+                } else {
+                    activity.startService(intent)
+                }
+            } else {
+                activity.stopService(intent)
+            }
+        }
+
+        @JavascriptInterface
+        fun saveQuotes(quotesJson: String) {
+            val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putString("quotes", quotesJson).apply()
+        }
     }
 }

@@ -317,6 +317,16 @@ function loadState() {
         appState.quotes = [];
     }
     
+    // Verify virtual cat settings
+    if (!appState.settings.cat) {
+        appState.settings.cat = {
+            enabled: true,
+            overlayEnabled: false,
+            skin: 'patched',
+            size: 'medium'
+        };
+    }
+    
     // Auto-update cycles based on logged flow if clean
     try {
         rebuildCyclesFromLogs(false);
@@ -335,6 +345,7 @@ function saveState() {
         console.error("localStorage writing failed:", e);
     }
     
+    syncQuotesToAndroid();
     saveToGoogleSheet();
 }// Rebuild cycles list from symptom logs where flow is registered
 function rebuildCyclesFromLogs(triggerSave = true) {
@@ -1252,6 +1263,7 @@ function fetchFromGoogleSheet() {
                 } catch (e) {
                     console.error("localStorage writing failed:", e);
                 }
+                syncQuotesToAndroid();
                 
                 // Reconstruir ciclos y actualizar UI
                 rebuildCyclesFromLogs(false);
@@ -1317,6 +1329,276 @@ function saveToGoogleSheet() {
     });
 }
 
+// --- VIRTUAL CAT SYSTEM (IN-APP & NATIVE OVERLAY) ---
+let localCatState = {
+    x: 20,
+    y: 80,
+    isWalking: false,
+    walkTimeout: null,
+    bubbleTimeout: null,
+    zzzInterval: null
+};
+
+function syncQuotesToAndroid() {
+    if (window.AndroidApp && window.AndroidApp.saveQuotes) {
+        const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : BEAUTIFUL_QUOTES;
+        window.AndroidApp.saveQuotes(JSON.stringify(quotesSource));
+    }
+}
+
+function initVirtualCat() {
+    const localContainer = document.getElementById('local-cat-container');
+    const localWrapper = document.getElementById('local-cat-wrapper');
+    const localBubble = document.getElementById('local-cat-bubble');
+    
+    if (!localContainer || !localWrapper || !localBubble) return;
+
+    // Ensure settings object is initialized
+    if (!appState.settings.cat) {
+        appState.settings.cat = {
+            enabled: true,
+            overlayEnabled: false,
+            skin: 'patched',
+            size: 'medium'
+        };
+    }
+
+    // Apply settings to UI inputs
+    const swLocal = document.getElementById('switch-cat-local');
+    const swOverlay = document.getElementById('switch-cat-overlay');
+    const selSkin = document.getElementById('select-cat-skin');
+    const selSize = document.getElementById('select-cat-size');
+
+    if (swLocal) swLocal.checked = appState.settings.cat.enabled;
+    if (swOverlay) swOverlay.checked = appState.settings.cat.overlayEnabled;
+    if (selSkin) selSkin.value = appState.settings.cat.skin;
+    if (selSize) selSize.value = appState.settings.cat.size;
+
+    // Update Cat presentation
+    function applyCatVisualSettings() {
+        const catSettings = appState.settings.cat;
+        
+        // Local Cat visibility
+        if (catSettings.enabled) {
+            localContainer.classList.remove('hidden');
+        } else {
+            localContainer.classList.add('hidden');
+        }
+
+        // Apply skin & size classes to container
+        localContainer.className = `local-cat-container skin-${catSettings.skin} size-${catSettings.size}`;
+        if (!catSettings.enabled) {
+            localContainer.classList.add('hidden');
+        }
+    }
+
+    applyCatVisualSettings();
+    syncOverlayCatNative();
+
+    // Trigger local movement loop if enabled
+    let movementInterval = null;
+    
+    function startLocalMovement() {
+        clearInterval(movementInterval);
+        movementInterval = setInterval(() => {
+            if (!appState.settings.cat.enabled || localCatState.isWalking) return;
+
+            // Random action: walk=50%, idle=30%, sleep=20%
+            const roll = Math.floor(Math.random() * 100);
+            if (roll < 50) {
+                walkLocalCat();
+            } else if (roll < 80) {
+                setLocalCatAnimation('idle');
+            } else {
+                setLocalCatAnimation('sleep');
+            }
+        }, 7000);
+    }
+
+    function setLocalCatAnimation(state, direction) {
+        localWrapper.className = `state-${state}`;
+        if (direction === -1) {
+            localWrapper.style.transform = 'scaleX(-1)';
+        } else if (direction === 1) {
+            localWrapper.style.transform = 'scaleX(1)';
+        }
+
+        // Handle Zzz particles
+        clearInterval(localCatState.zzzInterval);
+        if (state === 'sleep') {
+            localCatState.zzzInterval = setInterval(() => {
+                const zzz = document.createElement('div');
+                zzz.className = 'local-zzz';
+                zzz.textContent = 'z';
+                zzz.style.left = '64px';
+                zzz.style.top = '15px';
+                localContainer.appendChild(zzz);
+                setTimeout(() => zzz.remove(), 2500);
+            }, 1500);
+        }
+    }
+
+    function walkLocalCat() {
+        if (localCatState.isWalking) return;
+        localCatState.isWalking = true;
+
+        const appContainer = document.querySelector('.app-container');
+        if (!appContainer) return;
+
+        const appWidth = appContainer.clientWidth;
+        const appHeight = appContainer.clientHeight;
+
+        let catSize = 80;
+        if (appState.settings.cat.size === 'small') catSize = 60;
+        if (appState.settings.cat.size === 'large') catSize = 100;
+
+        // X bounds: 0 to width - size
+        const targetX = Math.floor(Math.random() * (appWidth - catSize));
+        // Y bounds: 65 (above menu) to height - size - 90 (below header)
+        const targetY = 65 + Math.floor(Math.random() * (appHeight - catSize - 155));
+
+        const startX = localCatState.x;
+        const startY = localCatState.y;
+
+        const distance = Math.hypot(targetX - startX, targetY - startY);
+        const speed = 40; // pixels per second
+        const duration = Math.max(1.5, distance / speed);
+
+        const direction = (targetX > startX) ? 1 : -1;
+        setLocalCatAnimation('walk', direction);
+
+        // Apply smooth transition
+        localContainer.style.transition = `left ${duration}s linear, bottom ${duration}s linear`;
+        localContainer.style.left = `${targetX}px`;
+        localContainer.style.bottom = `${targetY}px`;
+
+        localCatState.x = targetX;
+        localCatState.y = targetY;
+
+        clearTimeout(localCatState.walkTimeout);
+        localCatState.walkTimeout = setTimeout(() => {
+            localCatState.isWalking = false;
+            setLocalCatAnimation('idle');
+        }, duration * 1000);
+    }
+
+    // Tap/Click local cat interaction
+    localWrapper.addEventListener('click', (e) => {
+        e.stopPropagation();
+        
+        // Spawn hearts
+        for (let i = 0; i < 4; i++) {
+            setTimeout(() => {
+                const heart = document.createElement('div');
+                heart.className = 'local-heart';
+                heart.textContent = ['❤️', '💖', '💕', '💗'][Math.floor(Math.random() * 4)];
+                heart.style.left = `${35 + Math.random() * 20}px`;
+                heart.style.top = '25px';
+                heart.style.setProperty('--dx', `${-15 + Math.random() * 30}px`);
+                localContainer.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            }, i * 150);
+        }
+
+        // Show random quote
+        const currentAnimation = localWrapper.className;
+        setLocalCatAnimation('happy');
+
+        const quotesSource = (appState.quotes && appState.quotes.length > 0) ? appState.quotes : BEAUTIFUL_QUOTES;
+        const randomQuote = quotesSource[Math.floor(Math.random() * quotesSource.length)];
+        
+        localBubble.textContent = randomQuote;
+        localBubble.classList.add('visible');
+
+        clearTimeout(localCatState.bubbleTimeout);
+        localCatState.bubbleTimeout = setTimeout(() => {
+            localBubble.classList.remove('visible');
+            setLocalCatAnimation('idle');
+        }, 4000);
+    });
+
+    if (appState.settings.cat.enabled) {
+        startLocalMovement();
+    }
+
+    // Settings listeners
+    if (swLocal) {
+        swLocal.addEventListener('change', () => {
+            appState.settings.cat.enabled = swLocal.checked;
+            saveState();
+            applyCatVisualSettings();
+            if (swLocal.checked) {
+                startLocalMovement();
+            } else {
+                clearInterval(movementInterval);
+                clearTimeout(localCatState.walkTimeout);
+                localCatState.isWalking = false;
+                setLocalCatAnimation('idle');
+            }
+        });
+    }
+
+    if (swOverlay) {
+        swOverlay.addEventListener('change', () => {
+            const requested = swOverlay.checked;
+            if (requested) {
+                // Check permissions first!
+                if (window.AndroidApp && window.AndroidApp.checkOverlayPermission) {
+                    const hasPermission = window.AndroidApp.checkOverlayPermission();
+                    if (!hasPermission) {
+                        alert("Para mostrar al gatito fuera de la app, necesitas conceder el permiso de superposición (Dibujar sobre otras apps) en la siguiente pantalla.");
+                        window.AndroidApp.requestOverlayPermission();
+                        // Uncheck toggle until permission is granted
+                        swOverlay.checked = false;
+                        return;
+                    }
+                } else {
+                    alert("La superposición fuera de la pantalla de la app solo está soportada en dispositivos Android.");
+                    swOverlay.checked = false;
+                    return;
+                }
+            }
+
+            appState.settings.cat.overlayEnabled = requested;
+            saveState();
+            syncOverlayCatNative();
+        });
+    }
+
+    if (selSkin) {
+        selSkin.addEventListener('change', () => {
+            appState.settings.cat.skin = selSkin.value;
+            saveState();
+            applyCatVisualSettings();
+            syncOverlayCatNative();
+        });
+    }
+
+    if (selSize) {
+        selSize.addEventListener('change', () => {
+            appState.settings.cat.size = selSize.value;
+            saveState();
+            applyCatVisualSettings();
+            syncOverlayCatNative();
+        });
+    }
+
+    // Sync state changes with native service
+    function syncOverlayCatNative() {
+        if (window.AndroidApp && window.AndroidApp.toggleOverlayCat) {
+            const catSettings = appState.settings.cat;
+            // First save latest quotes to Android shared prefs
+            syncQuotesToAndroid();
+            
+            window.AndroidApp.toggleOverlayCat(
+                catSettings.overlayEnabled,
+                catSettings.skin,
+                catSettings.size
+            );
+        }
+    }
+}
+
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -1327,6 +1609,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDashboard();
     checkForUpdates();
     setupMirror();
+    initVirtualCat();
     
     // Iniciar sincronización de segundo plano con Google Sheets
     fetchFromGoogleSheet();

@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "1.3.0",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=13",
-  "whatsNew": "Descargas internas: ¡Las nuevas actualizaciones ahora se descargan en segundo plano directamente dentro de la app sin abrir el navegador! 💕"
+  "versionCode": 14,
+  "versionName": "1.4.0",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=14",
+  "whatsNew": "¡Mascota Virtual (Michi)! Ahora puedes tener a un tierno gatito animado (blanco manchado con negro) dentro de la app o paseando por tu pantalla de inicio sobre otras apps (superposición). Puedes personalizar su pelaje y tamaño en Ajustes. 💕"
 }

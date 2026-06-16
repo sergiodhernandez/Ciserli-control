@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            /* Patched (Blanco con Negro) - Predeterminado */
+            --skin-primary: #ffffff;
+            --skin-secondary: #f0f0f0;
+            --skin-paw: #ffffff;
+            --patch-1-color: #2b2d35;
+            --patch-2-color: #2b2d35;
+            --has-patches: block;
+            --ear-inner: #ffccd5;
+            --eye-color: #3b82f6;
+            --face-details: #2b2d35;
+        }
+
+        /* Skin Variations */
+        body.skin-orange {
+            --skin-primary: #ff9f43;
+            --skin-secondary: #ee8f33;
+            --skin-paw: #ff9f43;
+            --patch-1-color: #e07f24;
+            --patch-2-color: #e07f24;
+            --has-patches: block;
+            --ear-inner: #ffccd5;
+            --eye-color: #2ecc71;
+            --face-details: #5d4037;
+        }
+
+        body.skin-white {
+            --skin-primary: #ffffff;
+            --skin-secondary: #f5f6f8;
+            --skin-paw: #ffffff;
+            --patch-1-color: transparent;
+            --patch-2-color: transparent;
+            --has-patches: none;
+            --ear-inner: #ffccd5;
+            --eye-color: #00cec9;
+            --face-details: #7f8c8d;
+        }
+
+        body.skin-black {
+            --skin-primary: #2d3436;
+            --skin-secondary: #222728;
+            --skin-paw: #2d3436;
+            --patch-1-color: transparent;
+            --patch-2-color: transparent;
+            --has-patches: none;
+            --ear-inner: #ff8a9e;
+            --eye-color: #fdcb6e;
+            --face-details: #1e252b;
+        }
+
+        body.skin-calico {
+            --skin-primary: #ffffff;
+            --skin-secondary: #f0f0f0;
+            --skin-paw: #ffffff;
+            --patch-1-color: #2d3436; /* Black patch */
+            --patch-2-color: #ff9f43; /* Orange patch */
+            --has-patches: block;
+            --ear-inner: #ffccd5;
+            --eye-color: #2ecc71;
+            --face-details: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            overflow: hidden;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* Container Layout */
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 2px;
+        }
+
+        /* Bubble dialog */
+        #bubble {
+            position: absolute;
+            bottom: 82px; /* standard height of cat */
+            width: 170px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1.5px solid #000000;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #2d3748;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: scale(0.8);
+            transform-origin: bottom center;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background: #ffffff;
+            border-right: 1.5px solid #000000;
+            border-bottom: 1.5px solid #000000;
+        }
+
+        #bubble.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Cat Area */
+        #cat-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        /* Size classes */
+        body.size-small #cat-wrapper { width: 60px; height: 60px; }
+        body.size-small #bubble { bottom: 62px; }
+        
+        body.size-large #cat-wrapper { width: 100px; height: 100px; }
+        body.size-large #bubble { bottom: 102px; }
+
+        .cat-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- ANIMATIONS --- */
+
+        /* Tail sway */
+        .cat-tail {
+            transform-origin: 18px 48px;
+            animation: tail-sway 3s ease-in-out infinite;
+        }
+
+        @keyframes tail-sway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-12deg); }
+        }
+
+        /* Eyes state */
+        .eye-closed, .eye-happy {
+            display: none;
+        }
+
+        /* Idle state (blinking eyes, breath) */
+        .state-idle .eye-open {
+            animation: eye-blink 4s infinite;
+        }
+
+        .state-idle .cat-head {
+            animation: head-bob 4s ease-in-out infinite;
+        }
+
+        .state-idle .cat-body {
+            animation: body-breath 2s ease-in-out infinite;
+        }
+
+        @keyframes eye-blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        @keyframes head-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(0.5px); }
+        }
+
+        @keyframes body-breath {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.02); }
+        }
+
+        /* Walk state (bobbing, leg movement) */
+        .state-walk .paw-front-left {
+            animation: paw-move-1 0.4s linear infinite;
+        }
+        .state-walk .paw-front-right {
+            animation: paw-move-2 0.4s linear infinite;
+        }
+        .state-walk .paw-back-left {
+            animation: paw-move-2 0.4s linear infinite;
+        }
+        .state-walk .paw-back-right {
+            animation: paw-move-1 0.4s linear infinite;
+        }
+        .state-walk .cat-svg {
+            animation: walk-bounce 0.4s ease-in-out infinite;
+        }
+
+        @keyframes paw-move-1 {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px) translateX(1px); }
+        }
+
+        @keyframes paw-move-2 {
+            0%, 100% { transform: translateY(-3px) translateX(-1px); }
+            50% { transform: translateY(0); }
+        }
+
+        @keyframes walk-bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-1.5px) rotate(1deg); }
+        }
+
+        /* Sleep state (curled/down body, closed eyes) */
+        .state-sleep .eye-open { display: none; }
+        .state-sleep .eye-closed { display: block; }
+        .state-sleep .cat-body {
+            animation: body-breath 3s ease-in-out infinite;
+        }
+        .state-sleep .cat-head {
+            transform: translateY(2px) rotate(2deg);
+        }
+        .state-sleep .cat-tail {
+            animation: tail-sway-slow 5s ease-in-out infinite;
+        }
+
+        @keyframes tail-sway-slow {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-5deg); }
+        }
+
+        /* Happy state (excited wiggle, happy eyes) */
+        .state-happy .eye-open { display: none; }
+        .state-happy .eye-happy { display: block; }
+        .state-happy #cat-wrapper {
+            animation: happy-wiggle 0.3s ease-in-out infinite;
+        }
+        .state-happy .cat-tail {
+            animation: tail-sway-fast 0.5s linear infinite;
+        }
+
+        @keyframes happy-wiggle {
+            0%, 100% { transform: scale(1.05) rotate(0deg); }
+            50% { transform: scale(1.05) translateY(-1px) rotate(1deg); }
+        }
+
+        @keyframes tail-sway-fast {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-25deg); }
+        }
+
+        /* Hearts effect */
+        .heart {
+            position: absolute;
+            font-size: 14px;
+            color: #ff4d6d;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100;
+            animation: float-heart 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes float-heart {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(var(--dx), -50px) scale(1.2); opacity: 0; }
+        }
+
+        /* Zzz sleeping bubbles */
+        .zzz {
+            position: absolute;
+            font-size: 10px;
+            color: #5f27cd;
+            font-weight: 700;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 100;
+            animation: float-zzz 2.5s ease-in-out forwards;
+        }
+
+        @keyframes float-zzz {
+            0% { transform: translate(10px, -20px) scale(0.8); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translate(25px, -55px) scale(1.3); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="skin-patched size-medium">
+
+<div id="container">
+    <!-- Bubble text -->
+    <div id="bubble">¡Hola! ❤️</div>
+
+    <!-- Cat wrapper -->
+    <div id="cat-wrapper" class="state-idle">
+        <svg class="cat-svg" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tail -->
+            <path class="cat-tail" d="M 15 50 Q 5 30 15 20 Q 20 20 18 25 Q 10 32 18 48 Z" fill="var(--skin-primary)"/>
+            
+            <!-- Back Paws -->
+            <ellipse class="cat-paw paw-back-left" cx="30" cy="72" rx="6" ry="4" fill="var(--skin-secondary)"/>
+            <ellipse class="cat-paw paw-back-right" cx="70" cy="72" rx="6" ry="4" fill="var(--skin-secondary)"/>
+
+            <!-- Body -->
+            <rect class="cat-body" x="20" y="32" width="60" height="36" rx="18" ry="18" fill="var(--skin-primary)"/>
+
+            <!-- Spots/Patches for Patched & Calico -->
+            <path class="cat-patches body-patch-1" d="M 33 32 Q 43 40 50 32 Q 53 45 45 52 Q 35 45 33 32 Z" fill="var(--patch-1-color)" style="display: var(--has-patches);"/>
+            <path class="cat-patches body-patch-2" d="M 60 45 Q 68 38 72 45 Q 75 55 68 58 Q 60 52 60 45 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
+
+            <!-- Front Paws -->
+            <ellipse class="cat-paw paw-front-left" cx="42" cy="72" rx="6" ry="5" fill="var(--skin-paw)"/>
+            <ellipse class="cat-paw paw-front-right" cx="58" cy="72" rx="6" ry="5" fill="var(--skin-paw)"/>
+
+            <!-- Head -->
+            <circle class="cat-head" cx="72" cy="30" r="18" fill="var(--skin-primary)"/>
+            
+            <!-- Patches on head -->
+            <path class="cat-patches head-patch" d="M 64 16 Q 72 23 72 13 Q 78 18 84 21 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
+
+            <!-- Ears -->
+            <!-- Left Ear -->
+            <path class="cat-ear" d="M 58 20 L 52 2 L 66 14 Z" fill="var(--skin-primary)"/>
+            <path class="cat-ear-inner" d="M 60 18 L 56 6 L 64 13 Z" fill="var(--ear-inner)"/>
+            <!-- Right Ear -->
+            <path class="cat-ear" d="M 86 20 L 92 2 L 78 14 Z" fill="var(--skin-primary)"/>
+            <path class="cat-ear-inner" d="M 84 18 L 88 6 L 80 13 Z" fill="var(--ear-inner)"/>
+
+            <!-- Eyes -->
+            <!-- Left Eye -->
+            <g class="cat-eye-group eye-left">
+                <ellipse class="cat-eye eye-open" cx="66" cy="30" rx="2.2" ry="2.8" fill="var(--eye-color)"/>
+                <path class="cat-eye eye-closed" d="M 63.5 30 Q 66 33 68.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                <path class="cat-eye eye-happy" d="M 63.5 31 Q 66 28 68.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                <circle class="eye-pupil" cx="65.2" cy="29" r="0.7" fill="white" />
+            </g>
+            <!-- Right Eye -->
+            <g class="cat-eye-group eye-right">
+                <ellipse class="cat-eye eye-open" cx="78" cy="30" rx="2.2" ry="2.8" fill="var(--eye-color)"/>
+                <path class="cat-eye eye-closed" d="M 75.5 30 Q 78 33 80.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                <path class="cat-eye eye-happy" d="M 75.5 31 Q 78 28 80.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                <circle class="eye-pupil" cx="77.2" cy="29" r="0.7" fill="white" />
+            </g>
+
+            <!-- Nose -->
+            <polygon points="71.5,33 72.5,33 72,34" fill="var(--ear-inner)" />
+
+            <!-- Whiskers -->
+            <line x1="58" y1="34" x2="50" y2="33" stroke="var(--face-details)" stroke-width="1" />
+            <line x1="58" y1="36" x2="49" y2="37" stroke="var(--face-details)" stroke-width="1" />
+            <line x1="86" y1="34" x2="94" y2="33" stroke="var(--face-details)" stroke-width="1" />
+            <line x1="86" y1="36" x2="95" y2="37" stroke="var(--face-details)" stroke-width="1" />
+        </svg>
+    </div>
+</div>
+
+<script>
+    const wrapper = document.getElementById('cat-wrapper');
+    const bubble = document.getElementById('bubble');
+    const container = document.getElementById('container');
+
+    let currentDirection = 1;
+    let currentSkin = 'patched';
+    let bubbleTimeout = null;
+    let zzzInterval = null;
+
+    // Default romantic quotes (fallback)
+    const DEFAULT_QUOTES = [
+        "¡Eres mi sol, mi luna y mi todo, Citlali! 🌙",
+        "Te amo más de lo que te imaginas... ❤️",
+        "¡Qué lindo día para darte un abrazo! 🐾",
+        "Tu sonrisa hace brillar mi corazoncito. ✨",
+        "¡Citlali + Sergio por siempre! 💕",
+        "¡Miauuu! Eres lo más hermoso de mi vida."
+    ];
+
+    // Read URL parameters to apply skin and size
+    function applyUrlParameters() {
+        const params = new URLSearchParams(window.location.search);
+        
+        const skin = params.get('skin') || 'patched';
+        const size = params.get('size') || 'medium';
+        
+        currentSkin = skin;
+        
+        document.body.className = `skin-${skin} size-${size}`;
+    }
+
+    applyUrlParameters();
+
+    // Trigger state changes from Kotlin service
+    window.setCatState = function(state, direction) {
+        // Clear active class list
+        wrapper.className = `state-${state}`;
+        
+        // Handle flipping direction
+        if (direction !== undefined) {
+            currentDirection = direction;
+        }
+        
+        // Apply transform
+        if (currentDirection === -1) {
+            wrapper.style.transform = 'scaleX(-1)';
+        } else {
+            wrapper.style.transform = 'scaleX(1)';
+        }
+
+        // Sleep state bubble triggers
+        clearInterval(zzzInterval);
+        if (state === 'sleep') {
+            startZzzLoop();
+        }
+    };
+
+    function startZzzLoop() {
+        zzzInterval = setInterval(() => {
+            const zzz = document.createElement('div');
+            zzz.className = 'zzz';
+            zzz.textContent = 'z';
+            zzz.style.left = '64px';
+            zzz.style.top = '15px';
+            container.appendChild(zzz);
+            setTimeout(() => zzz.remove(), 2500);
+        }, 1500);
+    }
+
+    // Handle Taps / Clicks
+    wrapper.addEventListener('click', () => {
+        // Notify native android code to expand overlay window boundaries
+        if (window.AndroidAppOverlay && window.AndroidAppOverlay.onCatTapped) {
+            window.AndroidAppOverlay.onCatTapped();
+        }
+
+        // Show hearts
+        spawnHearts();
+
+        // Show a random love quote
+        showLoveQuote();
+    });
+
+    function spawnHearts() {
+        for (let i = 0; i < 4; i++) {
+            setTimeout(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = ['❤️', '💖', '💕', '💗'][Math.floor(Math.random() * 4)];
+                heart.style.left = `${35 + Math.random() * 20}px`;
+                heart.style.top = '25px';
+                heart.style.setProperty('--dx', `${-15 + Math.random() * 30}px`);
+                container.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            }, i * 150);
+        }
+    }
+
+    function showLoveQuote() {
+        // Toggle happy look
+        const savedClass = wrapper.className;
+        wrapper.className = 'state-happy';
+        
+        // Load quotes
+        let quotes = DEFAULT_QUOTES;
+        if (window.AndroidAppOverlay && window.AndroidAppOverlay.getQuotes) {
+            try {
+                const nativeJson = window.AndroidAppOverlay.getQuotes();
+                const parsed = JSON.parse(nativeJson);
+                if (parsed && parsed.length > 0) {
+                    quotes = parsed;
+                }
+            } catch (e) {
+                console.error("Failed to parse native quotes:", e);
+            }
+        }
+
+        // Select random quote
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        bubble.textContent = randomQuote;
+        bubble.classList.add('visible');
+
+        // Reset bubble and shrink window back after 4 seconds
+        clearTimeout(bubbleTimeout);
+        bubbleTimeout = setTimeout(() => {
+            bubble.classList.remove('visible');
+            
+            // Restore state
+            wrapper.className = savedClass;
+            if (savedClass === 'state-sleep') {
+                startZzzLoop();
+            }
+
+            // Notify android to shrink
+            if (window.AndroidAppOverlay && window.AndroidAppOverlay.onBubbleHidden) {
+                window.AndroidAppOverlay.onBubbleHidden();
+            }
+        }, 4000);
+    }
+</script>
+
+</body>
+</html>

@@ -258,6 +258,43 @@
                     <button id="btn-save-settings" class="action-btn gold-full">Guardar Configuración</button>
                 </div>
 
+                <!-- Mascot Settings (Michi Card) -->
+                <div class="card settings-card">
+                    <h3 class="gold-title">Mascota Virtual (Michi)</h3>
+                    <p class="setting-desc">Activa un tierno gatito animado que te acompañará en tu pantalla.</p>
+                    
+                    <div class="setting-group" style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <label for="switch-cat-local" style="font-weight: 500; cursor: pointer; flex: 1;">Mostrar gatito en la app</label>
+                        <input type="checkbox" id="switch-cat-local" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--gold-primary);">
+                    </div>
+
+                    <div class="setting-group" style="flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <label for="switch-cat-overlay" style="font-weight: 500; cursor: pointer; flex: 1;">Superposición (Fuera de la app)</label>
+                        <input type="checkbox" id="switch-cat-overlay" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--gold-primary);">
+                    </div>
+                    <small class="helper-text" style="margin-bottom: 15px; display: block;">Muestra al gatito sobre tu pantalla de inicio y otras apps (requiere habilitar permiso de sistema).</small>
+
+                    <div class="setting-group">
+                        <label for="select-cat-skin">Aspecto del gatito</label>
+                        <select id="select-cat-skin" style="background: #ffffff; border: 1.5px solid #000000; border-radius: 10px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; font-weight: 500; outline: none; width: 100%;">
+                            <option value="patched">Michi Manchado (Blanco con Negro)</option>
+                            <option value="orange">Naranjito (Naranja Atigrado)</option>
+                            <option value="white">Copito de Nieve (Blanco)</option>
+                            <option value="black">Michi Negro (Gatito Negro)</option>
+                            <option value="calico">Calicó (Tricolor)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="select-cat-size">Tamaño del gatito</label>
+                        <select id="select-cat-size" style="background: #ffffff; border: 1.5px solid #000000; border-radius: 10px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; font-weight: 500; outline: none; width: 100%;">
+                            <option value="small">Pequeño</option>
+                            <option value="medium" selected>Mediano</option>
+                            <option value="large">Grande</option>
+                        </select>
+                    </div>
+                </div>
+
 
 
                 <!-- Backup & Restore -->
@@ -318,6 +355,71 @@
                 <span>Ajustes</span>
             </button>
         </nav>
+
+        <!-- Floating In-App Cat -->
+        <div id="local-cat-container" class="local-cat-container hidden">
+            <div id="local-cat-bubble" class="local-cat-bubble">¡Hola Citlali! ❤️</div>
+            <div id="local-cat-wrapper" class="state-idle">
+                <svg class="cat-svg" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Tail -->
+                    <path class="cat-tail" d="M 15 50 Q 5 30 15 20 Q 20 20 18 25 Q 10 32 18 48 Z" fill="var(--skin-primary)"/>
+                    
+                    <!-- Back Paws -->
+                    <ellipse class="cat-paw paw-back-left" cx="30" cy="72" rx="6" ry="4" fill="var(--skin-secondary)"/>
+                    <ellipse class="cat-paw paw-back-right" cx="70" cy="72" rx="6" ry="4" fill="var(--skin-secondary)"/>
+
+                    <!-- Body -->
+                    <rect class="cat-body" x="20" y="32" width="60" height="36" rx="18" ry="18" fill="var(--skin-primary)"/>
+
+                    <!-- Spots/Patches for Patched & Calico -->
+                    <path class="cat-patches body-patch-1" d="M 33 32 Q 43 40 50 32 Q 53 45 45 52 Q 35 45 33 32 Z" fill="var(--patch-1-color)" style="display: var(--has-patches);"/>
+                    <path class="cat-patches body-patch-2" d="M 60 45 Q 68 38 72 45 Q 75 55 68 58 Q 60 52 60 45 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
+
+                    <!-- Front Paws -->
+                    <ellipse class="cat-paw paw-front-left" cx="42" cy="72" rx="6" ry="5" fill="var(--skin-paw)"/>
+                    <ellipse class="cat-paw paw-front-right" cx="58" cy="72" rx="6" ry="5" fill="var(--skin-paw)"/>
+
+                    <!-- Head -->
+                    <circle class="cat-head" cx="72" cy="30" r="18" fill="var(--skin-primary)"/>
+                    
+                    <!-- Patches on head -->
+                    <path class="cat-patches head-patch" d="M 64 16 Q 72 23 72 13 Q 78 18 84 21 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
+
+                    <!-- Ears -->
+                    <!-- Left Ear -->
+                    <path class="cat-ear" d="M 58 20 L 52 2 L 66 14 Z" fill="var(--skin-primary)"/>
+                    <path class="cat-ear-inner" d="M 60 18 L 56 6 L 64 13 Z" fill="var(--ear-inner)"/>
+                    <!-- Right Ear -->
+                    <path class="cat-ear" d="M 86 20 L 92 2 L 78 14 Z" fill="var(--skin-primary)"/>
+                    <path class="cat-ear-inner" d="M 84 18 L 88 6 L 80 13 Z" fill="var(--ear-inner)"/>
+
+                    <!-- Eyes -->
+                    <!-- Left Eye -->
+                    <g class="cat-eye-group eye-left">
+                        <ellipse class="cat-eye eye-open" cx="66" cy="30" rx="2.2" ry="2.8" fill="var(--eye-color)"/>
+                        <path class="cat-eye eye-closed" d="M 63.5 30 Q 66 33 68.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                        <path class="cat-eye eye-happy" d="M 63.5 31 Q 66 28 68.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                        <circle class="eye-pupil" cx="65.2" cy="29" r="0.7" fill="white" />
+                    </g>
+                    <!-- Right Eye -->
+                    <g class="cat-eye-group eye-right">
+                        <ellipse class="cat-eye eye-open" cx="78" cy="30" rx="2.2" ry="2.8" fill="var(--eye-color)"/>
+                        <path class="cat-eye eye-closed" d="M 75.5 30 Q 78 33 80.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                        <path class="cat-eye eye-happy" d="M 75.5 31 Q 78 28 80.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none"/>
+                        <circle class="eye-pupil" cx="77.2" cy="29" r="0.7" fill="white" />
+                    </g>
+
+                    <!-- Nose -->
+                    <polygon points="71.5,33 72.5,33 72,34" fill="var(--ear-inner)" />
+
+                    <!-- Whiskers -->
+                    <line x1="58" y1="34" x2="50" y2="33" stroke="var(--face-details)" stroke-width="1" />
+                    <line x1="58" y1="36" x2="49" y2="37" stroke="var(--face-details)" stroke-width="1" />
+                    <line x1="86" y1="34" x2="94" y2="33" stroke="var(--face-details)" stroke-width="1" />
+                    <line x1="86" y1="36" x2="95" y2="37" stroke="var(--face-details)" stroke-width="1" />
+                </svg>
+            </div>
+        </div>
     </div>
 
     <!-- LOG MODAL (Symptom & Mood Logger) -->

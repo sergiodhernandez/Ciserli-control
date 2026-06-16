@@ -1490,3 +1490,282 @@ body {
     border-color: #FFE5B4 !important;
     box-shadow: 0 0 45px rgba(255, 229, 180, 1), inset 0 0 25px rgba(255, 229, 180, 0.8) !important;
 }
+
+/* --- MASCOTA VIRTUAL (MICHI LOCAL) STYLES --- */
+.local-cat-container {
+    position: absolute;
+    bottom: 80px;
+    left: 20px;
+    z-index: 99;
+    pointer-events: none;
+    transition: top 1s ease, left 1s ease, transform 0.2s ease;
+}
+
+.local-cat-container.hidden {
+    display: none;
+}
+
+/* Local Cat Size Classes */
+.local-cat-container.size-small { width: 60px; height: 60px; }
+.local-cat-container.size-small .local-cat-bubble { bottom: 62px; }
+
+.local-cat-container.size-medium { width: 80px; height: 80px; }
+.local-cat-container.size-medium .local-cat-bubble { bottom: 82px; }
+
+.local-cat-container.size-large { width: 100px; height: 100px; }
+.local-cat-container.size-large .local-cat-bubble { bottom: 102px; }
+
+.local-cat-container.skin-patched {
+    --skin-primary: #ffffff;
+    --skin-secondary: #f0f0f0;
+    --skin-paw: #ffffff;
+    --patch-1-color: #2b2d35;
+    --patch-2-color: #2b2d35;
+    --has-patches: block;
+    --ear-inner: #ffccd5;
+    --eye-color: #3b82f6;
+    --face-details: #2b2d35;
+}
+
+.local-cat-container.skin-orange {
+    --skin-primary: #ff9f43;
+    --skin-secondary: #ee8f33;
+    --skin-paw: #ff9f43;
+    --patch-1-color: #e07f24;
+    --patch-2-color: #e07f24;
+    --has-patches: block;
+    --ear-inner: #ffccd5;
+    --eye-color: #2ecc71;
+    --face-details: #5d4037;
+}
+
+.local-cat-container.skin-white {
+    --skin-primary: #ffffff;
+    --skin-secondary: #f5f6f8;
+    --skin-paw: #ffffff;
+    --patch-1-color: transparent;
+    --patch-2-color: transparent;
+    --has-patches: none;
+    --ear-inner: #ffccd5;
+    --eye-color: #00cec9;
+    --face-details: #7f8c8d;
+}
+
+.local-cat-container.skin-black {
+    --skin-primary: #2d3436;
+    --skin-secondary: #222728;
+    --skin-paw: #2d3436;
+    --patch-1-color: transparent;
+    --patch-2-color: transparent;
+    --has-patches: none;
+    --ear-inner: #ff8a9e;
+    --eye-color: #fdcb6e;
+    --face-details: #1e252b;
+}
+
+.local-cat-container.skin-calico {
+    --skin-primary: #ffffff;
+    --skin-secondary: #f0f0f0;
+    --skin-paw: #ffffff;
+    --patch-1-color: #2d3436;
+    --patch-2-color: #ff9f43;
+    --has-patches: block;
+    --ear-inner: #ffccd5;
+    --eye-color: #2ecc71;
+    --face-details: #2d3436;
+}
+
+#local-cat-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease;
+}
+
+.local-cat-bubble {
+    position: absolute;
+    width: 170px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1.5px solid #000000;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #2d3748;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: scale(0.8);
+    transform-origin: bottom center;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    z-index: 1000;
+    left: 50%;
+    margin-left: -85px;
+}
+
+.local-cat-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    border-right: 1.5px solid #000000;
+    border-bottom: 1.5px solid #000000;
+}
+
+.local-cat-bubble.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.local-cat-container .cat-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Local Cat SVG Animations */
+.local-cat-container .cat-tail {
+    transform-origin: 18px 48px;
+    animation: local-tail-sway 3s ease-in-out infinite;
+}
+
+@keyframes local-tail-sway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-12deg); }
+}
+
+.local-cat-container .eye-closed, 
+.local-cat-container .eye-happy {
+    display: none;
+}
+
+/* States */
+.local-cat-container #local-cat-wrapper.state-idle .eye-open {
+    animation: local-eye-blink 4s infinite;
+}
+.local-cat-container #local-cat-wrapper.state-idle .cat-head {
+    animation: local-head-bob 4s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-idle .cat-body {
+    animation: local-body-breath 2s ease-in-out infinite;
+}
+
+@keyframes local-eye-blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+}
+@keyframes local-head-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(0.5px); }
+}
+@keyframes local-body-breath {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.02); }
+}
+
+/* Walk */
+.local-cat-container #local-cat-wrapper.state-walk .paw-front-left {
+    animation: local-paw-move-1 0.4s linear infinite;
+}
+.local-cat-container #local-cat-wrapper.state-walk .paw-front-right {
+    animation: local-paw-move-2 0.4s linear infinite;
+}
+.local-cat-container #local-cat-wrapper.state-walk .paw-back-left {
+    animation: local-paw-move-2 0.4s linear infinite;
+}
+.local-cat-container #local-cat-wrapper.state-walk .paw-back-right {
+    animation: local-paw-move-1 0.4s linear infinite;
+}
+.local-cat-container #local-cat-wrapper.state-walk .cat-svg {
+    animation: local-walk-bounce 0.4s ease-in-out infinite;
+}
+
+@keyframes local-paw-move-1 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px) translateX(1px); }
+}
+@keyframes local-paw-move-2 {
+    0%, 100% { transform: translateY(-3px) translateX(-1px); }
+    50% { transform: translateY(0); }
+}
+@keyframes local-walk-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-1.5px) rotate(1deg); }
+}
+
+/* Sleep */
+.local-cat-container #local-cat-wrapper.state-sleep .eye-open { display: none; }
+.local-cat-container #local-cat-wrapper.state-sleep .eye-closed { display: block; }
+.local-cat-container #local-cat-wrapper.state-sleep .cat-body {
+    animation: local-body-breath 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-sleep .cat-head {
+    transform: translateY(2px) rotate(2deg);
+}
+.local-cat-container #local-cat-wrapper.state-sleep .cat-tail {
+    animation: local-tail-sway-slow 5s ease-in-out infinite;
+}
+
+@keyframes local-tail-sway-slow {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-5deg); }
+}
+
+/* Happy */
+.local-cat-container #local-cat-wrapper.state-happy .eye-open { display: none; }
+.local-cat-container #local-cat-wrapper.state-happy .eye-happy { display: block; }
+.local-cat-container #local-cat-wrapper.state-happy {
+    animation: local-happy-wiggle 0.3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-happy .cat-tail {
+    animation: local-tail-sway-fast 0.5s linear infinite;
+}
+
+@keyframes local-happy-wiggle {
+    0%, 100% { transform: scale(1.05) rotate(0deg); }
+    50% { transform: scale(1.05) translateY(-1px) rotate(1deg); }
+}
+@keyframes local-tail-sway-fast {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(-25deg); }
+}
+
+/* Floating Hearts & Zzz bubbles */
+.local-heart {
+    position: absolute;
+    font-size: 14px;
+    color: #ff4d6d;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1001;
+    animation: local-float-heart 1s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes local-float-heart {
+    0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate(var(--dx), -50px) scale(1.2); opacity: 0; }
+}
+
+.local-zzz {
+    position: absolute;
+    font-size: 10px;
+    color: #5f27cd;
+    font-weight: 700;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1001;
+    animation: local-float-zzz 2.5s ease-in-out forwards;
+}
+
+@keyframes local-float-zzz {
+    0% { transform: translate(10px, -20px) scale(0.8); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translate(25px, -55px) scale(1.3); opacity: 0; }
+}
