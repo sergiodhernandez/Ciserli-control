@@ -1,6 +1,6 @@
 {
-  "versionCode": 20,
-  "versionName": "1.4.6",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=20",
-  "whatsNew": "¡Nueva Actualización v1.4.6! Se disminuyó la velocidad del proceso de limpieza en el servicio de accesibilidad para prevenir cierres inesperados de la aplicación de Ajustes del sistema. 🚀💕"
+  "versionCode": 21,
+  "versionName": "1.4.7",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=21",
+  "whatsNew": "¡Nueva Actualización v1.4.7! Separación de acciones en el optimizador: ahora cuentas con botones separados para 'Forzar Detención' y 'Borrar Caché'. 🚀💕"
 }

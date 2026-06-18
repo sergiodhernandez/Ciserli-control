@@ -227,8 +227,8 @@ const els = {
     optimizeScore: document.getElementById('optimize-score'),
     optimizeStatus: document.getElementById('optimize-status'),
     optimizeRingFill: document.getElementById('optimize-ring-fill'),
-    btnStartOptimize: document.getElementById('btn-start-optimize'),
-    btnOptimizeText: document.getElementById('btn-optimize-text'),
+    btnForceStop: document.getElementById('btn-force-stop'),
+    btnClearCache: document.getElementById('btn-clear-cache'),
     btnRescanOptimize: document.getElementById('btn-rescan-optimize'),
     optimizeScanLoading: document.getElementById('optimize-scan-loading'),
     optimizeScanCurrent: document.getElementById('optimize-scan-current'),
@@ -2038,9 +2038,15 @@ function initOptimizeView() {
             });
         }
 
-        if (els.btnStartOptimize) {
-            els.btnStartOptimize.addEventListener('click', () => {
-                optimizeDevice();
+        if (els.btnForceStop) {
+            els.btnForceStop.addEventListener('click', () => {
+                optimizeDevice('force_stop');
+            });
+        }
+
+        if (els.btnClearCache) {
+            els.btnClearCache.addEventListener('click', () => {
+                optimizeDevice('clear_cache');
             });
         }
 
@@ -2075,7 +2081,8 @@ function initOptimizeView() {
     if (!hasPermission) {
         els.optimizePermissionCard.classList.remove('hidden');
         els.optimizeResultsCard.classList.add('hidden');
-        els.btnStartOptimize.disabled = true;
+        if (els.btnForceStop) els.btnForceStop.disabled = true;
+        if (els.btnClearCache) els.btnClearCache.disabled = true;
         
         // Update dashboard score to warn permission is missing
         els.optimizeScore.textContent = "🔒";
@@ -2105,7 +2112,8 @@ window.onPermissionChanged = function(hasPermission) {
 function startOptimizeScan() {
     els.optimizeScanLoading.classList.remove('hidden');
     els.optimizeResultsCard.classList.add('hidden');
-    els.btnStartOptimize.disabled = true;
+    if (els.btnForceStop) els.btnForceStop.disabled = true;
+    if (els.btnClearCache) els.btnClearCache.disabled = true;
     
     // Add spinner to rescan button
     if (els.btnRescanOptimize) {
@@ -2226,8 +2234,14 @@ function renderScanResults() {
     els.optimizeRingFill.style.strokeDashoffset = dashoffset;
     
     // Enable optimizing button if we have apps or cache
-    els.btnStartOptimize.disabled = false;
-    els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+    if (els.btnForceStop) {
+        els.btnForceStop.disabled = false;
+        els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+    }
+    if (els.btnClearCache) {
+        els.btnClearCache.disabled = false;
+        els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
+    }
     
     // Build list
     els.optimizeAppsList.innerHTML = "";
@@ -2287,7 +2301,7 @@ function renderScanResults() {
     });
 }
 
-function optimizeDevice() {
+function optimizeDevice(actionType) {
     // Get checked apps to close processes
     const checkboxes = document.querySelectorAll('.optimize-app-checkbox:checked');
     const selectedPackages = [];
@@ -2300,28 +2314,32 @@ function optimizeDevice() {
         return;
     }
     
+    const targetBtn = actionType === 'force_stop' ? els.btnForceStop : els.btnClearCache;
+    const targetLabel = actionType === 'force_stop' ? 'Forzar Detención' : 'Borrar Caché';
+    
     if (window.AndroidApp && window.AndroidApp.optimizeApps) {
         // If accessibility service is supported but not enabled, request it
         if (window.AndroidApp.isAccessibilityServiceEnabled && !window.AndroidApp.isAccessibilityServiceEnabled()) {
-            const confirmSetting = confirm("Para forzar el cierre de las aplicaciones y borrar su caché de verdad automáticamente, Ciserli necesita el Permiso de Accesibilidad.\n\n¿Deseas ir a Ajustes ahora para activarlo?\n(Busca 'Servicio de Optimización de Ciserli')");
+            const confirmSetting = confirm(`Para realizar la acción de ${targetLabel.toLowerCase()} automáticamente, Ciserli necesita el Permiso de Accesibilidad.\n\n¿Deseas ir a Ajustes ahora para activarlo?\n(Busca 'Servicio de Optimización de Ciserli')`);
             if (confirmSetting) {
                 window.AndroidApp.requestAccessibilityService();
             } else {
                 // Fallback to basic optimization
-                if (confirm("¿Deseas realizar una optimización básica (ligera) en su lugar?")) {
-                    runLightweightOptimization(selectedPackages);
+                if (confirm(`¿Deseas realizar una acción de ${targetLabel.toLowerCase()} básica (ligera) en su lugar?`)) {
+                    runLightweightOptimization(selectedPackages, actionType);
                 }
             }
             return;
         }
         
-        els.btnStartOptimize.disabled = true;
-        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Iniciando...`;
+        if (els.btnForceStop) els.btnForceStop.disabled = true;
+        if (els.btnClearCache) els.btnClearCache.disabled = true;
+        targetBtn.innerHTML = `<span class="btn-spinner"></span> Iniciando...`;
         els.optimizeRingFill.classList.add('optimize-active');
         
         setTimeout(() => {
             try {
-                const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages));
+                const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages), actionType);
                 const result = JSON.parse(resultStr);
                 
                 if (result.success) {
@@ -2334,99 +2352,130 @@ function optimizeDevice() {
                     const ownCacheFormatted = formatBytes(result.ownCacheFreed);
                     const systemCleanedFormatted = formatBytes(result.systemCleaned);
                     
-                    alert(`✨ ¡Celular Optimizado! ✨\n\n- Memoria RAM liberada: ${ramFormatted}\n- Caché propia de Ciserli eliminada: ${ownCacheFormatted}\n- Petición de limpieza de caché al sistema Android completada exitosamente.`);
+                    let msg = "";
+                    if (actionType === 'force_stop') {
+                        msg = `✨ ¡Forzar Detención Completado! ✨\n\n- Memoria RAM liberada (estimada): ${ramFormatted}`;
+                    } else {
+                        msg = `✨ ¡Limpieza de Caché Completada! ✨\n\n- Caché propia de Ciserli eliminada: ${ownCacheFormatted}\n- Petición de limpieza de caché al sistema Android completada de forma básica.`;
+                    }
+                    alert(msg);
                     
                     // Rescan to update the sizes
                     startScanAfterOptimization();
                 } else {
                     alert("Error al optimizar: " + (result.error || "Desconocido"));
-                    els.btnStartOptimize.disabled = false;
-                    els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+                    if (els.btnForceStop) els.btnForceStop.disabled = false;
+                    if (els.btnClearCache) els.btnClearCache.disabled = false;
+                    if (els.btnForceStop) els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+                    if (els.btnClearCache) els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
                     els.optimizeRingFill.classList.remove('optimize-active');
                 }
             } catch (err) {
                 alert("Error durante la optimización: " + err.message);
-                els.btnStartOptimize.disabled = false;
-                els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+                if (els.btnForceStop) els.btnForceStop.disabled = false;
+                if (els.btnClearCache) els.btnClearCache.disabled = false;
+                if (els.btnForceStop) els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+                if (els.btnClearCache) els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
                 els.optimizeRingFill.classList.remove('optimize-active');
             }
         }, 1200);
     } else {
-        els.btnStartOptimize.disabled = true;
-        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
+        if (els.btnForceStop) els.btnForceStop.disabled = true;
+        if (els.btnClearCache) els.btnClearCache.disabled = true;
+        targetBtn.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
         els.optimizeRingFill.classList.add('optimize-active');
         
         // simulated optimization for desktop browser testing
         setTimeout(() => {
-            alert(`✨ ¡Celular Optimizado (Simulado)! ✨\n\n- Memoria RAM liberada: 250 MB\n- Caché de apps limpiada por el sistema: 520 MB`);
+            alert(`✨ ¡Optimización Completada (Simulada)! ✨\n\nAcción ejecutada: ${targetLabel}\n- Memoria RAM liberada: 250 MB\n- Caché de apps limpiada por el sistema: 520 MB`);
             
             // Clear simulated cache sizes
-            scannedApps.forEach(app => {
-                if (selectedPackages.includes(app.packageName)) {
-                    app.cacheSize = 0;
-                }
-            });
+            if (actionType === 'clear_cache') {
+                scannedApps.forEach(app => {
+                    if (selectedPackages.includes(app.packageName)) {
+                        app.cacheSize = 0;
+                    }
+                });
+            }
             
             renderScanResults();
         }, 2000);
     }
 }
 
-function runLightweightOptimization(selectedPackages) {
-    els.btnStartOptimize.disabled = true;
-    els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
+function runLightweightOptimization(selectedPackages, actionType) {
+    if (els.btnForceStop) els.btnForceStop.disabled = true;
+    if (els.btnClearCache) els.btnClearCache.disabled = true;
+    const targetBtn = actionType === 'force_stop' ? els.btnForceStop : els.btnClearCache;
+    targetBtn.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
     els.optimizeRingFill.classList.add('optimize-active');
     
     setTimeout(() => {
         try {
-            const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages));
+            const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages), actionType);
             const result = JSON.parse(resultStr);
             
             if (result.success) {
                 const ramFormatted = formatBytes(result.ramFreed);
                 const ownCacheFormatted = formatBytes(result.ownCacheFreed);
-                const systemCleanedFormatted = formatBytes(result.systemCleaned);
                 
-                alert(`✨ ¡Optimización Básica Completa! ✨\n\n- Memoria RAM liberada: ${ramFormatted}\n- Caché de Ciserli eliminada: ${ownCacheFormatted}\n\nNota: Habilite el servicio de accesibilidad para la detención forzada y borrado de caché real de otras apps.`);
+                let msg = "";
+                if (actionType === 'force_stop') {
+                    msg = `✨ ¡Forzar Detención Básica Completada! ✨\n\n- Memoria RAM liberada: ${ramFormatted}\n\nNota: Habilite el servicio de accesibilidad para la detención forzada real de otras apps.`;
+                } else {
+                    msg = `✨ ¡Limpieza de Caché Básica Completada! ✨\n\n- Caché propia de Ciserli eliminada: ${ownCacheFormatted}\n\nNota: Habilite el servicio de accesibilidad para el borrado de caché real de otras apps.`;
+                }
+                alert(msg);
                 
                 startScanAfterOptimization();
             } else {
                 alert("Error al optimizar: " + (result.error || "Desconocido"));
-                els.btnStartOptimize.disabled = false;
-                els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+                if (els.btnForceStop) els.btnForceStop.disabled = false;
+                if (els.btnClearCache) els.btnClearCache.disabled = false;
+                if (els.btnForceStop) els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+                if (els.btnClearCache) els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
                 els.optimizeRingFill.classList.remove('optimize-active');
             }
         } catch (err) {
             alert("Error durante la optimización básica: " + err.message);
-            els.btnStartOptimize.disabled = false;
-            els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+            if (els.btnForceStop) els.btnForceStop.disabled = false;
+            if (els.btnClearCache) els.btnClearCache.disabled = false;
+            if (els.btnForceStop) els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+            if (els.btnClearCache) els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
             els.optimizeRingFill.classList.remove('optimize-active');
         }
     }, 1000);
 }
 
 // Callback triggered by Android to report progress during accessibility cleanup
-window.onCleanProgress = function(index, total) {
+window.onCleanProgress = function(index, total, actionType) {
+    const targetBtn = actionType === 'force_stop' ? els.btnForceStop : els.btnClearCache;
+    const targetLabel = actionType === 'force_stop' ? 'Deteniendo' : 'Limpiando';
+    
     if (index < total) {
-        els.btnStartOptimize.disabled = true;
-        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando (${index}/${total})...`;
+        if (els.btnForceStop) els.btnForceStop.disabled = true;
+        if (els.btnClearCache) els.btnClearCache.disabled = true;
+        targetBtn.innerHTML = `<span class="btn-spinner"></span> ${targetLabel} (${index}/${total})...`;
         els.optimizeRingFill.classList.add('optimize-active');
         
         // Update dashboard score and progress display in real time
         const percent = Math.round((index / total) * 100);
         els.optimizeScore.textContent = percent;
-        els.optimizeStatus.textContent = `Limpiando ${index + 1}/${total}...`;
+        els.optimizeStatus.textContent = `${targetLabel} ${index + 1}/${total}...`;
         
         const progressPercent = percent / 100;
         const dashoffset = Math.max(0, Math.min(534, 534 - (534 * progressPercent)));
         els.optimizeRingFill.style.strokeDashoffset = dashoffset;
     } else {
         // Finished!
-        els.btnStartOptimize.disabled = false;
-        els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+        if (els.btnForceStop) els.btnForceStop.disabled = false;
+        if (els.btnClearCache) els.btnClearCache.disabled = false;
+        if (els.btnForceStop) els.btnForceStop.innerHTML = `<span class="icon-drop">🛑</span> <span id="btn-force-stop-text">Forzar Detención</span>`;
+        if (els.btnClearCache) els.btnClearCache.innerHTML = `<span class="icon-drop">🧹</span> <span id="btn-clear-cache-text">Borrar Caché</span>`;
         els.optimizeRingFill.classList.remove('optimize-active');
         
-        alert(`✨ ¡Optimización Completa! ✨\n\nSe han forzado el cierre y limpiado las cachés de todas las aplicaciones seleccionadas de forma automática.`);
+        const actionWord = actionType === 'force_stop' ? 'forzado el cierre' : 'limpiado las cachés';
+        alert(`✨ ¡Acción Completada! ✨\n\nSe han ${actionWord} de todas las aplicaciones seleccionadas de forma automática.`);
         
         // Rescan to update the sizes
         startScanAfterOptimization();

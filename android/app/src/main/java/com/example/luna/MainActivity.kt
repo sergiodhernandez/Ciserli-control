@@ -531,14 +531,11 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
-        fun optimizeApps(packagesJson: String): String {
+        fun optimizeApps(packagesJson: String, actionType: String): String {
             val response = JSONObject()
             try {
                 val am = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                 val packagesArray = JSONArray(packagesJson)
-                var ramFreed: Long = 0
-                
-                // 1. Terminar procesos en segundo plano
                 val packagesToKill = mutableListOf<String>()
                 for (i in 0 until packagesArray.length()) {
                     packagesToKill.add(packagesArray.getString(i))
@@ -547,8 +544,8 @@ class MainActivity : ComponentActivity() {
                 // If accessibility service is enabled, run the automated accessibility cleaning!
                 if (isAccessibilityServiceEnabled()) {
                     activity.runOnUiThread {
-                        AutoCleanService.startCleaning(activity, packagesToKill) { index, total ->
-                            webView.evaluateJavascript("javascript:if(window.onCleanProgress) window.onCleanProgress($index, $total);", null)
+                        AutoCleanService.startCleaning(activity, packagesToKill, actionType) { index, total ->
+                            webView.evaluateJavascript("javascript:if(window.onCleanProgress) window.onCleanProgress($index, $total, '$actionType');", null)
                         }
                     }
                     response.put("success", true)
@@ -559,54 +556,60 @@ class MainActivity : ComponentActivity() {
                     return response.toString()
                 }
                 
-                val runningProcesses = am.runningAppProcesses
-                if (runningProcesses != null) {
-                    for (procInfo in runningProcesses) {
-                        val intersect = procInfo.pkgList.filter { it in packagesToKill }
-                        if (intersect.isNotEmpty()) {
-                            val pid = procInfo.pid
-                            try {
-                                val memInfo = am.getProcessMemoryInfo(intArrayOf(pid))
-                                if (memInfo.isNotEmpty()) {
-                                    ramFreed += memInfo[0].totalPss * 1024L // convert PSS KB to bytes
+                var ramFreed: Long = 0
+                var ownCacheFreed: Long = 0
+                var systemCleaned: Long = 0
+
+                // 1. Terminar procesos en segundo plano (Solo si se requiere forzar detención o todo)
+                if (actionType == "force_stop" || actionType == "all") {
+                    val runningProcesses = am.runningAppProcesses
+                    if (runningProcesses != null) {
+                        for (procInfo in runningProcesses) {
+                            val intersect = procInfo.pkgList.filter { it in packagesToKill }
+                            if (intersect.isNotEmpty()) {
+                                val pid = procInfo.pid
+                                try {
+                                    val memInfo = am.getProcessMemoryInfo(intArrayOf(pid))
+                                    if (memInfo.isNotEmpty()) {
+                                        ramFreed += memInfo[0].totalPss * 1024L // convert PSS KB to bytes
+                                    }
+                                } catch (e: Exception) {
+                                    ramFreed += 15 * 1024 * 1024L // fallback 15MB
                                 }
-                            } catch (e: Exception) {
-                                ramFreed += 15 * 1024 * 1024L // fallback 15MB
                             }
                         }
                     }
-                }
-                
-                for (pkg in packagesToKill) {
-                    try {
-                        am.killBackgroundProcesses(pkg)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    
+                    for (pkg in packagesToKill) {
+                        try {
+                            am.killBackgroundProcesses(pkg)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
                 
-                // 2. Limpiar la caché propia de la aplicación
-                var ownCacheFreed: Long = 0
-                try {
-                    ownCacheFreed = deleteDirContent(activity.cacheDir)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                
-                // 3. Truco de asignación de espacio para forzar al sistema a limpiar caché de otras apps
-                var systemCleaned: Long = 0
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // 2. Limpiar la caché propia de la aplicación y truco de asignación (Solo si se requiere borrar caché o todo)
+                if (actionType == "clear_cache" || actionType == "all") {
                     try {
-                        val storageManager = activity.getSystemService(Context.STORAGE_SERVICE) as android.os.storage.StorageManager
-                        val uuid = android.os.storage.StorageManager.UUID_DEFAULT
-                        val allocatableBytes = storageManager.getAllocatableBytes(uuid)
-                        if (allocatableBytes > 10 * 1024 * 1024L) { // más de 10MB
-                            val bytesToRequest = (allocatableBytes * 0.90).toLong() // solicitar 90%
-                            storageManager.allocateBytes(uuid, bytesToRequest)
-                            systemCleaned = bytesToRequest
-                        }
+                        ownCacheFreed = deleteDirContent(activity.cacheDir)
                     } catch (e: Exception) {
                         e.printStackTrace()
+                    }
+                    
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        try {
+                            val storageManager = activity.getSystemService(Context.STORAGE_SERVICE) as android.os.storage.StorageManager
+                            val uuid = android.os.storage.StorageManager.UUID_DEFAULT
+                            val allocatableBytes = storageManager.getAllocatableBytes(uuid)
+                            if (allocatableBytes > 10 * 1024 * 1024L) { // más de 10MB
+                                val bytesToRequest = (allocatableBytes * 0.90).toLong() // solicitar 90%
+                                storageManager.allocateBytes(uuid, bytesToRequest)
+                                systemCleaned = bytesToRequest
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
                 

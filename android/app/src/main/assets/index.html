@@ -265,11 +265,17 @@
                 <!-- Quick actions -->
                 <div class="card">
                     <h3 class="gold-title">Limpieza Rápida</h3>
-                    <div class="quick-buttons">
-                        <button id="btn-start-optimize" class="action-btn" disabled>
-                            <span class="icon-drop">🚀</span>
-                            <span id="btn-optimize-text">Optimizar Dispositivo</span>
-                        </button>
+                    <div class="quick-buttons" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
+                            <button id="btn-force-stop" class="action-btn" disabled style="flex: 1;">
+                                <span class="icon-drop">🛑</span>
+                                <span id="btn-force-stop-text">Forzar Detención</span>
+                            </button>
+                            <button id="btn-clear-cache" class="action-btn" disabled style="flex: 1;">
+                                <span class="icon-drop">🧹</span>
+                                <span id="btn-clear-cache-text">Borrar Caché</span>
+                            </button>
+                        </div>
                         <button id="btn-rescan-optimize" class="action-btn outline">
                             <span>🔄 Buscar Caché y Apps</span>
                         </button>

@@ -56,8 +56,33 @@ class AutoCleanService : AccessibilityService() {
                         Log.d("AutoCleanService", "Clicking Force Stop button (delayed)")
                         performDelayedClick(forceStopNode, STATE_CONFIRM_FORCE_STOP)
                     } else {
-                        Log.d("AutoCleanService", "Force Stop is already disabled. Skipping to Storage (delayed).")
-                        // If force stop is disabled, we skip to Storage directly
+                        Log.d("AutoCleanService", "Force Stop is already disabled. Skipping (delayed).")
+                        if (currentActionType == "force_stop") {
+                            isActionPending = true
+                            currentState = STATE_BACK
+                            handler.postDelayed({
+                                isActionPending = false
+                                goBackAndNext()
+                            }, 800)
+                        } else {
+                            isActionPending = true
+                            currentState = STATE_CLICK_STORAGE
+                            handler.postDelayed({
+                                isActionPending = false
+                                clickStorageButton(rootNode)
+                            }, 800)
+                        }
+                    }
+                } else {
+                    Log.d("AutoCleanService", "Force Stop button not found, searching for Storage (delayed).")
+                    if (currentActionType == "force_stop") {
+                        isActionPending = true
+                        currentState = STATE_BACK
+                        handler.postDelayed({
+                            isActionPending = false
+                            goBackAndNext()
+                        }, 800)
+                    } else {
                         isActionPending = true
                         currentState = STATE_CLICK_STORAGE
                         handler.postDelayed({
@@ -65,15 +90,6 @@ class AutoCleanService : AccessibilityService() {
                             clickStorageButton(rootNode)
                         }, 800)
                     }
-                } else {
-                    // Try to click storage directly if Force Stop button is not found
-                    Log.d("AutoCleanService", "Force Stop button not found, searching for Storage (delayed).")
-                    isActionPending = true
-                    currentState = STATE_CLICK_STORAGE
-                    handler.postDelayed({
-                        isActionPending = false
-                        clickStorageButton(rootNode)
-                    }, 800)
                 }
             }
 
@@ -83,15 +99,33 @@ class AutoCleanService : AccessibilityService() {
                 val confirmNode = findNodeByText(rootNode, confirmTexts, clickableOnly = true)
                 if (confirmNode != null) {
                     Log.d("AutoCleanService", "Confirming Force Stop in dialog (delayed)")
-                    performDelayedClick(confirmNode, STATE_CLICK_STORAGE)
+                    val nextState = if (currentActionType == "force_stop") STATE_BACK else STATE_CLICK_STORAGE
+                    performDelayedClick(confirmNode, nextState) {
+                        if (currentActionType == "force_stop") {
+                            isActionPending = true
+                            handler.postDelayed({
+                                isActionPending = false
+                                goBackAndNext()
+                            }, 800)
+                        }
+                    }
                 } else {
-                    // Fallback: if dialog doesn't appear or cannot find OK, check if we can click storage
-                    isActionPending = true
-                    currentState = STATE_CLICK_STORAGE
-                    handler.postDelayed({
-                        isActionPending = false
-                        clickStorageButton(rootNode)
-                    }, 800)
+                    // Fallback
+                    if (currentActionType == "force_stop") {
+                        isActionPending = true
+                        currentState = STATE_BACK
+                        handler.postDelayed({
+                            isActionPending = false
+                            goBackAndNext()
+                        }, 800)
+                    } else {
+                        isActionPending = true
+                        currentState = STATE_CLICK_STORAGE
+                        handler.postDelayed({
+                            isActionPending = false
+                            clickStorageButton(rootNode)
+                        }, 800)
+                    }
                 }
             }
 
@@ -234,6 +268,7 @@ class AutoCleanService : AccessibilityService() {
 
     companion object {
         var isRunning = false
+        var currentActionType = "all" // "force_stop", "clear_cache", "all"
         private var packageQueue = mutableListOf<String>()
         private var currentPackageIndex = 0
         
@@ -280,11 +315,12 @@ class AutoCleanService : AccessibilityService() {
             return applicationContextRef ?: activeInstance?.applicationContext
         }
 
-        fun startCleaning(context: Context, packages: List<String>, callback: (Int, Int) -> Unit) {
+        fun startCleaning(context: Context, packages: List<String>, actionType: String, callback: (Int, Int) -> Unit) {
             packageQueue = packages.toMutableList()
             currentPackageIndex = 0
             progressCallback = callback
             isRunning = true
+            currentActionType = actionType
             applicationContextRef = context.applicationContext
             
             cleanNextPackage(context)
@@ -302,7 +338,7 @@ class AutoCleanService : AccessibilityService() {
                 val instance = activeInstance
                 if (instance != null) {
                     instance.currentPackageName = pkg
-                    instance.currentState = STATE_CLICK_FORCE_STOP
+                    instance.currentState = if (currentActionType == "clear_cache") STATE_CLICK_STORAGE else STATE_CLICK_FORCE_STOP
                     instance.resetTimeout()
                 }
 
