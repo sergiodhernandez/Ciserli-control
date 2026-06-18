@@ -1990,6 +1990,35 @@ function formatBytes(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+// Update phone storage progress bar
+function updateStorageUI() {
+    let totalBytes = 128 * 1024 * 1024 * 1024; // 128 GB default
+    let usedBytes = 52.4 * 1024 * 1024 * 1024;  // 52.4 GB default
+    
+    if (window.AndroidApp && window.AndroidApp.getStorageInfo) {
+        try {
+            const info = JSON.parse(window.AndroidApp.getStorageInfo());
+            if (info.success) {
+                totalBytes = info.totalBytes;
+                usedBytes = info.usedBytes;
+            }
+        } catch (e) {
+            console.error("Error reading storage info:", e);
+        }
+    }
+    
+    // Format to GB
+    const totalGB = (totalBytes / (1024 * 1024 * 1024)).toFixed(1);
+    const usedGB = (usedBytes / (1024 * 1024 * 1024)).toFixed(1);
+    const percent = ((usedBytes / totalBytes) * 100).toFixed(0);
+    
+    const txtVal = document.getElementById('storage-text-value');
+    const fill = document.getElementById('storage-progress-fill');
+    
+    if (txtVal) txtVal.textContent = `${usedGB} GB / ${totalGB} GB (${percent}%)`;
+    if (fill) fill.style.width = `${percent}%`;
+}
+
 function initOptimizeView() {
     // Event listeners registration (guarded to avoid duplicates)
     if (!window.optimizeEventsRegistered) {
@@ -2012,6 +2041,20 @@ function initOptimizeView() {
         if (els.btnStartOptimize) {
             els.btnStartOptimize.addEventListener('click', () => {
                 optimizeDevice();
+            });
+        }
+
+        const btnToggleAll = document.getElementById('btn-toggle-all-apps');
+        if (btnToggleAll) {
+            btnToggleAll.addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('.optimize-app-checkbox');
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                
+                checkboxes.forEach(cb => {
+                    cb.checked = !anyChecked;
+                });
+                
+                btnToggleAll.textContent = anyChecked ? "Seleccionar Todo" : "Deseleccionar Todo";
             });
         }
 
@@ -2042,6 +2085,9 @@ function initOptimizeView() {
         els.optimizePermissionCard.classList.add('hidden');
         els.optimizeResultsCard.classList.remove('hidden');
         
+        // Update Storage UI
+        updateStorageUI();
+
         // Auto-scan if never done or last scan was long ago
         if (scannedApps.length === 0) {
             startOptimizeScan();
@@ -2051,11 +2097,22 @@ function initOptimizeView() {
     }
 }
 
+// Global callback for native permission change event
+window.onPermissionChanged = function(hasPermission) {
+    initOptimizeView();
+};
+
 function startOptimizeScan() {
     els.optimizeScanLoading.classList.remove('hidden');
     els.optimizeResultsCard.classList.add('hidden');
     els.btnStartOptimize.disabled = true;
     
+    // Add spinner to rescan button
+    if (els.btnRescanOptimize) {
+        els.btnRescanOptimize.disabled = true;
+        els.btnRescanOptimize.innerHTML = `<span class="btn-spinner"></span> Buscando...`;
+    }
+
     // Animate score status
     els.optimizeScore.textContent = "--";
     els.optimizeStatus.textContent = "Escaneando...";
@@ -2088,16 +2145,23 @@ window.onScanComplete = function(appsJson) {
     } catch (e) {
         console.error("Error parsing scan results:", e);
         window.onScanError("Error de formato de datos.");
+    } finally {
+        if (els.btnRescanOptimize) {
+            els.btnRescanOptimize.disabled = false;
+            els.btnRescanOptimize.innerHTML = `<span>🔄 Buscar Caché y Apps</span>`;
+        }
     }
 };
 
 window.onScanError = function(errorMsg) {
     els.optimizeScanLoading.classList.add('hidden');
     els.optimizeResultsCard.classList.remove('hidden');
-    
-    els.optimizeScore.textContent = "❌";
-    els.optimizeStatus.textContent = "Error";
     els.optimizeRingFill.classList.remove('optimize-active');
+    
+    if (els.btnRescanOptimize) {
+        els.btnRescanOptimize.disabled = false;
+        els.btnRescanOptimize.innerHTML = `<span>🔄 Buscar Caché y Apps</span>`;
+    }
     
     alert("Error de escaneo: " + errorMsg);
 };
@@ -2107,6 +2171,9 @@ function renderScanResults() {
     els.optimizeResultsCard.classList.remove('hidden');
     els.optimizeRingFill.classList.remove('optimize-active');
     
+    // Update Storage UI too
+    updateStorageUI();
+
     // Sort applications: user apps with cache first, then by size descending
     scannedApps.sort((a, b) => b.cacheSize - a.cacheSize);
     
@@ -2126,6 +2193,12 @@ function renderScanResults() {
         els.optimizeLastTime.textContent = "Ahora";
     }
     
+    // Reset toggle-all text to Deseleccionar Todo
+    const btnToggleAll = document.getElementById('btn-toggle-all-apps');
+    if (btnToggleAll) {
+        btnToggleAll.textContent = "Deseleccionar Todo";
+    }
+
     // Determine Score & Health status based on cache size
     let score = 100;
     let statusText = "Excelente";
@@ -2154,7 +2227,7 @@ function renderScanResults() {
     
     // Enable optimizing button if we have apps or cache
     els.btnStartOptimize.disabled = false;
-    els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+    els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
     
     // Build list
     els.optimizeAppsList.innerHTML = "";
@@ -2189,6 +2262,15 @@ function renderScanResults() {
         row.addEventListener('click', (e) => {
             // Prevent trigger if clicking the checkbox
             if (e.target.classList.contains('optimize-app-checkbox')) {
+                // Update toggle-all button text dynamically based on state
+                setTimeout(() => {
+                    const checkboxes = document.querySelectorAll('.optimize-app-checkbox');
+                    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                    const btnToggleAll = document.getElementById('btn-toggle-all-apps');
+                    if (btnToggleAll) {
+                        btnToggleAll.textContent = allChecked ? "Deseleccionar Todo" : "Seleccionar Todo";
+                    }
+                }, 10);
                 return;
             }
             
@@ -2214,7 +2296,7 @@ function optimizeDevice() {
     });
     
     els.btnStartOptimize.disabled = true;
-    els.btnOptimizeText.textContent = "Optimizando...";
+    els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
     els.optimizeRingFill.classList.add('optimize-active');
     
     if (window.AndroidApp && window.AndroidApp.optimizeApps) {
@@ -2235,13 +2317,13 @@ function optimizeDevice() {
                 } else {
                     alert("Error al optimizar: " + (result.error || "Desconocido"));
                     els.btnStartOptimize.disabled = false;
-                    els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+                    els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
                     els.optimizeRingFill.classList.remove('optimize-active');
                 }
             } catch (err) {
                 alert("Error durante la optimización: " + err.message);
                 els.btnStartOptimize.disabled = false;
-                els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+                els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
                 els.optimizeRingFill.classList.remove('optimize-active');
             }
         }, 1200);

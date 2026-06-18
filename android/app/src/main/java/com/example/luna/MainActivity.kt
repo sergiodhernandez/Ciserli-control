@@ -20,6 +20,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.work.*
+import java.util.concurrent.TimeUnit
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -214,6 +216,33 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    fun checkUsageStatsPermissionFromActivity(): Boolean {
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                packageName
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            appOps.checkOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                packageName
+            )
+        }
+        return mode == android.app.AppOpsManager.MODE_ALLOWED
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webView?.let { view ->
+            val hasPermission = checkUsageStatsPermissionFromActivity()
+            view.evaluateJavascript("javascript:if(window.onPermissionChanged) window.onPermissionChanged($hasPermission);", null)
+        }
+    }
+
     // JS interface class to share version info with web app
     class WebAppInterface(private val activity: Activity, private val webView: WebView) {
         @JavascriptInterface
@@ -321,22 +350,7 @@ class MainActivity : ComponentActivity() {
 
         @JavascriptInterface
         fun checkUsageStatsPermission(): Boolean {
-            val appOps = activity.getSystemService(Context.APP_OPS_SERVICE) as android.app.AppOpsManager
-            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                appOps.unsafeCheckOpNoThrow(
-                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    android.os.Process.myUid(),
-                    activity.packageName
-                )
-            } else {
-                @Suppress("DEPRECATION")
-                appOps.checkOpNoThrow(
-                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-                    android.os.Process.myUid(),
-                    activity.packageName
-                )
-            }
-            return mode == android.app.AppOpsManager.MODE_ALLOWED
+            return (activity as MainActivity).checkUsageStatsPermissionFromActivity()
         }
 
         @JavascriptInterface
@@ -360,6 +374,31 @@ class MainActivity : ComponentActivity() {
         fun saveSetting(key: String, value: Boolean) {
             val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean(key, value).apply()
+        }
+
+        @JavascriptInterface
+        fun getStorageInfo(): String {
+            val response = JSONObject()
+            try {
+                val path = Environment.getDataDirectory()
+                val stat = android.os.StatFs(path.path)
+                val blockSize = stat.blockSizeLong
+                val totalBlocks = stat.blockCountLong
+                val availableBlocks = stat.availableBlocksLong
+                
+                val totalBytes = totalBlocks * blockSize
+                val availableBytes = availableBlocks * blockSize
+                val usedBytes = totalBytes - availableBytes
+                
+                response.put("success", true)
+                response.put("totalBytes", totalBytes)
+                response.put("usedBytes", usedBytes)
+                response.put("freeBytes", availableBytes)
+            } catch (e: Exception) {
+                response.put("success", false)
+                response.put("error", e.message)
+            }
+            return response.toString()
         }
 
         @JavascriptInterface
@@ -451,6 +490,44 @@ class MainActivity : ComponentActivity() {
             } catch (e: Exception) {
                 ""
             }
+        }
+
+        @JavascriptInterface
+        fun onPermissionChanged(hasPermission: Boolean) {
+            activity.runOnUiThread {
+                webView.evaluateJavascript("javascript:if(window.onPermissionChanged) window.onPermissionChanged($hasPermission);", null)
+            }
+        }
+
+        @JavascriptInterface
+        fun scheduleOptimization(hour: Int) {
+            // Save hour in SharedPreferences
+            val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putInt("optimize_hour", hour).apply()
+            // Schedule periodic work with WorkManager (once daily at specified hour)
+            val current = java.util.Calendar.getInstance()
+            val target = java.util.Calendar.getInstance().apply { set(java.util.Calendar.HOUR_OF_DAY, hour); set(java.util.Calendar.MINUTE, 0); set(java.util.Calendar.SECOND, 0) }
+            if (target.before(current)) { target.add(java.util.Calendar.DAY_OF_MONTH, 1) }
+            val delay = target.timeInMillis - current.timeInMillis
+            val work = PeriodicWorkRequestBuilder<OptimizationWorker>(24, TimeUnit.HOURS)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .build()
+            WorkManager.getInstance(activity).enqueueUniquePeriodicWork("optimizeWork", ExistingPeriodicWorkPolicy.REPLACE, work)
+        }
+
+        @JavascriptInterface
+        fun getHistory(): String {
+            val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+            return prefs.getString("opt_history", "[]") ?: "[]"
+        }
+
+        @JavascriptInterface
+        fun addHistoryEntry(entryJson: String) {
+            val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
+            val existing = prefs.getString("opt_history", "[]") ?: "[]"
+            val arr = JSONArray(existing)
+            arr.put(JSONObject(entryJson))
+            prefs.edit().putString("opt_history", arr.toString()).apply()
         }
 
         @JavascriptInterface
@@ -570,6 +647,29 @@ class MainActivity : ComponentActivity() {
                 activity.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+        }
+
+    // Worker class to perform scheduled optimization
+    class OptimizationWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+        override fun doWork(): Result {
+            // Perform a simple optimization (no UI feedback)
+            try {
+                val pm = applicationContext.packageManager
+                val am = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                // Example: kill background processes of non-system apps
+                val installed = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                for (appInfo in installed) {
+                    val pkg = appInfo.packageName
+                    if ((appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 0) {
+                        am.killBackgroundProcesses(pkg)
+                    }
+                }
+                return Result.success()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return Result.failure()
             }
         }
     }

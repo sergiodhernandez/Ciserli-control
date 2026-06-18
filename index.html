@@ -302,8 +302,22 @@
                         </div>
                     </div>
 
+                    <!-- Device Storage Progress Bar -->
+                    <div class="storage-bar-container" style="margin-bottom: 20px; padding: 15px; border: 1.5px solid #000000; border-radius: 12px; background: #FFFFFF;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span class="label" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; font-family: inherit;">Almacenamiento del Teléfono</span>
+                            <span id="storage-text-value" style="font-size: 0.8rem; font-weight: 700; color: var(--gold-primary); font-family: inherit;">-- GB / -- GB</span>
+                        </div>
+                        <div class="storage-progress" style="width: 100%; height: 10px; background: rgba(0, 0, 0, 0.05); border: 1.5px solid #000000; border-radius: 6px; overflow: hidden; position: relative;">
+                            <div id="storage-progress-fill" style="width: 0%; height: 100%; background: var(--gold-gradient); transition: width 0.8s ease-in-out;"></div>
+                        </div>
+                    </div>
+
                     <div class="settings-group">
-                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 10px;">Aplicaciones Detectadas</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--gold-primary); margin: 0; font-family: inherit;">Aplicaciones Detectadas</h4>
+                            <button id="btn-toggle-all-apps" style="background: none; border: none; color: var(--gold-primary); font-size: 0.75rem; font-weight: 600; cursor: pointer; text-decoration: underline; font-family: inherit; outline: none; padding: 0;">Deseleccionar Todo</button>
+                        </div>
                         <div id="optimize-apps-list" class="history-list" style="max-height: 350px; overflow-y: auto;">
                             <!-- Filled dynamically by JavaScript -->
                         </div>
