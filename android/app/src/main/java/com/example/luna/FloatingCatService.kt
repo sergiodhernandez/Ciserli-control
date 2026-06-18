@@ -174,6 +174,11 @@ class FloatingCatService : Service() {
                     animator?.cancel()
                     isWalking = false
                     
+                    // Wake up immediately if the cat is sleeping
+                    webView.post {
+                        webView.evaluateJavascript("if (document.getElementById('cat-wrapper').classList.contains('state-sleep')) { window.setCatState('idle'); }", null)
+                    }
+                    
                     initialX = layoutParams.x
                     initialY = layoutParams.y
                     initialTouchX = event.rawX

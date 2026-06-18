@@ -12,7 +12,7 @@
     <meta name="theme-color" content="#0a0a0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Ciserli-app</title>
+    <title>Ciserli</title>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -40,7 +40,7 @@
                 <path d="M12 3c.132 0 .263 0 .393.007a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z" fill="url(#gold-grad-splash)"/>
                 <path d="M12 1a11 11 0 1 0 11 11 11.013 11.013 0 0 0-3.475-7.986 8.5 8.5 0 0 1-9.52 14.975A9.5 9.5 0 0 1 12 3c.097 0 .193.003.29.008A11.025 11.025 0 0 0 12 1z" fill="url(#gold-grad-splash)" opacity="0.3"/>
             </svg>
-            <h1 class="splash-title">Ciserli-app</h1>
+            <h1 class="splash-title">Ciserli</h1>
             <div class="splash-dedication">Para el amor de mi vida: Citlali Guadalupe Castañeda Alcaraz</div>
             <div class="splash-quote-container">
                 <p id="splash-quote" class="splash-quote">Cargando tus citas bonitas...</p>
@@ -65,7 +65,7 @@
                     <path d="M12 3c.132 0 .263 0 .393.007a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z" fill="url(#gold-grad)"/>
                     <path d="M12 1a11 11 0 1 0 11 11 11.013 11.013 0 0 0-3.475-7.986 8.5 8.5 0 0 1-9.52 14.975A9.5 9.5 0 0 1 12 3c.097 0 .193.003.29.008A11.025 11.025 0 0 0 12 1z" fill="url(#gold-grad)" opacity="0.3"/>
                 </svg>
-                <h1>Ciserli-app</h1>
+                <h1>Ciserli</h1>
             </div>
             <div class="header-subtitle">Control de Ciclo</div>
         </header>
@@ -231,6 +231,86 @@
                 </div>
             </section>
 
+            <!-- SECTION 3.5: OPTIMIZER -->
+            <section id="section-optimize" class="app-section">
+                <!-- Usage stats permission alert -->
+                <div id="optimize-permission-card" class="card danger-zone hidden">
+                    <h3 class="red-title">Permiso Requerido</h3>
+                    <p class="setting-desc" style="color: var(--text-primary);">Para poder escanear el tamaño exacto de la caché y la memoria de las aplicaciones instaladas, Ciserli requiere el permiso de <strong>Acceso a Estadísticas de Uso</strong>.</p>
+                    <button id="btn-request-optimize-permission" class="action-btn danger outline" style="width: 100%;">
+                        <span>🔑 Otorgar Permiso de Uso</span>
+                    </button>
+                </div>
+
+                <!-- Main dashboard optimization status -->
+                <div class="dashboard-card optimize-dashboard">
+                    <!-- Ring indicator for RAM or Optimization Score -->
+                    <div class="status-ring-container">
+                        <svg class="status-ring optimize-ring" viewBox="0 0 200 200">
+                            <circle class="ring-bg" cx="100" cy="100" r="85"></circle>
+                            <circle id="optimize-ring-fill" class="ring-fill" cx="100" cy="100" r="85" stroke-dasharray="534" stroke-dashoffset="534"></circle>
+                        </svg>
+                        <div class="ring-text-container">
+                            <span id="optimize-score" class="cycle-day">--</span>
+                            <span id="optimize-status" class="cycle-phase">Cargando...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-box">
+                        <p id="optimize-desc">Escanea tu dispositivo para liberar caché y memoria RAM.</p>
+                        <div id="optimize-info-badge" class="fertility-pill">Dispositivo</div>
+                    </div>
+                </div>
+
+                <!-- Quick actions -->
+                <div class="card">
+                    <h3 class="gold-title">Limpieza Rápida</h3>
+                    <div class="quick-buttons">
+                        <button id="btn-start-optimize" class="action-btn" disabled>
+                            <span class="icon-drop">🚀</span>
+                            <span id="btn-optimize-text">Optimizar Dispositivo</span>
+                        </button>
+                        <button id="btn-rescan-optimize" class="action-btn outline">
+                            <span>🔄 Buscar Caché y Apps</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Optimization scanning animation overlay -->
+                <div id="optimize-scan-loading" class="card hidden" style="text-align: center; padding: 30px;">
+                    <div class="splash-spinner" style="margin: 0 auto 15px auto; width: 40px; height: 40px; border-top-color: var(--gold-primary);"></div>
+                    <h4 style="color: var(--gold-light); margin-bottom: 5px;">Escaneando caché de aplicaciones...</h4>
+                    <p id="optimize-scan-current" class="helper-text">Analizando paquetes del sistema...</p>
+                </div>
+
+                <!-- Scan Results Lists -->
+                <div id="optimize-results-card" class="card hidden">
+                    <h3 class="gold-title">Detalles del Almacenamiento</h3>
+                    
+                    <div class="summary-grid" style="margin-bottom: 20px;">
+                        <div class="summary-item">
+                            <span class="label">Caché Total</span>
+                            <span id="optimize-total-cache" class="value">-- MB</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Apps Escaneadas</span>
+                            <span id="optimize-total-apps" class="value">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Último Análisis</span>
+                            <span id="optimize-last-time" class="value">Nunca</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 10px;">Aplicaciones Detectadas</h4>
+                        <div id="optimize-apps-list" class="history-list" style="max-height: 350px; overflow-y: auto;">
+                            <!-- Filled dynamically by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- SECTION 4: SETTINGS -->
             <section id="section-settings" class="app-section">
                 <!-- Average Cycle and Period Settings -->
@@ -320,7 +400,7 @@
                 <!-- App Update Settings -->
                 <div class="card settings-card">
                     <h3 class="gold-title">Actualización</h3>
-                    <p class="setting-desc">Verifica si hay una nueva versión disponible para Ciserli-app.</p>
+                    <p class="setting-desc">Verifica si hay una nueva versión disponible para Ciserli.</p>
                     <button id="btn-check-update" class="action-btn outline small">🔄 Buscar Actualización</button>
                 </div>
 
@@ -353,6 +433,12 @@
                     <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
                 </svg>
                 <span>Historial</span>
+            </button>
+            <button class="nav-tab" data-target="section-optimize">
+                <svg viewBox="0 0 24 24" class="nav-icon">
+                    <path d="M19.36 2.72c-.78-.78-2.05-.78-2.83 0l-3.53 3.53-2.12-2.12c-.78-.78-2.05-.78-2.83 0L3.53 8.66c-.78.78-.78 2.05 0 2.83l3.54 3.53-4.95 4.95a1 1 0 000 1.41l2.12 2.12c.39.39.9.59 1.41.59s1.02-.2 1.41-.59l4.95-4.95 3.53 3.54c.78.78 2.05.78 2.83 0l4.53-4.53c.78-.78.78-2.05 0-2.83l-2.12-2.12 3.53-3.53c.78-.78.78-2.05 0-2.83l-1.41-1.41z"/>
+                </svg>
+                <span>Optimizar</span>
             </button>
             <button class="nav-tab" data-target="section-settings">
                 <svg viewBox="0 0 24 24" class="nav-icon">

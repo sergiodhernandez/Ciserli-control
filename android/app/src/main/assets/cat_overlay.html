@@ -580,6 +580,10 @@
 
     // Trigger state changes from Kotlin service
     window.setCatState = function(state, direction) {
+        // If the bubble is visible, don't let external calls override the interactive/happy state
+        if (bubble && bubble.classList.contains('visible')) {
+            return;
+        }
         // Clear active class list
         wrapper.className = `state-${state}`;
         
@@ -640,6 +644,13 @@
         }, 2000);
     }
 
+    // Wake up if sleeping
+    wrapper.addEventListener('pointerdown', () => {
+        if (wrapper.classList.contains('state-sleep')) {
+            setCatState('idle');
+        }
+    });
+
     // Handle Taps / Clicks
     wrapper.addEventListener('click', () => {
         // Play purr sound
@@ -674,7 +685,10 @@
 
     function showLoveQuote() {
         // Toggle happy look
-        const savedClass = wrapper.className;
+        let savedClass = wrapper.className;
+        if (savedClass === 'state-sleep') {
+            savedClass = 'state-idle';
+        }
         wrapper.className = 'state-happy';
         
         // Load quotes

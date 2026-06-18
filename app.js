@@ -219,7 +219,24 @@ const els = {
 
     // Google Sheets Sync
     syncStatus: document.getElementById('sync-status'),
-    syncText: document.getElementById('sync-text')
+    syncText: document.getElementById('sync-text'),
+
+    // Optimizer
+    optimizePermissionCard: document.getElementById('optimize-permission-card'),
+    btnRequestOptimizePermission: document.getElementById('btn-request-optimize-permission'),
+    optimizeScore: document.getElementById('optimize-score'),
+    optimizeStatus: document.getElementById('optimize-status'),
+    optimizeRingFill: document.getElementById('optimize-ring-fill'),
+    btnStartOptimize: document.getElementById('btn-start-optimize'),
+    btnOptimizeText: document.getElementById('btn-optimize-text'),
+    btnRescanOptimize: document.getElementById('btn-rescan-optimize'),
+    optimizeScanLoading: document.getElementById('optimize-scan-loading'),
+    optimizeScanCurrent: document.getElementById('optimize-scan-current'),
+    optimizeResultsCard: document.getElementById('optimize-results-card'),
+    optimizeTotalCache: document.getElementById('optimize-total-cache'),
+    optimizeTotalApps: document.getElementById('optimize-total-apps'),
+    optimizeLastTime: document.getElementById('optimize-last-time'),
+    optimizeAppsList: document.getElementById('optimize-apps-list')
 };
 
 // --- TIMEZONE-SAFE DATE UTILITIES ---
@@ -516,6 +533,8 @@ function setupNavigation() {
                 updateDashboard();
             } else if (target === 'section-mirror') {
                 updateBackgroundLight();
+            } else if (target === 'section-optimize') {
+                initOptimizeView();
             }
         });
     });
@@ -1585,7 +1604,7 @@ function initVirtualCat() {
     function startLocalMovement() {
         clearInterval(movementInterval);
         movementInterval = setInterval(() => {
-            if (!appState.settings.cat.enabled || localCatState.isWalking) return;
+            if (!appState.settings.cat.enabled || localCatState.isWalking || (localBubble && localBubble.classList.contains('visible'))) return;
 
             // Random action: walk=50%, idle=30%, sleep=20%
             const roll = Math.floor(Math.random() * 100);
@@ -1712,6 +1731,11 @@ function initVirtualCat() {
         // Cancel ongoing movement/walk
         clearTimeout(localCatState.walkTimeout);
         localCatState.isWalking = false;
+        
+        // Wake up if sleeping
+        if (localWrapper.classList.contains('state-sleep')) {
+            setLocalCatAnimation('idle');
+        }
         
         // Disable transitions during dragging
         localContainer.style.transition = 'none';
@@ -1953,3 +1977,295 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// --- DEVICE OPTIMIZER SYSTEM ---
+let scannedApps = [];
+let lastScanTime = null;
+
+function formatBytes(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function initOptimizeView() {
+    // Event listeners registration (guarded to avoid duplicates)
+    if (!window.optimizeEventsRegistered) {
+        if (els.btnRequestOptimizePermission) {
+            els.btnRequestOptimizePermission.addEventListener('click', () => {
+                if (window.AndroidApp && window.AndroidApp.requestUsageStatsPermission) {
+                    window.AndroidApp.requestUsageStatsPermission();
+                } else {
+                    alert("Esta opción solo está disponible en dispositivos Android.");
+                }
+            });
+        }
+
+        if (els.btnRescanOptimize) {
+            els.btnRescanOptimize.addEventListener('click', () => {
+                startOptimizeScan();
+            });
+        }
+
+        if (els.btnStartOptimize) {
+            els.btnStartOptimize.addEventListener('click', () => {
+                optimizeDevice();
+            });
+        }
+
+        window.optimizeEventsRegistered = true;
+    }
+
+    // Check permissions
+    let hasPermission = false;
+    const isAndroid = !!(window.AndroidApp);
+    
+    if (isAndroid && window.AndroidApp.checkUsageStatsPermission) {
+        hasPermission = window.AndroidApp.checkUsageStatsPermission();
+    } else {
+        // Safe fallback for web testing/desktop browser: simulate having permission
+        hasPermission = true;
+    }
+
+    if (!hasPermission) {
+        els.optimizePermissionCard.classList.remove('hidden');
+        els.optimizeResultsCard.classList.add('hidden');
+        els.btnStartOptimize.disabled = true;
+        
+        // Update dashboard score to warn permission is missing
+        els.optimizeScore.textContent = "🔒";
+        els.optimizeStatus.textContent = "Sin Permiso";
+        els.optimizeRingFill.style.strokeDashoffset = "534";
+    } else {
+        els.optimizePermissionCard.classList.add('hidden');
+        els.optimizeResultsCard.classList.remove('hidden');
+        
+        // Auto-scan if never done or last scan was long ago
+        if (scannedApps.length === 0) {
+            startOptimizeScan();
+        } else {
+            renderScanResults();
+        }
+    }
+}
+
+function startOptimizeScan() {
+    els.optimizeScanLoading.classList.remove('hidden');
+    els.optimizeResultsCard.classList.add('hidden');
+    els.btnStartOptimize.disabled = true;
+    
+    // Animate score status
+    els.optimizeScore.textContent = "--";
+    els.optimizeStatus.textContent = "Escaneando...";
+    els.optimizeRingFill.style.strokeDashoffset = "534";
+    els.optimizeRingFill.classList.add('optimize-active');
+    
+    if (window.AndroidApp && window.AndroidApp.startAppScan) {
+        window.AndroidApp.startAppScan();
+    } else {
+        // Simulated scan for browser debug
+        setTimeout(() => {
+            const mockApps = [
+                { name: "WhatsApp", packageName: "com.whatsapp", cacheSize: 425987120, isSystem: false, icon: "" },
+                { name: "Chrome", packageName: "com.android.chrome", cacheSize: 289123400, isSystem: true, icon: "" },
+                { name: "Instagram", packageName: "com.instagram.android", cacheSize: 521876500, isSystem: false, icon: "" },
+                { name: "YouTube", packageName: "com.google.android.youtube", cacheSize: 312000000, isSystem: true, icon: "" },
+                { name: "Luna (Ciserli)", packageName: "com.example.luna", cacheSize: 1543000, isSystem: false, icon: "" }
+            ];
+            window.onScanComplete(JSON.stringify(mockApps));
+        }, 1500);
+    }
+}
+
+// Global callback triggered by Android java interface
+window.onScanComplete = function(appsJson) {
+    try {
+        scannedApps = JSON.parse(appsJson);
+        lastScanTime = new Date();
+        renderScanResults();
+    } catch (e) {
+        console.error("Error parsing scan results:", e);
+        window.onScanError("Error de formato de datos.");
+    }
+};
+
+window.onScanError = function(errorMsg) {
+    els.optimizeScanLoading.classList.add('hidden');
+    els.optimizeResultsCard.classList.remove('hidden');
+    
+    els.optimizeScore.textContent = "❌";
+    els.optimizeStatus.textContent = "Error";
+    els.optimizeRingFill.classList.remove('optimize-active');
+    
+    alert("Error de escaneo: " + errorMsg);
+};
+
+function renderScanResults() {
+    els.optimizeScanLoading.classList.add('hidden');
+    els.optimizeResultsCard.classList.remove('hidden');
+    els.optimizeRingFill.classList.remove('optimize-active');
+    
+    // Sort applications: user apps with cache first, then by size descending
+    scannedApps.sort((a, b) => b.cacheSize - a.cacheSize);
+    
+    // Calculate total cache size
+    let totalCacheBytes = 0;
+    scannedApps.forEach(app => {
+        totalCacheBytes += app.cacheSize;
+    });
+    
+    els.optimizeTotalCache.textContent = formatBytes(totalCacheBytes);
+    els.optimizeTotalApps.textContent = scannedApps.length;
+    
+    if (lastScanTime) {
+        const timeStr = lastScanTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        els.optimizeLastTime.textContent = timeStr;
+    } else {
+        els.optimizeLastTime.textContent = "Ahora";
+    }
+    
+    // Determine Score & Health status based on cache size
+    let score = 100;
+    let statusText = "Excelente";
+    let scoreColor = "var(--gold-primary)";
+    
+    if (totalCacheBytes > 1024 * 1024 * 1024) { // > 1 GB
+        score = 50;
+        statusText = "Crítico";
+        scoreColor = "var(--crimson-period)";
+    } else if (totalCacheBytes > 500 * 1024 * 1024) { // > 500 MB
+        score = 75;
+        statusText = "Regular";
+    } else if (totalCacheBytes > 100 * 1024 * 1024) { // > 100 MB
+        score = 90;
+        statusText = "Bueno";
+    }
+    
+    els.optimizeScore.textContent = score;
+    els.optimizeStatus.textContent = statusText;
+    els.optimizeScore.style.color = scoreColor;
+    
+    // Draw ring progress
+    const progressPercent = score / 100;
+    const dashoffset = Math.max(0, Math.min(534, 534 - (534 * progressPercent)));
+    els.optimizeRingFill.style.strokeDashoffset = dashoffset;
+    
+    // Enable optimizing button if we have apps or cache
+    els.btnStartOptimize.disabled = false;
+    els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+    
+    // Build list
+    els.optimizeAppsList.innerHTML = "";
+    if (scannedApps.length === 0) {
+        els.optimizeAppsList.innerHTML = '<div class="empty-state">No se detectó caché en ninguna aplicación. ¡Tu cel está limpio!</div>';
+        return;
+    }
+    
+    scannedApps.forEach(app => {
+        const row = document.createElement('div');
+        row.className = "optimize-app-item";
+        
+        // Icon base64
+        const iconSrc = app.icon ? `data:image/png;base64,${app.icon}` : 'icon.svg';
+        const formattedCache = formatBytes(app.cacheSize);
+        
+        row.innerHTML = `
+            <div class="optimize-app-info">
+                <img class="optimize-app-icon" src="${iconSrc}" onerror="this.src='icon.svg'">
+                <div class="optimize-app-meta">
+                    <span class="optimize-app-name">${app.name}</span>
+                    <span class="optimize-app-pkg">${app.packageName}</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="optimize-app-size">${formattedCache}</span>
+                <input type="checkbox" class="optimize-app-checkbox" data-package="${app.packageName}" checked>
+            </div>
+        `;
+        
+        // Clicking on the item opens settings to clear cache manually
+        row.addEventListener('click', (e) => {
+            // Prevent trigger if clicking the checkbox
+            if (e.target.classList.contains('optimize-app-checkbox')) {
+                return;
+            }
+            
+            if (confirm(`¿Quieres abrir la configuración de ${app.name} para borrar su caché manualmente?`)) {
+                if (window.AndroidApp && window.AndroidApp.openAppSettings) {
+                    window.AndroidApp.openAppSettings(app.packageName);
+                } else {
+                    alert(`Redirección simulada a Ajustes de ${app.packageName}`);
+                }
+            }
+        });
+        
+        els.optimizeAppsList.appendChild(row);
+    });
+}
+
+function optimizeDevice() {
+    // Get checked apps to close processes
+    const checkboxes = document.querySelectorAll('.optimize-app-checkbox:checked');
+    const selectedPackages = [];
+    checkboxes.forEach(cb => {
+        selectedPackages.push(cb.getAttribute('data-package'));
+    });
+    
+    els.btnStartOptimize.disabled = true;
+    els.btnOptimizeText.textContent = "Optimizando...";
+    els.optimizeRingFill.classList.add('optimize-active');
+    
+    if (window.AndroidApp && window.AndroidApp.optimizeApps) {
+        setTimeout(() => {
+            try {
+                const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages));
+                const result = JSON.parse(resultStr);
+                
+                if (result.success) {
+                    const ramFormatted = formatBytes(result.ramFreed);
+                    const ownCacheFormatted = formatBytes(result.ownCacheFreed);
+                    const systemCleanedFormatted = formatBytes(result.systemCleaned);
+                    
+                    alert(`✨ ¡Celular Optimizado! ✨\n\n- Memoria RAM liberada: ${ramFormatted}\n- Caché propia de Ciserli eliminada: ${ownCacheFormatted}\n- Petición de limpieza de caché al sistema Android completada exitosamente.`);
+                    
+                    // Rescan to update the sizes
+                    startScanAfterOptimization();
+                } else {
+                    alert("Error al optimizar: " + (result.error || "Desconocido"));
+                    els.btnStartOptimize.disabled = false;
+                    els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+                    els.optimizeRingFill.classList.remove('optimize-active');
+                }
+            } catch (err) {
+                alert("Error durante la optimización: " + err.message);
+                els.btnStartOptimize.disabled = false;
+                els.btnOptimizeText.textContent = "Optimizar Dispositivo";
+                els.optimizeRingFill.classList.remove('optimize-active');
+            }
+        }, 1200);
+    } else {
+        // simulated optimization for desktop browser testing
+        setTimeout(() => {
+            alert(`✨ ¡Celular Optimizado (Simulado)! ✨\n\n- Memoria RAM liberada: 250 MB\n- Caché de apps limpiada por el sistema: 520 MB`);
+            
+            // Clear simulated cache sizes
+            scannedApps.forEach(app => {
+                if (selectedPackages.includes(app.packageName)) {
+                    app.cacheSize = 0;
+                }
+            });
+            
+            renderScanResults();
+        }, 2000);
+    }
+}
+
+function startScanAfterOptimization() {
+    // Slight timeout before scanning to allow OS processes to finish closing
+    setTimeout(() => {
+        startOptimizeScan();
+    }, 1500);
+}
+

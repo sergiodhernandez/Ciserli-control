@@ -26,9 +26,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import com.example.luna.theme.LunaTheme
+import android.app.ActivityManager
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.util.Base64
+import java.io.ByteArrayOutputStream
+import java.io.File
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
 
+    private var webView: WebView? = null
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
     private val fileChooserLauncher = registerForActivityResult(
@@ -97,8 +109,9 @@ class MainActivity : ComponentActivity() {
                                 settings.cacheMode = WebSettings.LOAD_NO_CACHE
                                 clearCache(true)
 
+                                this@MainActivity.webView = this
                                 // Register Javascript Interface
-                                addJavascriptInterface(WebAppInterface(this@MainActivity), "AndroidApp")
+                                addJavascriptInterface(WebAppInterface(this@MainActivity, this), "AndroidApp")
 
                                 webViewClient = object : WebViewClient() {
                                     override fun shouldOverrideUrlLoading(
@@ -143,7 +156,7 @@ class MainActivity : ComponentActivity() {
                                         result: JsResult?
                                     ): Boolean {
                                         AlertDialog.Builder(this@MainActivity)
-                                            .setTitle("Ciserli-app")
+                                            .setTitle("Ciserli")
                                             .setMessage(message)
                                             .setPositiveButton(android.R.string.ok) { _, _ -> result?.confirm() }
                                             .setCancelable(false)
@@ -158,7 +171,7 @@ class MainActivity : ComponentActivity() {
                                         result: JsResult?
                                     ): Boolean {
                                         AlertDialog.Builder(this@MainActivity)
-                                            .setTitle("Ciserli-app")
+                                            .setTitle("Ciserli")
                                             .setMessage(message)
                                             .setPositiveButton(android.R.string.ok) { _, _ -> result?.confirm() }
                                             .setNegativeButton(android.R.string.cancel) { _, _ -> result?.cancel() }
@@ -202,7 +215,7 @@ class MainActivity : ComponentActivity() {
     }
 
     // JS interface class to share version info with web app
-    class WebAppInterface(private val activity: Activity) {
+    class WebAppInterface(private val activity: Activity, private val webView: WebView) {
         @JavascriptInterface
         fun getAppVersionCode(): Int {
             return try {
@@ -242,7 +255,7 @@ class MainActivity : ComponentActivity() {
         fun downloadApk(url: String) {
             try {
                 val request = DownloadManager.Request(Uri.parse(url))
-                request.setTitle("Ciserli App Actualizacion")
+                request.setTitle("Ciserli Actualización")
                 request.setDescription("Descargando actualizacion...")
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 
@@ -347,6 +360,217 @@ class MainActivity : ComponentActivity() {
         fun saveSetting(key: String, value: Boolean) {
             val prefs = activity.getSharedPreferences("luna_prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean(key, value).apply()
+        }
+
+        @JavascriptInterface
+        fun startAppScan() {
+            Thread {
+                try {
+                    val pm = activity.packageManager
+                    val installedApps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                    val appListJson = JSONArray()
+                    
+                    var storageStatsManager: android.app.usage.StorageStatsManager? = null
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        storageStatsManager = activity.getSystemService(Context.STORAGE_STATS_SERVICE) as? android.app.usage.StorageStatsManager
+                    }
+                    
+                    for (appInfo in installedApps) {
+                        val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                        if (isSystem && appInfo.packageName != "com.google.android.youtube" && appInfo.packageName != "com.android.chrome") {
+                            val launchIntent = pm.getLaunchIntentForPackage(appInfo.packageName)
+                            if (launchIntent == null) {
+                                continue
+                            }
+                        }
+                        
+                        val appName = appInfo.loadLabel(pm).toString()
+                        val packageName = appInfo.packageName
+                        
+                        var cacheSize: Long = 0
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && storageStatsManager != null) {
+                            try {
+                                val storageStats = storageStatsManager.queryStatsForPackage(
+                                    android.os.storage.StorageManager.UUID_DEFAULT,
+                                    packageName,
+                                    android.os.Process.myUserHandle()
+                                )
+                                cacheSize = storageStats.cacheBytes
+                            } catch (e: Exception) {
+                                // Stats might not be queryable (e.g. system app permissions or app disabled)
+                            }
+                        }
+                        
+                        val appJson = JSONObject()
+                        appJson.put("name", appName)
+                        appJson.put("packageName", packageName)
+                        appJson.put("cacheSize", cacheSize)
+                        appJson.put("isSystem", isSystem)
+                        
+                        val iconBase64 = getAppIconBase64(packageName)
+                        appJson.put("icon", iconBase64)
+                        
+                        appListJson.put(appJson)
+                    }
+                    
+                    val resultString = appListJson.toString()
+                    val escapedResult = resultString.replace("'", "\\'")
+                    
+                    activity.runOnUiThread {
+                        webView.evaluateJavascript("javascript:if(window.onScanComplete) window.onScanComplete('$escapedResult');", null)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    val errorMsg = e.message ?: "Unknown scan error"
+                    activity.runOnUiThread {
+                        webView.evaluateJavascript("javascript:if(window.onScanError) window.onScanError('$errorMsg');", null)
+                    }
+                }
+            }.start()
+        }
+
+        private fun getAppIconBase64(packageName: String): String {
+            return try {
+                val pm = activity.packageManager
+                val icon = pm.getApplicationIcon(packageName)
+                val bitmap = if (icon is BitmapDrawable) {
+                    icon.bitmap
+                } else {
+                    val width = icon.intrinsicWidth.coerceAtLeast(1)
+                    val height = icon.intrinsicHeight.coerceAtLeast(1)
+                    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                    val canvas = Canvas(bmp)
+                    icon.setBounds(0, 0, canvas.width, canvas.height)
+                    icon.draw(canvas)
+                    bmp
+                }
+                val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 64, 64, true)
+                val outputStream = ByteArrayOutputStream()
+                scaledBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+            } catch (e: Exception) {
+                ""
+            }
+        }
+
+        @JavascriptInterface
+        fun optimizeApps(packagesJson: String): String {
+            val response = JSONObject()
+            try {
+                val am = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val packagesArray = JSONArray(packagesJson)
+                var ramFreed: Long = 0
+                
+                // 1. Terminar procesos en segundo plano
+                val packagesToKill = mutableListOf<String>()
+                for (i in 0 until packagesArray.length()) {
+                    packagesToKill.add(packagesArray.getString(i))
+                }
+                
+                val runningProcesses = am.runningAppProcesses
+                if (runningProcesses != null) {
+                    for (procInfo in runningProcesses) {
+                        val intersect = procInfo.pkgList.filter { it in packagesToKill }
+                        if (intersect.isNotEmpty()) {
+                            val pid = procInfo.pid
+                            try {
+                                val memInfo = am.getProcessMemoryInfo(intArrayOf(pid))
+                                if (memInfo.isNotEmpty()) {
+                                    ramFreed += memInfo[0].totalPss * 1024L // convert PSS KB to bytes
+                                }
+                            } catch (e: Exception) {
+                                ramFreed += 15 * 1024 * 1024L // fallback 15MB
+                            }
+                        }
+                    }
+                }
+                
+                for (pkg in packagesToKill) {
+                    try {
+                        am.killBackgroundProcesses(pkg)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                
+                // 2. Limpiar la caché propia de la aplicación
+                var ownCacheFreed: Long = 0
+                try {
+                    ownCacheFreed = deleteDirContent(activity.cacheDir)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                
+                // 3. Truco de asignación de espacio para forzar al sistema a limpiar caché de otras apps
+                var systemCleaned: Long = 0
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    try {
+                        val storageManager = activity.getSystemService(Context.STORAGE_SERVICE) as android.os.storage.StorageManager
+                        val uuid = android.os.storage.StorageManager.UUID_DEFAULT
+                        val allocatableBytes = storageManager.getAllocatableBytes(uuid)
+                        if (allocatableBytes > 10 * 1024 * 1024L) { // más de 10MB
+                            val bytesToRequest = (allocatableBytes * 0.90).toLong() // solicitar 90%
+                            storageManager.allocateBytes(uuid, bytesToRequest)
+                            systemCleaned = bytesToRequest
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                
+                response.put("success", true)
+                response.put("ramFreed", ramFreed)
+                response.put("ownCacheFreed", ownCacheFreed)
+                response.put("systemCleaned", systemCleaned)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                try {
+                    response.put("success", false)
+                    response.put("error", e.message)
+                } catch (jsonEx: Exception) {}
+            }
+            return response.toString()
+        }
+
+        private fun deleteDirContent(dir: File?): Long {
+            var bytes: Long = 0
+            if (dir != null && dir.isDirectory) {
+                val children = dir.listFiles()
+                if (children != null) {
+                    for (child in children) {
+                        bytes += getFolderSize(child)
+                        child.deleteRecursively()
+                    }
+                }
+            }
+            return bytes
+        }
+
+        private fun getFolderSize(file: File): Long {
+            var size: Long = 0
+            if (file.isDirectory) {
+                val files = file.listFiles()
+                if (files != null) {
+                    for (f in files) {
+                        size += getFolderSize(f)
+                    }
+                }
+            } else {
+                size += file.length()
+            }
+            return size
+        }
+
+        @JavascriptInterface
+        fun openAppSettings(packageName: String) {
+            try {
+                val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
