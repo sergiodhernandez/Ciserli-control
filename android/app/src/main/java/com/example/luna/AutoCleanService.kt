@@ -17,9 +17,25 @@ class AutoCleanService : AccessibilityService() {
 
     private var currentPackageName = ""
     private var currentState = STATE_IDLE
+    var isActionPending = false
+
+    private fun performDelayedClick(node: AccessibilityNodeInfo, nextState: Int, delay: Long = 800L, onComplete: (() -> Unit)? = null) {
+        isActionPending = true
+        currentState = nextState
+        handler.postDelayed({
+            try {
+                node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            } catch (e: Exception) {
+                Log.e("AutoCleanService", "Error clicking node", e)
+            }
+            isActionPending = false
+            onComplete?.invoke()
+        }, delay)
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (!isRunning || event.packageName == null) return
+        if (isActionPending) return
 
         // We only respond to Settings app events
         val eventPackage = event.packageName.toString()
@@ -37,19 +53,27 @@ class AutoCleanService : AccessibilityService() {
                 val forceStopNode = findNodeByText(rootNode, forceStopTexts, clickableOnly = true)
                 if (forceStopNode != null) {
                     if (forceStopNode.isEnabled) {
-                        Log.d("AutoCleanService", "Clicking Force Stop button")
-                        currentState = STATE_CONFIRM_FORCE_STOP
-                        forceStopNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        Log.d("AutoCleanService", "Clicking Force Stop button (delayed)")
+                        performDelayedClick(forceStopNode, STATE_CONFIRM_FORCE_STOP)
                     } else {
-                        Log.d("AutoCleanService", "Force Stop is already disabled. Skipping to Storage.")
+                        Log.d("AutoCleanService", "Force Stop is already disabled. Skipping to Storage (delayed).")
                         // If force stop is disabled, we skip to Storage directly
+                        isActionPending = true
                         currentState = STATE_CLICK_STORAGE
-                        clickStorageButton(rootNode)
+                        handler.postDelayed({
+                            isActionPending = false
+                            clickStorageButton(rootNode)
+                        }, 800)
                     }
                 } else {
                     // Try to click storage directly if Force Stop button is not found
-                    Log.d("AutoCleanService", "Force Stop button not found, searching for Storage.")
-                    clickStorageButton(rootNode)
+                    Log.d("AutoCleanService", "Force Stop button not found, searching for Storage (delayed).")
+                    isActionPending = true
+                    currentState = STATE_CLICK_STORAGE
+                    handler.postDelayed({
+                        isActionPending = false
+                        clickStorageButton(rootNode)
+                    }, 800)
                 }
             }
 
@@ -58,12 +82,16 @@ class AutoCleanService : AccessibilityService() {
                 val confirmTexts = listOf("aceptar", "ok", "forzar detención", "forzar cierre", "sí", "yes", "confirmar")
                 val confirmNode = findNodeByText(rootNode, confirmTexts, clickableOnly = true)
                 if (confirmNode != null) {
-                    Log.d("AutoCleanService", "Confirming Force Stop in dialog")
-                    currentState = STATE_CLICK_STORAGE
-                    confirmNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    Log.d("AutoCleanService", "Confirming Force Stop in dialog (delayed)")
+                    performDelayedClick(confirmNode, STATE_CLICK_STORAGE)
                 } else {
                     // Fallback: if dialog doesn't appear or cannot find OK, check if we can click storage
-                    clickStorageButton(rootNode)
+                    isActionPending = true
+                    currentState = STATE_CLICK_STORAGE
+                    handler.postDelayed({
+                        isActionPending = false
+                        clickStorageButton(rootNode)
+                    }, 800)
                 }
             }
 
@@ -77,20 +105,33 @@ class AutoCleanService : AccessibilityService() {
                 val clearCacheNode = findNodeByText(rootNode, clearCacheTexts, clickableOnly = true)
                 if (clearCacheNode != null) {
                     if (clearCacheNode.isEnabled) {
-                        Log.d("AutoCleanService", "Clicking Clear Cache button")
-                        clearCacheNode.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        Log.d("AutoCleanService", "Clicking Clear Cache button (delayed)")
+                        performDelayedClick(clearCacheNode, STATE_BACK, delay = 800L) {
+                            // Extra safety delay to let the OS clear cache before executing back navigation
+                            isActionPending = true
+                            handler.postDelayed({
+                                isActionPending = false
+                                goBackAndNext()
+                            }, 1000)
+                        }
                     } else {
-                        Log.d("AutoCleanService", "Clear Cache already disabled (0 Bytes)")
+                        Log.d("AutoCleanService", "Clear Cache already disabled (0 Bytes) (delayed)")
+                        isActionPending = true
+                        currentState = STATE_BACK
+                        handler.postDelayed({
+                            isActionPending = false
+                            goBackAndNext()
+                        }, 800)
                     }
-                    // Wait a little and go back
-                    currentState = STATE_BACK
-                    handler.postDelayed({
-                        goBackAndNext()
-                    }, 400)
                 } else {
                     // If not found, just go back
-                    Log.d("AutoCleanService", "Clear Cache button not found, returning")
-                    goBackAndNext()
+                    Log.d("AutoCleanService", "Clear Cache button not found, returning (delayed)")
+                    isActionPending = true
+                    currentState = STATE_BACK
+                    handler.postDelayed({
+                        isActionPending = false
+                        goBackAndNext()
+                    }, 800)
                 }
             }
             
@@ -106,16 +147,25 @@ class AutoCleanService : AccessibilityService() {
         if (storageNode != null) {
             val targetClickable = findClickableAncestor(storageNode)
             if (targetClickable != null) {
-                Log.d("AutoCleanService", "Clicking Storage category")
-                currentState = STATE_CLICK_CLEAR_CACHE
-                targetClickable.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                Log.d("AutoCleanService", "Clicking Storage category (delayed)")
+                performDelayedClick(targetClickable, STATE_CLICK_CLEAR_CACHE)
             } else {
-                Log.d("AutoCleanService", "Storage node ancestor not clickable, returning")
-                goBackAndNext()
+                Log.d("AutoCleanService", "Storage node ancestor not clickable, returning (delayed)")
+                isActionPending = true
+                currentState = STATE_BACK
+                handler.postDelayed({
+                    isActionPending = false
+                    goBackAndNext()
+                }, 800)
             }
         } else {
-            Log.d("AutoCleanService", "Storage category button not found, returning")
-            goBackAndNext()
+            Log.d("AutoCleanService", "Storage category button not found, returning (delayed)")
+            isActionPending = true
+            currentState = STATE_BACK
+            handler.postDelayed({
+                isActionPending = false
+                goBackAndNext()
+            }, 800)
         }
     }
 
@@ -160,15 +210,17 @@ class AutoCleanService : AccessibilityService() {
         if (!isRunning) return
         
         Log.d("AutoCleanService", "Navigating back to Settings")
+        isActionPending = true
         performGlobalAction(GLOBAL_ACTION_BACK)
         
         // Settings details page has nested storage view, we need another back button click to return to the package Details page or launcher
         handler.postDelayed({
             performGlobalAction(GLOBAL_ACTION_BACK)
             handler.postDelayed({
+                isActionPending = false
                 onPackageCleaned(this)
-            }, 300)
-        }, 300)
+            }, 600) // Slightly increased delay for stability
+        }, 600) // Slightly increased delay for stability
     }
 
     override fun onInterrupt() {
@@ -202,13 +254,15 @@ class AutoCleanService : AccessibilityService() {
                 Log.d("AutoCleanService", "Timeout cleaning package, force skipping...")
                 val service = activeInstance
                 if (service != null) {
+                    service.isActionPending = true
                     service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                     handler.postDelayed({
                         service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                         handler.postDelayed({
+                            service.isActionPending = false
                             onPackageCleaned(service)
-                        }, 300)
-                    }, 300)
+                        }, 600)
+                    }, 600)
                 } else {
                     currentPackageIndex++
                     val context = getAppContext()
