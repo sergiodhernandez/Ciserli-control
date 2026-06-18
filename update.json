@@ -2,5 +2,5 @@
   "versionCode": 18,
   "versionName": "1.4.4",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=18",
-  "whatsNew": "¡Nueva Actualización v1.4.4! Corrección de bucle infinito en el optimizador, implementación del medidor de almacenamiento total del teléfono, botón para seleccionar/deseleccionar todo y animaciones de carga. 🚀💕"
+  "whatsNew": "¡Nueva Actualización v1.4.4! Integración de un Servicio de Accesibilidad para forzar el cierre y borrar la caché de verdad de otras aplicaciones de forma automática y rápida. 🚀💕"
 }

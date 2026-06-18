@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Ciserli</string>
+    <string name="accessibility_service_label">Servicio de Optimización de Ciserli</string>
+    <string name="accessibility_service_description">Permite a Ciserli automatizar la detención forzada y la limpieza de caché de las aplicaciones seleccionadas.</string>
 </resources>

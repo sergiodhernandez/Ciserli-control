@@ -543,6 +543,21 @@ class MainActivity : ComponentActivity() {
                 for (i in 0 until packagesArray.length()) {
                     packagesToKill.add(packagesArray.getString(i))
                 }
+
+                // If accessibility service is enabled, run the automated accessibility cleaning!
+                if (isAccessibilityServiceEnabled()) {
+                    activity.runOnUiThread {
+                        AutoCleanService.startCleaning(activity, packagesToKill) { index, total ->
+                            webView.evaluateJavascript("javascript:if(window.onCleanProgress) window.onCleanProgress($index, $total);", null)
+                        }
+                    }
+                    response.put("success", true)
+                    response.put("async", true)
+                    response.put("ramFreed", 0L)
+                    response.put("ownCacheFreed", 0L)
+                    response.put("systemCleaned", 0L)
+                    return response.toString()
+                }
                 
                 val runningProcesses = am.runningAppProcesses
                 if (runningProcesses != null) {
@@ -644,6 +659,36 @@ class MainActivity : ComponentActivity() {
                 val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.parse("package:$packageName")
                 }
+                activity.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        @JavascriptInterface
+        fun isAccessibilityServiceEnabled(): Boolean {
+            val expectedComponentName = android.content.ComponentName(activity, AutoCleanService::class.java)
+            val enabledServicesSetting = android.provider.Settings.Secure.getString(
+                activity.contentResolver,
+                android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+            ) ?: return false
+            val colonSplitter = android.text.TextUtils.SimpleStringSplitter(':')
+            colonSplitter.setString(enabledServicesSetting)
+            while (colonSplitter.hasNext()) {
+                val componentNameString = colonSplitter.next()
+                val enabledService = android.content.ComponentName.unflattenFromString(componentNameString)
+                if (enabledService != null && enabledService == expectedComponentName) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        @JavascriptInterface
+        fun requestAccessibilityService() {
+            try {
+                val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 activity.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()

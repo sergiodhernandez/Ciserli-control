@@ -2295,17 +2295,41 @@ function optimizeDevice() {
         selectedPackages.push(cb.getAttribute('data-package'));
     });
     
-    els.btnStartOptimize.disabled = true;
-    els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
-    els.optimizeRingFill.classList.add('optimize-active');
+    if (selectedPackages.length === 0) {
+        alert("Por favor, selecciona al menos una aplicación para optimizar.");
+        return;
+    }
     
     if (window.AndroidApp && window.AndroidApp.optimizeApps) {
+        // If accessibility service is supported but not enabled, request it
+        if (window.AndroidApp.isAccessibilityServiceEnabled && !window.AndroidApp.isAccessibilityServiceEnabled()) {
+            const confirmSetting = confirm("Para forzar el cierre de las aplicaciones y borrar su caché de verdad automáticamente, Ciserli necesita el Permiso de Accesibilidad.\n\n¿Deseas ir a Ajustes ahora para activarlo?\n(Busca 'Servicio de Optimización de Ciserli')");
+            if (confirmSetting) {
+                window.AndroidApp.requestAccessibilityService();
+            } else {
+                // Fallback to basic optimization
+                if (confirm("¿Deseas realizar una optimización básica (ligera) en su lugar?")) {
+                    runLightweightOptimization(selectedPackages);
+                }
+            }
+            return;
+        }
+        
+        els.btnStartOptimize.disabled = true;
+        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Iniciando...`;
+        els.optimizeRingFill.classList.add('optimize-active');
+        
         setTimeout(() => {
             try {
                 const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages));
                 const result = JSON.parse(resultStr);
                 
                 if (result.success) {
+                    if (result.async) {
+                        // The cleaning process is running asynchronously via accessibility service
+                        return;
+                    }
+                    
                     const ramFormatted = formatBytes(result.ramFreed);
                     const ownCacheFormatted = formatBytes(result.ownCacheFreed);
                     const systemCleanedFormatted = formatBytes(result.systemCleaned);
@@ -2328,6 +2352,10 @@ function optimizeDevice() {
             }
         }, 1200);
     } else {
+        els.btnStartOptimize.disabled = true;
+        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
+        els.optimizeRingFill.classList.add('optimize-active');
+        
         // simulated optimization for desktop browser testing
         setTimeout(() => {
             alert(`✨ ¡Celular Optimizado (Simulado)! ✨\n\n- Memoria RAM liberada: 250 MB\n- Caché de apps limpiada por el sistema: 520 MB`);
@@ -2343,6 +2371,67 @@ function optimizeDevice() {
         }, 2000);
     }
 }
+
+function runLightweightOptimization(selectedPackages) {
+    els.btnStartOptimize.disabled = true;
+    els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando...`;
+    els.optimizeRingFill.classList.add('optimize-active');
+    
+    setTimeout(() => {
+        try {
+            const resultStr = window.AndroidApp.optimizeApps(JSON.stringify(selectedPackages));
+            const result = JSON.parse(resultStr);
+            
+            if (result.success) {
+                const ramFormatted = formatBytes(result.ramFreed);
+                const ownCacheFormatted = formatBytes(result.ownCacheFreed);
+                const systemCleanedFormatted = formatBytes(result.systemCleaned);
+                
+                alert(`✨ ¡Optimización Básica Completa! ✨\n\n- Memoria RAM liberada: ${ramFormatted}\n- Caché de Ciserli eliminada: ${ownCacheFormatted}\n\nNota: Habilite el servicio de accesibilidad para la detención forzada y borrado de caché real de otras apps.`);
+                
+                startScanAfterOptimization();
+            } else {
+                alert("Error al optimizar: " + (result.error || "Desconocido"));
+                els.btnStartOptimize.disabled = false;
+                els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+                els.optimizeRingFill.classList.remove('optimize-active');
+            }
+        } catch (err) {
+            alert("Error durante la optimización básica: " + err.message);
+            els.btnStartOptimize.disabled = false;
+            els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+            els.optimizeRingFill.classList.remove('optimize-active');
+        }
+    }, 1000);
+}
+
+// Callback triggered by Android to report progress during accessibility cleanup
+window.onCleanProgress = function(index, total) {
+    if (index < total) {
+        els.btnStartOptimize.disabled = true;
+        els.btnStartOptimize.innerHTML = `<span class="btn-spinner"></span> Optimizando (${index}/${total})...`;
+        els.optimizeRingFill.classList.add('optimize-active');
+        
+        // Update dashboard score and progress display in real time
+        const percent = Math.round((index / total) * 100);
+        els.optimizeScore.textContent = percent;
+        els.optimizeStatus.textContent = `Limpiando ${index + 1}/${total}...`;
+        
+        const progressPercent = percent / 100;
+        const dashoffset = Math.max(0, Math.min(534, 534 - (534 * progressPercent)));
+        els.optimizeRingFill.style.strokeDashoffset = dashoffset;
+    } else {
+        // Finished!
+        els.btnStartOptimize.disabled = false;
+        els.btnStartOptimize.innerHTML = `<span class="icon-drop">🚀</span> <span id="btn-optimize-text">Optimizar Dispositivo</span>`;
+        els.optimizeRingFill.classList.remove('optimize-active');
+        
+        alert(`✨ ¡Optimización Completa! ✨\n\nSe han forzado el cierre y limpiado las cachés de todas las aplicaciones seleccionadas de forma automática.`);
+        
+        // Rescan to update the sizes
+        startScanAfterOptimization();
+    }
+};
 
 function startScanAfterOptimization() {
     // Slight timeout before scanning to allow OS processes to finish closing
