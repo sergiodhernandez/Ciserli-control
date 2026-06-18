@@ -652,12 +652,12 @@ class MainActivity : ComponentActivity() {
         }
 
     // Worker class to perform scheduled optimization
-    class OptimizationWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
-        override fun doWork(): Result {
+    class OptimizationWorker(private val appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+        override fun doWork(): androidx.work.ListenableWorker.Result {
             // Perform a simple optimization (no UI feedback)
             try {
-                val pm = applicationContext.packageManager
-                val am = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val pm = appContext.packageManager
+                val am = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                 // Example: kill background processes of non-system apps
                 val installed = pm.getInstalledApplications(PackageManager.GET_META_DATA)
                 for (appInfo in installed) {
@@ -666,10 +666,10 @@ class MainActivity : ComponentActivity() {
                         am.killBackgroundProcesses(pkg)
                     }
                 }
-                return Result.success()
+                return androidx.work.ListenableWorker.Result.success()
             } catch (e: Exception) {
                 e.printStackTrace()
-                return Result.failure()
+                return androidx.work.ListenableWorker.Result.failure()
             }
         }
     }
