@@ -377,8 +377,11 @@
 </div>
 
 <script>
+    window.isScreenOff = false;
+
     class CatAudio {
         static playMeow() {
+            if (window.isScreenOff) return;
             try {
                 const audio = new Audio('meow.ogg');
                 audio.play().catch(e => {
@@ -392,6 +395,7 @@
         }
 
         static playPurr(duration = 3.0) {
+            if (window.isScreenOff) return;
             try {
                 if (this.currentPurr) {
                     try { this.currentPurr.pause(); } catch(err) {}
@@ -626,6 +630,7 @@
     }
 
     function playRandomMeowOverlay() {
+        if (window.isScreenOff) return;
         CatAudio.playMeow();
         bubble.textContent = Math.random() < 0.5 ? "¡Miau! ❤️" : "¡Miau! 🐾";
         bubble.classList.add('visible');

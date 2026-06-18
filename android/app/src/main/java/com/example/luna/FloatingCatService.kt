@@ -7,8 +7,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
@@ -50,6 +52,9 @@ class FloatingCatService : Service() {
     private var originalX = 0
     private var originalY = 0
 
+    private var screenReceiver: BroadcastReceiver? = null
+    private var isScreenOff = false
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
@@ -58,12 +63,67 @@ class FloatingCatService : Service() {
         updateScreenBounds()
         createNotificationChannel()
         startGameCheckLoop()
+        registerScreenReceiver()
     }
 
     private fun updateScreenBounds() {
         val displayMetrics = resources.displayMetrics
         screenWidth = displayMetrics.widthPixels
         screenHeight = displayMetrics.heightPixels
+    }
+
+    private fun registerScreenReceiver() {
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_SCREEN_ON)
+        }
+        screenReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                when (intent?.action) {
+                    Intent.ACTION_SCREEN_OFF -> pauseFloatingCat()
+                    Intent.ACTION_SCREEN_ON -> resumeFloatingCat()
+                }
+            }
+        }
+        registerReceiver(screenReceiver, filter)
+    }
+
+    private fun unregisterScreenReceiver() {
+        screenReceiver?.let {
+            try {
+                unregisterReceiver(it)
+            } catch (e: Exception) {
+                // Ignore
+            }
+        }
+    }
+
+    private fun pauseFloatingCat() {
+        isScreenOff = true
+        animator?.cancel()
+        isWalking = false
+        if (movementRunnable != null) {
+            handler.removeCallbacks(movementRunnable!!)
+        }
+        if (::webView.isInitialized) {
+            webView.post {
+                webView.evaluateJavascript("window.isScreenOff = true;", null)
+            }
+        }
+    }
+
+    private fun resumeFloatingCat() {
+        if (!isScreenOff) return
+        isScreenOff = false
+        if (::webView.isInitialized) {
+            webView.post {
+                webView.evaluateJavascript("window.isScreenOff = false; if (typeof setCatState === 'function') { setCatState('idle'); }", null)
+            }
+        }
+        if (movementRunnable != null) {
+            handler.removeCallbacks(movementRunnable!!)
+            handler.postDelayed(movementRunnable!!, 3000)
+        }
     }
 
     private fun createNotificationChannel() {
@@ -262,6 +322,7 @@ class FloatingCatService : Service() {
     private fun startMovementLoop() {
         movementRunnable = object : Runnable {
             override fun run() {
+                if (isScreenOff) return
                 if (!isWalking) {
                     // Decide action: walk, idle, sleep
                     val roll = (1..100).random()
@@ -293,6 +354,10 @@ class FloatingCatService : Service() {
     }
 
     private fun walkToRandomPosition() {
+        if (isScreenOff) {
+            isWalking = false
+            return
+        }
         isWalking = true
         updateScreenBounds()
         
@@ -516,6 +581,7 @@ class FloatingCatService : Service() {
         super.onDestroy()
         animator?.cancel()
         stopGameCheckLoop()
+        unregisterScreenReceiver()
         if (movementRunnable != null) {
             handler.removeCallbacks(movementRunnable!!)
         }
