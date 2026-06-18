@@ -1,6 +1,6 @@
 {
   "versionCode": 17,
-  "versionName": "1.4.2",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=16",
+  "versionName": "1.4.3",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=17",
   "whatsNew": "¡Nueva Actualización! Añadido el nuevo apartado 'Optimizar Celular' para escanear y limpiar la memoria caché de tus aplicaciones, finalizar procesos en segundo plano para liberar RAM y optimizar el rendimiento de tu teléfono. 🚀💕"
 }
