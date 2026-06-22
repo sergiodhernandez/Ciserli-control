@@ -1632,7 +1632,7 @@ body {
 
 /* Local Cat SVG Animations */
 .local-cat-container .cat-tail {
-    transform-origin: 18px 48px;
+    transform-origin: 66px 80px;
     animation: local-tail-sway 3s ease-in-out infinite;
 }
 
@@ -1664,12 +1664,12 @@ body {
 }
 .local-cat-container #local-cat-wrapper.state-idle .ear-left,
 .local-cat-container #local-cat-wrapper.state-idle .ear-inner-left {
-    transform-origin: 58px 20px;
+    transform-origin: 32px 20px;
     animation: local-ear-twitch-left 5s infinite;
 }
 .local-cat-container #local-cat-wrapper.state-idle .ear-right,
 .local-cat-container #local-cat-wrapper.state-idle .ear-inner-right {
-    transform-origin: 86px 20px;
+    transform-origin: 68px 20px;
     animation: local-ear-twitch-right 5s infinite;
 }
 
@@ -1712,7 +1712,7 @@ body {
     animation: local-walk-bounce 0.4s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .cat-bell {
-    transform-origin: 68px 42px;
+    transform-origin: 50px 52px;
     animation: local-bell-bounce 0.4s ease-in-out infinite;
 }
 
@@ -1776,23 +1776,23 @@ body {
 .local-cat-container #local-cat-wrapper.state-stretch .cat-mouth-open { display: block; animation: local-stretch-mouth 3s ease-in-out infinite; }
 .local-cat-container #local-cat-wrapper.state-stretch .cat-mouth-closed { display: none; }
 .local-cat-container #local-cat-wrapper.state-stretch .cat-body {
-    transform-origin: 50px 50px;
+    transform-origin: 50px 81px;
     animation: local-stretch-body 3s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-stretch .cat-head {
-    transform-origin: 72px 30px;
+    transform-origin: 50px 35px;
     animation: local-stretch-head 3s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-stretch .cat-tail {
-    transform-origin: 18px 48px;
+    transform-origin: 66px 80px;
     animation: local-stretch-tail 3s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-stretch .paw-front-left {
-    transform-origin: 42px 72px;
+    transform-origin: 38px 55px;
     animation: local-stretch-paw-left 3s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-stretch .paw-front-right {
-    transform-origin: 58px 72px;
+    transform-origin: 62px 55px;
     animation: local-stretch-paw-right 3s ease-in-out infinite;
 }
 
@@ -1829,13 +1829,13 @@ body {
 .local-cat-container #local-cat-wrapper.state-lick .eye-open { display: none; }
 .local-cat-container #local-cat-wrapper.state-lick .eye-closed { display: block; }
 .local-cat-container #local-cat-wrapper.state-lick .cat-mouth-closed { display: none; }
-.local-cat-container #local-cat-wrapper.state-lick .cat-tongue { display: block; transform-origin: 72px 38px; animation: local-lick-tongue 3s ease-in-out infinite; }
+.local-cat-container #local-cat-wrapper.state-lick .cat-tongue { display: block; transform-origin: 50px 44px; animation: local-lick-tongue 3s ease-in-out infinite; }
 .local-cat-container #local-cat-wrapper.state-lick .cat-head {
-    transform-origin: 72px 30px;
+    transform-origin: 50px 35px;
     animation: local-lick-head 3s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-lick .paw-front-left {
-    transform-origin: 42px 72px;
+    transform-origin: 38px 55px;
     animation: local-lick-paw 3s ease-in-out infinite;
 }
 
@@ -1857,11 +1857,11 @@ body {
 .local-cat-container #local-cat-wrapper.state-scratch .eye-open { display: none; }
 .local-cat-container #local-cat-wrapper.state-scratch .eye-closed { display: block; }
 .local-cat-container #local-cat-wrapper.state-scratch .cat-head {
-    transform-origin: 72px 30px;
+    transform-origin: 50px 35px;
     animation: local-scratch-head 2s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-scratch .paw-back-right {
-    transform-origin: 70px 72px;
+    transform-origin: 64px 66px;
     animation: local-scratch-paw 0.2s linear infinite;
 }
 
