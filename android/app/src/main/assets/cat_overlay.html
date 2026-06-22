@@ -226,45 +226,75 @@
             50% { transform: scaleY(1.02); }
         }
 
-        /* Walk state (bobbing, leg movement, bell bounce) */
+        /* Walk state (crawling/sliding walk cycle overrides) */
+        .state-walk .cat-body {
+            animation: walk-body-bob 0.6s ease-in-out infinite;
+        }
+        .state-walk .cat-head {
+            transform-origin: 50px 35px;
+            animation: walk-head-bob 0.6s ease-in-out infinite;
+        }
+        .state-walk .cat-tail {
+            transform-origin: 66px 80px;
+            animation: walk-tail-wag 0.6s ease-in-out infinite;
+        }
+        .state-walk .cat-collar, .state-walk .cat-bell {
+            animation: walk-neck-bob 0.6s ease-in-out infinite;
+        }
+
         .state-walk .paw-front-left {
-            animation: paw-move-1 0.4s linear infinite;
+            transform-origin: 38px 55px;
+            animation: walk-paw-front-l 0.6s linear infinite;
         }
         .state-walk .paw-front-right {
-            animation: paw-move-2 0.4s linear infinite;
+            transform-origin: 62px 55px;
+            animation: walk-paw-front-r 0.6s linear infinite;
         }
         .state-walk .paw-back-left {
-            animation: paw-move-2 0.4s linear infinite;
+            transform-origin: 32px 81px;
+            animation: walk-paw-back-l 0.6s linear infinite;
         }
         .state-walk .paw-back-right {
-            animation: paw-move-1 0.4s linear infinite;
-        }
-        .state-walk .cat-svg {
-            animation: walk-bounce 0.4s ease-in-out infinite;
-        }
-        .state-walk .cat-bell {
-            transform-origin: 50px 52px;
-            animation: bell-bounce 0.4s ease-in-out infinite;
+            transform-origin: 64px 66px;
+            animation: walk-paw-back-r 0.6s linear infinite;
         }
 
-        @keyframes bell-bounce {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            50% { transform: rotate(15deg) translateY(-0.5px); }
+        @keyframes walk-body-bob {
+            0%, 100% { transform: scaleX(1.15) scaleY(0.85) translate(-1px, 4px); }
+            50% { transform: scaleX(1.10) scaleY(0.90) translate(1px, 3px); }
+        }
+        @keyframes walk-head-bob {
+            0%, 100% { transform: translate(7px, 6px) rotate(2deg); }
+            50% { transform: translate(3px, 4px) rotate(-2deg); }
+        }
+        @keyframes walk-tail-wag {
+            0%, 100% { transform: rotate(50deg) translate(-4px, 12px); }
+            50% { transform: rotate(40deg) translate(-2px, 10px); }
+        }
+        @keyframes walk-neck-bob {
+            0%, 100% { transform: translate(6px, 5px); }
+            50% { transform: translate(2px, 4px); }
         }
 
-        @keyframes paw-move-1 {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px) translateX(1px); }
+        @keyframes walk-paw-front-l {
+            0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+            25% { transform: translate(4px, -3px) rotate(15deg); }
+            50% { transform: translate(8px, 1px) rotate(0deg); }
+            75% { transform: translate(4px, 2px) rotate(-10deg); }
         }
-
-        @keyframes paw-move-2 {
-            0%, 100% { transform: translateY(-3px) translateX(-1px); }
-            50% { transform: translateY(0); }
+        @keyframes walk-paw-front-r {
+            0%, 100% { transform: translate(8px, 1px) rotate(0deg); }
+            25% { transform: translate(4px, 2px) rotate(-10deg); }
+            50% { transform: translate(0px, 0px) rotate(0deg); }
+            75% { transform: translate(4px, -3px) rotate(15deg); }
         }
-
-        @keyframes walk-bounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-1.5px) rotate(1deg); }
+        @keyframes walk-paw-back-l {
+            0%, 100% { transform: translate(4px, 0px); }
+            50% { transform: translate(-4px, -1px); }
+        }
+        @keyframes walk-paw-back-r {
+            0%, 100% { transform: translate(-4px, -1px); }
+            50% { transform: translate(4px, 0px); }
         }
 
         /* Sleep state (curled/down body, closed eyes) */
@@ -538,78 +568,72 @@
                 </g>
             </g>
 
-            <!-- Head -->
-            <ellipse class="cat-head" cx="50" cy="35" rx="19" ry="16" fill="url(#head-grad)"/>
+            <!-- Head Group -->
+            <g class="cat-head">
+                <!-- Base Head -->
+                <ellipse class="cat-head-base" cx="50" cy="35" rx="19" ry="16" fill="url(#head-grad)"/>
 
-            <!-- Ears -->
-            <!-- Left Ear -->
-            <path class="cat-ear ear-left" d="M 31,22 C 26,15 27,6 36,6 C 41,6 44,14 45,22 Z" fill="url(#head-grad)"/>
-            <path class="cat-ear-inner ear-inner-left" d="M 33,21 C 29,16 30,10 36,10 C 39,10 41,15 42,21 Z" fill="var(--ear-inner)"/>
-            <!-- Right Ear -->
-            <path class="cat-ear ear-right" d="M 69,22 C 74,15 73,6 64,6 C 59,6 56,14 55,22 Z" fill="url(#head-grad)"/>
-            <path class="cat-ear-inner ear-inner-right" d="M 67,21 C 71,16 70,10 64,10 C 61,10 59,15 58,21 Z" fill="var(--ear-inner)"/>
+                <!-- Ears -->
+                <!-- Left Ear -->
+                <path class="cat-ear ear-left" d="M 31,22 C 26,15 27,6 36,6 C 41,6 44,14 45,22 Z" fill="url(#head-grad)"/>
+                <path class="cat-ear-inner ear-inner-left" d="M 33,21 C 29,16 30,10 36,10 C 39,10 41,15 42,21 Z" fill="var(--ear-inner)"/>
+                <!-- Right Ear -->
+                <path class="cat-ear ear-right" d="M 69,22 C 74,15 73,6 64,6 C 59,6 56,14 55,22 Z" fill="url(#head-grad)"/>
+                <path class="cat-ear-inner ear-inner-right" d="M 67,21 C 71,16 70,10 64,10 C 61,10 59,15 58,21 Z" fill="var(--ear-inner)"/>
 
-            <!-- Collar & Bell -->
-            <path class="cat-collar" d="M 38 48 Q 50 53 62 48" stroke="#d63031" stroke-width="2.5" fill="none" stroke-linecap="round" />
-            <g class="cat-bell">
-                <line x1="50" y1="50" x2="50" y2="52" stroke="#fbc02d" stroke-width="1.5" />
-                <circle cx="50" cy="55" r="4.5" fill="url(#bell-grad)" stroke="#d4af37" stroke-width="0.5" />
-                <circle cx="50" cy="56" r="1" fill="#2d3436" />
-                <line x1="48" y1="57" x2="52" y2="57" stroke="#2d3436" stroke-width="0.5" />
-            </g>
+                <!-- Blush Cheeks -->
+                <ellipse class="cat-blush blush-left" cx="38" cy="38" rx="4" ry="2" fill="url(#blush-grad)" />
+                <ellipse class="cat-blush blush-right" cx="62" cy="38" rx="4" ry="2" fill="url(#blush-grad)" />
 
-            <!-- Blush Cheeks -->
-            <ellipse class="cat-blush blush-left" cx="38" cy="38" rx="4" ry="2" fill="url(#blush-grad)" />
-            <ellipse class="cat-blush blush-right" cx="62" cy="38" rx="4" ry="2" fill="url(#blush-grad)" />
-
-            <!-- Eyes -->
-            <!-- Left Eye -->
-            <g class="cat-eye-group eye-left">
-                <g class="eye-open">
-                    <ellipse cx="42" cy="33" rx="3.5" ry="4.8" fill="var(--face-details)" />
-                    <circle cx="40.8" cy="31.2" r="1.3" fill="white" />
-                    <circle cx="43.2" cy="34.8" r="0.6" fill="white" />
+                <!-- Eyes -->
+                <!-- Left Eye -->
+                <g class="cat-eye-group eye-left">
+                    <g class="eye-open">
+                        <ellipse cx="42" cy="33" rx="3.5" ry="4.8" fill="var(--face-details)" />
+                        <circle cx="40.8" cy="31.2" r="1.3" fill="white" />
+                        <circle cx="43.2" cy="34.8" r="0.6" fill="white" />
+                    </g>
+                    <path class="eye-closed" d="M 38.5 33 Q 42 36 45.5 33" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                    <path class="eye-happy" d="M 38.5 34 Q 42 31 45.5 34" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
                 </g>
-                <path class="eye-closed" d="M 38.5 33 Q 42 36 45.5 33" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <path class="eye-happy" d="M 38.5 34 Q 42 31 45.5 34" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-            </g>
-            <!-- Right Eye -->
-            <g class="cat-eye-group eye-right">
-                <g class="eye-open">
-                    <ellipse cx="58" cy="33" rx="3.5" ry="4.8" fill="var(--face-details)" />
-                    <circle cx="56.8" cy="31.2" r="1.3" fill="white" />
-                    <circle cx="59.2" cy="34.8" r="0.6" fill="white" />
+                <!-- Right Eye -->
+                <g class="cat-eye-group eye-right">
+                    <g class="eye-open">
+                        <ellipse cx="58" cy="33" rx="3.5" ry="4.8" fill="var(--face-details)" />
+                        <circle cx="56.8" cy="31.2" r="1.3" fill="white" />
+                        <circle cx="59.2" cy="34.8" r="0.6" fill="white" />
+                    </g>
+                    <path class="eye-closed" d="M 54.5 33 Q 58 36 61.5 33" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                    <path class="eye-happy" d="M 54.5 34 Q 58 31 61.5 34" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
                 </g>
-                <path class="eye-closed" d="M 54.5 33 Q 58 36 61.5 33" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <path class="eye-happy" d="M 54.5 34 Q 58 31 61.5 34" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+                <!-- Nose & Mouth (White muzzle backdrop) -->
+                <ellipse cx="50" cy="37.5" rx="7" ry="4.5" fill="#ffffff" />
+                <ellipse cx="50" cy="36" rx="1.2" ry="0.8" fill="var(--face-details)" />
+
+                <!-- Mouth & Tongue -->
+                <g class="cat-mouth-group">
+                    <path class="cat-mouth-closed" d="M 47.5 37.5 Q 48.75 39 50 37.5 Q 51.25 39 52.5 37.5" stroke="var(--face-details)" stroke-width="1.2" fill="none" stroke-linecap="round" />
+                    <ellipse class="cat-mouth-open" cx="50" cy="39.5" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.8" />
+                    <path class="cat-tongue" d="M 48.5 38.8 Q 50 41.5 51.5 38.8 Z" fill="#ffccd5" />
+                </g>
+
+                <!-- Whiskers -->
+                <line x1="33" y1="36" x2="26" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+                <line x1="33" y1="38" x2="25" y2="39" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+                <line x1="67" y1="36" x2="74" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+                <line x1="67" y1="38" x2="75" y2="39" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+
+                <!-- Forehead & Cheek Tabby Stripes -->
+                <path class="cat-patches forehead-stripe-mid" d="M 50,19 L 50,24" stroke="var(--patch-1-color)" stroke-width="1.8" stroke-linecap="round" style="display: var(--has-patches);"/>
+                <path class="cat-patches forehead-stripe-left" d="M 46,20 Q 47,22 47,24" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                <path class="cat-patches forehead-stripe-right" d="M 54,20 Q 53,22 53,24" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+
+                <path class="cat-patches cheek-stripe-l1" d="M 33,34 Q 37,34 38,34" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                <path class="cat-patches cheek-stripe-l2" d="M 32,37 Q 35,37 36,37" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                <path class="cat-patches cheek-stripe-r1" d="M 67,34 Q 63,34 62,34" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                <path class="cat-patches cheek-stripe-r2" d="M 68,37 Q 65,37 64,37" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
             </g>
-
-            <!-- Nose & Mouth (White muzzle backdrop) -->
-            <ellipse cx="50" cy="37.5" rx="7" ry="4.5" fill="#ffffff" />
-            <ellipse cx="50" cy="36" rx="1.2" ry="0.8" fill="var(--face-details)" />
-
-            <!-- Mouth & Tongue -->
-            <g class="cat-mouth-group">
-                <path class="cat-mouth-closed" d="M 47.5 37.5 Q 48.75 39 50 37.5 Q 51.25 39 52.5 37.5" stroke="var(--face-details)" stroke-width="1.2" fill="none" stroke-linecap="round" />
-                <ellipse class="cat-mouth-open" cx="50" cy="39.5" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.8" />
-                <path class="cat-tongue" d="M 48.5 38.8 Q 50 41.5 51.5 38.8 Z" fill="#ffccd5" />
-            </g>
-
-            <!-- Whiskers -->
-            <line x1="33" y1="36" x2="26" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
-            <line x1="33" y1="38" x2="25" y2="39" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
-            <line x1="67" y1="36" x2="74" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
-            <line x1="67" y1="38" x2="75" y2="39" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
-
-            <!-- Forehead & Cheek Tabby Stripes -->
-            <path class="cat-patches forehead-stripe-mid" d="M 50,19 L 50,24" stroke="var(--patch-1-color)" stroke-width="1.8" stroke-linecap="round" style="display: var(--has-patches);"/>
-            <path class="cat-patches forehead-stripe-left" d="M 46,20 Q 47,22 47,24" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-            <path class="cat-patches forehead-stripe-right" d="M 54,20 Q 53,22 53,24" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-
-            <path class="cat-patches cheek-stripe-l1" d="M 33,34 Q 37,34 38,34" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-            <path class="cat-patches cheek-stripe-l2" d="M 32,37 Q 35,37 36,37" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-            <path class="cat-patches cheek-stripe-r1" d="M 67,34 Q 63,34 62,34" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-            <path class="cat-patches cheek-stripe-r2" d="M 68,37 Q 65,37 64,37" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
         </svg>
     </div>
 </div>

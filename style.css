@@ -1695,42 +1695,76 @@ body {
     50% { transform: scaleY(1.02); }
 }
 
-/* Walk */
-.local-cat-container #local-cat-wrapper.state-walk .paw-front-left {
-    animation: local-paw-move-1 0.4s linear infinite;
+/* Walk (Crawling/sliding walk cycle overrides) */
+.local-cat-container #local-cat-wrapper.state-walk .cat-body {
+    animation: local-walk-body-bob 0.6s ease-in-out infinite;
 }
-.local-cat-container #local-cat-wrapper.state-walk .paw-front-right {
-    animation: local-paw-move-2 0.4s linear infinite;
+.local-cat-container #local-cat-wrapper.state-walk .cat-head {
+    transform-origin: 50px 35px;
+    animation: local-walk-head-bob 0.6s ease-in-out infinite;
 }
-.local-cat-container #local-cat-wrapper.state-walk .paw-back-left {
-    animation: local-paw-move-2 0.4s linear infinite;
+.local-cat-container #local-cat-wrapper.state-walk .cat-tail {
+    transform-origin: 66px 80px;
+    animation: local-walk-tail-wag 0.6s ease-in-out infinite;
 }
-.local-cat-container #local-cat-wrapper.state-walk .paw-back-right {
-    animation: local-paw-move-1 0.4s linear infinite;
-}
-.local-cat-container #local-cat-wrapper.state-walk .cat-svg {
-    animation: local-walk-bounce 0.4s ease-in-out infinite;
-}
+.local-cat-container #local-cat-wrapper.state-walk .cat-collar,
 .local-cat-container #local-cat-wrapper.state-walk .cat-bell {
-    transform-origin: 50px 52px;
-    animation: local-bell-bounce 0.4s ease-in-out infinite;
+    animation: local-walk-neck-bob 0.6s ease-in-out infinite;
 }
 
-@keyframes local-bell-bounce {
-    0%, 100% { transform: rotate(0deg) translateY(0); }
-    50% { transform: rotate(15deg) translateY(-0.5px); }
+.local-cat-container #local-cat-wrapper.state-walk .paw-front-left {
+    transform-origin: 38px 55px;
+    animation: local-walk-paw-front-l 0.6s linear infinite;
 }
-@keyframes local-paw-move-1 {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px) translateX(1px); }
+.local-cat-container #local-cat-wrapper.state-walk .paw-front-right {
+    transform-origin: 62px 55px;
+    animation: local-walk-paw-front-r 0.6s linear infinite;
 }
-@keyframes local-paw-move-2 {
-    0%, 100% { transform: translateY(-3px) translateX(-1px); }
-    50% { transform: translateY(0); }
+.local-cat-container #local-cat-wrapper.state-walk .paw-back-left {
+    transform-origin: 32px 81px;
+    animation: local-walk-paw-back-l 0.6s linear infinite;
 }
-@keyframes local-walk-bounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-1.5px) rotate(1deg); }
+.local-cat-container #local-cat-wrapper.state-walk .paw-back-right {
+    transform-origin: 64px 66px;
+    animation: local-walk-paw-back-r 0.6s linear infinite;
+}
+
+@keyframes local-walk-body-bob {
+    0%, 100% { transform: scaleX(1.15) scaleY(0.85) translate(-1px, 4px); }
+    50% { transform: scaleX(1.10) scaleY(0.90) translate(1px, 3px); }
+}
+@keyframes local-walk-head-bob {
+    0%, 100% { transform: translate(7px, 6px) rotate(2deg); }
+    50% { transform: translate(3px, 4px) rotate(-2deg); }
+}
+@keyframes local-walk-tail-wag {
+    0%, 100% { transform: rotate(50deg) translate(-4px, 12px); }
+    50% { transform: rotate(40deg) translate(-2px, 10px); }
+}
+@keyframes local-walk-neck-bob {
+    0%, 100% { transform: translate(6px, 5px); }
+    50% { transform: translate(2px, 4px); }
+}
+
+@keyframes local-walk-paw-front-l {
+    0%, 100% { transform: translate(0px, 0px) rotate(0deg); }
+    25% { transform: translate(4px, -3px) rotate(15deg); }
+    50% { transform: translate(8px, 1px) rotate(0deg); }
+    75% { transform: translate(4px, 2px) rotate(-10deg); }
+}
+@keyframes local-walk-paw-front-r {
+    0%, 100% { transform: translate(8px, 1px) rotate(0deg); }
+    25% { transform: translate(4px, 2px) rotate(-10deg); }
+    50% { transform: translate(0px, 0px) rotate(0deg); }
+    75% { transform: translate(4px, -3px) rotate(15deg); }
+}
+@keyframes local-walk-paw-back-l {
+    0%, 100% { transform: translate(4px, 0px); }
+    50% { transform: translate(-4px, -1px); }
+}
+@keyframes local-walk-paw-back-r {
+    0%, 100% { transform: translate(-4px, -1px); }
+    50% { transform: translate(4px, 0px); }
 }
 
 /* Sleep */

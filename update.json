@@ -1,6 +1,6 @@
 {
-  "versionCode": 25,
-  "versionName": "1.5.2",
-  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=25",
-  "whatsNew": "¡Nuevo rediseño del gato Sheshe a estilo tabby sentado gris con pecho blanco! El gato ahora tiene el diseño de la imagen de referencia, con rayas tabby en la frente, mejillas, cuerpo y cola, pecho blanco esponjoso, y patas ubicadas en su pose sentada frontal. 🐱❤️"
+  "versionCode": 26,
+  "versionName": "1.5.3",
+  "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/android/app/build/outputs/apk/debug/app-debug.apk?v=26",
+  "whatsNew": "¡Mejora de animación! Agrupamos la cabeza de Sheshe para evitar desmembramiento facial y agregamos la animación crawl (caminata baja) inspirada en el gato de PC del usuario. Sheshe ahora se estira y gatea de forma fluida. 🐱✨"
 }
