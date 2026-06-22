@@ -130,7 +130,7 @@ class FloatingCatService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "floating_cat_channel",
-                "Mascota Virtual (Michi)",
+                "Mascota Virtual (Sheshe)",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Mantiene activo al gatito sobre tu pantalla"
@@ -147,8 +147,8 @@ class FloatingCatService : Service() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         return NotificationCompat.Builder(this, "floating_cat_channel")
-            .setContentTitle("Michi está de visita")
-            .setContentText("El gatito está paseando por tu pantalla. ¡Tócalo!")
+            .setContentTitle("Sheshe está de visita")
+            .setContentText("Sheshe está paseando por tu pantalla. ¡Tócalo!")
             .setSmallIcon(applicationInfo.icon)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
@@ -324,23 +324,41 @@ class FloatingCatService : Service() {
             override fun run() {
                 if (isScreenOff) return
                 if (!isWalking) {
-                    // Decide action: walk, idle, sleep
+                    // Decide action: walk=40%, idle=25%, sleep=15%, stretch=7%, lick=7%, scratch=6%
                     val roll = (1..100).random()
                     when {
-                        roll <= 50 -> {
+                        roll <= 40 -> {
                             // Walk
                             walkToRandomPosition()
                         }
-                        roll <= 80 -> {
+                        roll <= 65 -> {
                             // Idle/Sit
                             webView.post {
                                 webView.evaluateJavascript("setCatState('idle')", null)
                             }
                         }
-                        else -> {
+                        roll <= 80 -> {
                             // Sleep
                             webView.post {
                                 webView.evaluateJavascript("setCatState('sleep')", null)
+                            }
+                        }
+                        roll <= 87 -> {
+                            // Stretch/Yawn
+                            webView.post {
+                                webView.evaluateJavascript("setCatState('stretch')", null)
+                            }
+                        }
+                        roll <= 94 -> {
+                            // Lick paw
+                            webView.post {
+                                webView.evaluateJavascript("setCatState('lick')", null)
+                            }
+                        }
+                        else -> {
+                            // Scratch behind ear
+                            webView.post {
+                                webView.evaluateJavascript("setCatState('scratch')", null)
                             }
                         }
                     }

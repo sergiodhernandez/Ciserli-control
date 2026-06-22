@@ -440,6 +440,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         
+                        if (cacheSize <= 0) {
+                            continue
+                        }
+                        
                         val appJson = JSONObject()
                         appJson.put("name", appName)
                         appJson.put("packageName", packageName)
@@ -536,9 +540,49 @@ class MainActivity : ComponentActivity() {
             try {
                 val am = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                 val packagesArray = JSONArray(packagesJson)
-                val packagesToKill = mutableListOf<String>()
+                val rawPackages = mutableListOf<String>()
                 for (i in 0 until packagesArray.length()) {
-                    packagesToKill.add(packagesArray.getString(i))
+                    rawPackages.add(packagesArray.getString(i))
+                }
+
+                var storageStatsManager: android.app.usage.StorageStatsManager? = null
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    storageStatsManager = activity.getSystemService(Context.STORAGE_STATS_SERVICE) as? android.app.usage.StorageStatsManager
+                }
+
+                // Get running packages
+                val runningProcesses = am.runningAppProcesses
+                val runningPackages = mutableSetOf<String>()
+                if (runningProcesses != null) {
+                    for (procInfo in runningProcesses) {
+                        for (pkg in procInfo.pkgList) {
+                            runningPackages.add(pkg)
+                        }
+                    }
+                }
+
+                // Filter packages according to actionType
+                val packagesToKill = rawPackages.filter { pkg ->
+                    if (actionType == "force_stop") {
+                        pkg in runningPackages
+                    } else if (actionType == "clear_cache") {
+                        var cacheSize: Long = 0
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && storageStatsManager != null) {
+                            try {
+                                val storageStats = storageStatsManager.queryStatsForPackage(
+                                    android.os.storage.StorageManager.UUID_DEFAULT,
+                                    pkg,
+                                    android.os.Process.myUserHandle()
+                                )
+                                cacheSize = storageStats.cacheBytes
+                            } catch (e: Exception) {
+                                // Ignore
+                            }
+                        }
+                        cacheSize > 0
+                    } else {
+                        true
+                    }
                 }
 
                 // If accessibility service is enabled, run the automated accessibility cleaning!

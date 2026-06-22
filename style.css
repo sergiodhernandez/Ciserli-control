@@ -1491,7 +1491,7 @@ body {
     box-shadow: 0 0 45px rgba(255, 229, 180, 1), inset 0 0 25px rgba(255, 229, 180, 0.8) !important;
 }
 
-/* --- MASCOTA VIRTUAL (MICHI LOCAL) STYLES --- */
+/* --- MASCOTA VIRTUAL (SHESHE LOCAL) STYLES --- */
 .local-cat-container {
     position: absolute;
     bottom: 80px;
@@ -1646,6 +1646,12 @@ body {
     display: none;
 }
 
+/* Default hiding for mouth open and tongue */
+.local-cat-container .cat-mouth-open,
+.local-cat-container .cat-tongue {
+    display: none;
+}
+
 /* States */
 .local-cat-container #local-cat-wrapper.state-idle .eye-open {
     animation: local-eye-blink 4s infinite;
@@ -1655,6 +1661,25 @@ body {
 }
 .local-cat-container #local-cat-wrapper.state-idle .cat-body {
     animation: local-body-breath 2s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-idle .ear-left,
+.local-cat-container #local-cat-wrapper.state-idle .ear-inner-left {
+    transform-origin: 58px 20px;
+    animation: local-ear-twitch-left 5s infinite;
+}
+.local-cat-container #local-cat-wrapper.state-idle .ear-right,
+.local-cat-container #local-cat-wrapper.state-idle .ear-inner-right {
+    transform-origin: 86px 20px;
+    animation: local-ear-twitch-right 5s infinite;
+}
+
+@keyframes local-ear-twitch-left {
+    0%, 90%, 94%, 98%, 100% { transform: rotate(0deg); }
+    92%, 96% { transform: rotate(-6deg); }
+}
+@keyframes local-ear-twitch-right {
+    0%, 92%, 96%, 100% { transform: rotate(0deg); }
+    94%, 98% { transform: rotate(6deg); }
 }
 
 @keyframes local-eye-blink {
@@ -1686,7 +1711,15 @@ body {
 .local-cat-container #local-cat-wrapper.state-walk .cat-svg {
     animation: local-walk-bounce 0.4s ease-in-out infinite;
 }
+.local-cat-container #local-cat-wrapper.state-walk .cat-bell {
+    transform-origin: 68px 42px;
+    animation: local-bell-bounce 0.4s ease-in-out infinite;
+}
 
+@keyframes local-bell-bounce {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(15deg) translateY(-0.5px); }
+}
 @keyframes local-paw-move-1 {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-3px) translateX(1px); }
@@ -1735,6 +1768,111 @@ body {
 @keyframes local-tail-sway-fast {
     0%, 100% { transform: rotate(0deg); }
     50% { transform: rotate(-25deg); }
+}
+
+/* Stretch state (arching back, yawning, paws extended) */
+.local-cat-container #local-cat-wrapper.state-stretch .eye-open { display: none; }
+.local-cat-container #local-cat-wrapper.state-stretch .eye-closed { display: block; animation: local-stretch-eyes 3s ease-in-out infinite; }
+.local-cat-container #local-cat-wrapper.state-stretch .cat-mouth-open { display: block; animation: local-stretch-mouth 3s ease-in-out infinite; }
+.local-cat-container #local-cat-wrapper.state-stretch .cat-mouth-closed { display: none; }
+.local-cat-container #local-cat-wrapper.state-stretch .cat-body {
+    transform-origin: 50px 50px;
+    animation: local-stretch-body 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-stretch .cat-head {
+    transform-origin: 72px 30px;
+    animation: local-stretch-head 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-stretch .cat-tail {
+    transform-origin: 18px 48px;
+    animation: local-stretch-tail 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-stretch .paw-front-left {
+    transform-origin: 42px 72px;
+    animation: local-stretch-paw-left 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-stretch .paw-front-right {
+    transform-origin: 58px 72px;
+    animation: local-stretch-paw-right 3s ease-in-out infinite;
+}
+
+@keyframes local-stretch-body {
+    0%, 100% { transform: scale(1) translateY(0) skewX(0deg); }
+    30%, 70% { transform: scaleY(0.85) scaleX(1.05) translateY(2px) skewX(-5deg); }
+}
+@keyframes local-stretch-head {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    30%, 70% { transform: translate(2px, 3px) rotate(8deg); }
+}
+@keyframes local-stretch-tail {
+    0%, 100% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(-55deg); }
+}
+@keyframes local-stretch-paw-left {
+    0%, 100% { transform: translate(0, 0) scaleY(1); }
+    30%, 70% { transform: translate(-4px, 1px) rotate(-15deg) scaleY(0.9); }
+}
+@keyframes local-stretch-paw-right {
+    0%, 100% { transform: translate(0, 0) scaleY(1); }
+    30%, 70% { transform: translate(-1px, 1px) scaleY(0.9); }
+}
+@keyframes local-stretch-mouth {
+    0%, 20%, 80%, 100% { transform: scale(0); }
+    35%, 65% { transform: scale(1.2); }
+}
+@keyframes local-stretch-eyes {
+    0%, 100% { transform: scaleY(1); }
+    30%, 70% { transform: scaleY(0.8); }
+}
+
+/* Lick state (lick paw) */
+.local-cat-container #local-cat-wrapper.state-lick .eye-open { display: none; }
+.local-cat-container #local-cat-wrapper.state-lick .eye-closed { display: block; }
+.local-cat-container #local-cat-wrapper.state-lick .cat-mouth-closed { display: none; }
+.local-cat-container #local-cat-wrapper.state-lick .cat-tongue { display: block; transform-origin: 72px 38px; animation: local-lick-tongue 3s ease-in-out infinite; }
+.local-cat-container #local-cat-wrapper.state-lick .cat-head {
+    transform-origin: 72px 30px;
+    animation: local-lick-head 3s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-lick .paw-front-left {
+    transform-origin: 42px 72px;
+    animation: local-lick-paw 3s ease-in-out infinite;
+}
+
+@keyframes local-lick-head {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25%, 75% { transform: translate(-3px, 4px) rotate(-15deg); }
+}
+@keyframes local-lick-paw {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    25%, 75% { transform: translate(12px, -18px) rotate(45deg); }
+}
+@keyframes local-lick-tongue {
+    0%, 20%, 80%, 100% { transform: scale(0) translate(0, 0); }
+    30%, 40%, 50%, 60%, 70% { transform: scale(1) translate(-2px, 1px) rotate(-10deg); }
+    35%, 45%, 55%, 65% { transform: scale(1) translate(-1px, 2px) rotate(-5deg); }
+}
+
+/* Scratch state (scratch behind ear) */
+.local-cat-container #local-cat-wrapper.state-scratch .eye-open { display: none; }
+.local-cat-container #local-cat-wrapper.state-scratch .eye-closed { display: block; }
+.local-cat-container #local-cat-wrapper.state-scratch .cat-head {
+    transform-origin: 72px 30px;
+    animation: local-scratch-head 2s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-scratch .paw-back-right {
+    transform-origin: 70px 72px;
+    animation: local-scratch-paw 0.2s linear infinite;
+}
+
+@keyframes local-scratch-head {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10%, 90% { transform: translate(-1px, 2px) rotate(-8deg); }
+}
+@keyframes local-scratch-paw {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    33% { transform: translate(5px, -22px) rotate(-35deg); }
+    66% { transform: translate(7px, -24px) rotate(-30deg); }
 }
 
 /* Floating Hearts & Zzz bubbles */

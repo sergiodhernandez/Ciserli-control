@@ -1606,23 +1606,37 @@ function initVirtualCat() {
         movementInterval = setInterval(() => {
             if (!appState.settings.cat.enabled || localCatState.isWalking || (localBubble && localBubble.classList.contains('visible'))) return;
 
-            // Random action: walk=50%, idle=30%, sleep=20%
+            // Random action distribution:
+            // walk: 40% (0-39), idle: 25% (40-64), sleep: 15% (65-79), stretch: 7% (80-86), lick: 7% (87-93), scratch: 6% (94-99)
             const roll = Math.floor(Math.random() * 100);
-            
-            // Random meow chance (15%) when transitioning to active states
-            if (roll < 80 && Math.random() < 0.15) {
+            let nextState = 'idle';
+
+            if (roll < 40) {
+                nextState = 'walk';
+            } else if (roll < 65) {
+                nextState = 'idle';
+            } else if (roll < 80) {
+                nextState = 'sleep';
+            } else if (roll < 87) {
+                nextState = 'stretch';
+            } else if (roll < 94) {
+                nextState = 'lick';
+            } else {
+                nextState = 'scratch';
+            }
+
+            // Random meow chance (15%) when transitioning to active states (not sleep)
+            if (nextState !== 'sleep' && Math.random() < 0.15) {
                 if (!localBubble.classList.contains('visible')) {
                     CatAudio.playMeow();
                     showLocalCatBubble(Math.random() < 0.5 ? "¡Miau! ❤️" : "¡Miau! 🐾", 2000);
                 }
             }
 
-            if (roll < 50) {
+            if (nextState === 'walk') {
                 walkLocalCat();
-            } else if (roll < 80) {
-                setLocalCatAnimation('idle');
             } else {
-                setLocalCatAnimation('sleep');
+                setLocalCatAnimation(nextState);
             }
         }, 7000);
     }
