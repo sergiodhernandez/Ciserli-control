@@ -527,18 +527,18 @@
             </g>
 
             <!-- Head -->
-            <circle class="cat-head" cx="72" cy="30" r="18" fill="url(#head-grad)"/>
+            <ellipse class="cat-head" cx="72" cy="30" rx="19" ry="17" fill="url(#head-grad)"/>
             
             <!-- Patches on head -->
-            <path class="cat-patches head-patch" d="M 64 16 Q 72 23 72 13 Q 78 18 84 21 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
+            <path class="cat-patches head-patch" d="M 62,17 C 68,23 72,16 72,13 C 78,16 83,18 83,21 Z" fill="var(--patch-2-color)" style="display: var(--has-patches);"/>
 
             <!-- Ears -->
             <!-- Left Ear -->
-            <path class="cat-ear ear-left" d="M 58 20 L 52 2 L 66 14 Z" fill="url(#head-grad)"/>
-            <path class="cat-ear-inner ear-inner-left" d="M 60 18 L 56 6 L 64 13 Z" fill="var(--ear-inner)"/>
+            <path class="cat-ear ear-left" d="M 57,22 C 51,13 54,4 61,4 C 66,4 66,13 67,22 Z" fill="url(#head-grad)"/>
+            <path class="cat-ear-inner ear-inner-left" d="M 58.5,20 C 54.5,14 56.5,8 60.5,8 C 63.5,8 63.5,14 64.5,20 Z" fill="var(--ear-inner)"/>
             <!-- Right Ear -->
-            <path class="cat-ear ear-right" d="M 86 20 L 92 2 L 78 14 Z" fill="url(#head-grad)"/>
-            <path class="cat-ear-inner ear-inner-right" d="M 84 18 L 88 6 L 80 13 Z" fill="var(--ear-inner)"/>
+            <path class="cat-ear ear-right" d="M 87,22 C 93,13 90,4 83,4 C 78,4 78,13 77,22 Z" fill="url(#head-grad)"/>
+            <path class="cat-ear-inner ear-inner-right" d="M 85.5,20 C 89.5,14 87.5,8 83.5,8 C 80.5,8 80.5,14 79.5,20 Z" fill="var(--ear-inner)"/>
 
             <!-- Collar & Bell -->
             <path class="cat-collar" d="M 56 38 Q 68 46 80 38" stroke="#d63031" stroke-width="2.5" fill="none" stroke-linecap="round" />
@@ -550,50 +550,46 @@
             </g>
 
             <!-- Blush Cheeks -->
-            <ellipse class="cat-blush blush-left" cx="62" cy="34" rx="4" ry="2" fill="url(#blush-grad)" />
-            <ellipse class="cat-blush blush-right" cx="82" cy="34" rx="4" ry="2" fill="url(#blush-grad)" />
+            <ellipse class="cat-blush blush-left" cx="60" cy="33" rx="4" ry="2" fill="url(#blush-grad)" />
+            <ellipse class="cat-blush blush-right" cx="84" cy="33" rx="4" ry="2" fill="url(#blush-grad)" />
 
             <!-- Eyes -->
             <!-- Left Eye -->
             <g class="cat-eye-group eye-left">
                 <g class="eye-open">
-                    <ellipse cx="66" cy="30" rx="3.5" ry="4" fill="white" stroke="var(--face-details)" stroke-width="0.5" />
-                    <ellipse cx="66" cy="30" rx="2.5" ry="3" fill="var(--eye-color)" />
-                    <ellipse class="eye-pupil-slit" cx="66" cy="30" rx="0.8" ry="2.2" fill="#1e272e" />
-                    <circle cx="65.0" cy="28.5" r="0.8" fill="white" />
-                    <circle cx="67.2" cy="31.2" r="0.4" fill="white" />
+                    <ellipse cx="65" cy="29" rx="3.5" ry="4.8" fill="var(--face-details)" />
+                    <circle cx="63.8" cy="27.2" r="1.3" fill="white" />
+                    <circle cx="66.2" cy="30.8" r="0.6" fill="white" />
                 </g>
-                <path class="eye-closed" d="M 62.5 30 Q 66 33 69.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <path class="eye-happy" d="M 62.5 31 Q 66 28 69.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path class="eye-closed" d="M 61.5 29 Q 65 32 68.5 29" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path class="eye-happy" d="M 61.5 30 Q 65 27 68.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
             </g>
             <!-- Right Eye -->
             <g class="cat-eye-group eye-right">
                 <g class="eye-open">
-                    <ellipse cx="78" cy="30" rx="3.5" ry="4" fill="white" stroke="var(--face-details)" stroke-width="0.5" />
-                    <ellipse cx="78" cy="30" rx="2.5" ry="3" fill="var(--eye-color)" />
-                    <ellipse class="eye-pupil-slit" cx="78" cy="30" rx="0.8" ry="2.2" fill="#1e272e" />
-                    <circle cx="77.0" cy="28.5" r="0.8" fill="white" />
-                    <circle cx="79.2" cy="31.2" r="0.4" fill="white" />
+                    <ellipse cx="77" cy="29" rx="3.5" ry="4.8" fill="var(--face-details)" />
+                    <circle cx="75.8" cy="27.2" r="1.3" fill="white" />
+                    <circle cx="78.2" cy="30.8" r="0.6" fill="white" />
                 </g>
-                <path class="eye-closed" d="M 74.5 30 Q 78 33 81.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <path class="eye-happy" d="M 74.5 31 Q 78 28 81.5 31" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path class="eye-closed" d="M 73.5 29 Q 77 32 80.5 29" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path class="eye-happy" d="M 73.5 30 Q 77 27 80.5 30" stroke="var(--face-details)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
             </g>
 
             <!-- Nose -->
-            <polygon points="71,33 73,33 72,34.2" fill="#ff8a9e" />
+            <ellipse cx="71" cy="31.2" rx="1.2" ry="0.8" fill="#ff8a9e" />
 
             <!-- Mouth & Tongue -->
             <g class="cat-mouth-group">
-                <path class="cat-mouth-closed" d="M 69 35.5 Q 70.5 37 72 35.5 Q 73.5 37 75 35.5" stroke="var(--face-details)" stroke-width="1.2" fill="none" stroke-linecap="round" />
-                <ellipse class="cat-mouth-open" cx="72" cy="38" rx="2.5" ry="3.5" fill="#d63031" stroke="var(--face-details)" stroke-width="0.8" />
-                <path class="cat-tongue" d="M 70.5 37.5 Q 72 40.5 73.5 37.5 Z" fill="#ffccd5" />
+                <path class="cat-mouth-closed" d="M 68.5 32.5 Q 69.75 34 71 32.5 Q 72.25 34 73.5 32.5" stroke="var(--face-details)" stroke-width="1.2" fill="none" stroke-linecap="round" />
+                <ellipse class="cat-mouth-open" cx="71" cy="34.5" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.8" />
+                <path class="cat-tongue" d="M 69.5 33.8 Q 71 36.5 72.5 33.8 Z" fill="#ffccd5" />
             </g>
 
             <!-- Whiskers -->
-            <line x1="58" y1="34" x2="49" y2="33" stroke="var(--face-details)" stroke-width="1" />
-            <line x1="58" y1="37" x2="48" y2="37" stroke="var(--face-details)" stroke-width="1" />
-            <line x1="86" y1="34" x2="95" y2="33" stroke="var(--face-details)" stroke-width="1" />
-            <line x1="86" y1="37" x2="96" y2="37" stroke="var(--face-details)" stroke-width="1" />
+            <line x1="57" y1="32" x2="49" y2="31" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+            <line x1="57" y1="34" x2="48" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+            <line x1="85" y1="32" x2="93" y2="31" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
+            <line x1="85" y1="34" x2="94" y2="35" stroke="var(--face-details)" stroke-width="0.8" stroke-linecap="round" />
         </svg>
     </div>
 </div>
