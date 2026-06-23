@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.luna"
         minSdk = 24
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.5.3"
+        versionCode = 27
+        versionName = "1.6.0"
     }
 
     buildTypes {

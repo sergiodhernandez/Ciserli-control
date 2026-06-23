@@ -340,8 +340,19 @@ function loadState() {
             enabled: true,
             overlayEnabled: false,
             skin: 'patched',
-            size: 'medium'
+            size: 'medium',
+            hideInGames: false,
+            needs: { hunger: 80, happiness: 80, hygiene: 80, energy: 80, lastDecay: Date.now() },
+            accessories: { hat: false, bow: false, glasses: false }
         };
+    } else {
+        if (appState.settings.cat.hideInGames === undefined) appState.settings.cat.hideInGames = false;
+        if (!appState.settings.cat.needs) {
+            appState.settings.cat.needs = { hunger: 80, happiness: 80, hygiene: 80, energy: 80, lastDecay: Date.now() };
+        }
+        if (!appState.settings.cat.accessories) {
+            appState.settings.cat.accessories = { hat: false, bow: false, glasses: false };
+        }
     }
     
     // Auto-update cycles based on logged flow if clean
@@ -1528,6 +1539,223 @@ class CatAudio {
     }
 }
 
+// --- CAT REACTIONS SYSTEM (inspirado en lillys-box) ---
+const CAT_REACTIONS = {
+    greeting: [
+        '¡Hola Citlali! ❤️',
+        '¡Ya llegaste! 🎉',
+        'Te esperaba 🐾',
+        '¡Miau! Buenos días 🌞',
+    ],
+    fed: [
+        '¡Ñam ñam! 😋',
+        '¡Qué rico! 🍖',
+        'Gracias por la comidita 🥰',
+        'Delicioso! ⭐',
+    ],
+    played: [
+        '¡Qué divertido! 🎮',
+        '¡Otra vez! 🎉',
+        'Jugar contigo es lo mejor ✨',
+        'Wheee! 🌟',
+    ],
+    bathed: [
+        '¡Qué limpio! 🛁',
+        'Brillito brillito ✨',
+        'Fresco y limpio 🧼',
+        'Splish splash! 💧',
+    ],
+    sleepy: [
+        'Buenas noches... 💤',
+        'Zzz... 🌙',
+        'A dormir... 😴',
+        'Sweet dreams... 🌟',
+    ],
+    happy: [
+        '¡Estoy muy feliz! 🥰',
+        'Amo estar contigo 💖',
+        'Eres la mejor persona ✨',
+        'Contigo todo es bonito 🌈',
+    ],
+    sad: [
+        'Un abracito... 🤗',
+        '¿Jugamos? 🥺',
+        'Necesito atención 💕',
+        'Háblame... 🐾',
+    ],
+    hungry: [
+        'Tengo hambre... 🍽️',
+        '¿Algo de comer? 🥺',
+        'Miau... comida 🙏',
+        'Mi pancita suena 🥹',
+    ],
+    petted: [
+        '❤️❤️❤️',
+        '¡Más caricias! 💕',
+        '*ronroneo* 🥰',
+        'Amo tus mimos ✨',
+    ],
+    dirty: [
+        '¡Estoy sucio! 🧼',
+        'Un bañito... 🛁',
+        'Me siento mugroso 🥺',
+    ],
+};
+
+function getCatReaction(eventType) {
+    const pool = CAT_REACTIONS[eventType] || CAT_REACTIONS.greeting;
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// --- CAT NEEDS SYSTEM (inspirado en lillys-box) ---
+function initCatNeeds() {
+    if (!appState.settings.cat.needs) {
+        appState.settings.cat.needs = {
+            hunger: 80,
+            happiness: 80,
+            hygiene: 80,
+            energy: 80,
+            lastDecay: Date.now(),
+        };
+    }
+    if (!appState.settings.cat.accessories) {
+        appState.settings.cat.accessories = {
+            hat: false,
+            bow: false,
+            glasses: false,
+        };
+    }
+    // Ensure all need keys exist
+    const needs = appState.settings.cat.needs;
+    if (needs.hunger === undefined) needs.hunger = 80;
+    if (needs.happiness === undefined) needs.happiness = 80;
+    if (needs.hygiene === undefined) needs.hygiene = 80;
+    if (needs.energy === undefined) needs.energy = 80;
+    if (!needs.lastDecay) needs.lastDecay = Date.now();
+}
+
+let catDecayTimer = null;
+
+function startCatDecayTimer() {
+    if (catDecayTimer) clearInterval(catDecayTimer);
+    catDecayTimer = setInterval(() => {
+        if (!appState.settings.cat || !appState.settings.cat.enabled) return;
+        const needs = appState.settings.cat.needs;
+        if (!needs) return;
+        const now = Date.now();
+        const elapsed = (now - (needs.lastDecay || now)) / 1000;
+        if (elapsed < 300) return; // decay every 5 minutes
+
+        const ticks = Math.floor(elapsed / 300);
+        needs.hunger = Math.max(0, needs.hunger - ticks * 3);
+        needs.happiness = Math.max(0, needs.happiness - ticks * 2);
+        needs.hygiene = Math.max(0, needs.hygiene - ticks * 2);
+        needs.energy = Math.max(0, needs.energy - ticks * 2);
+        needs.lastDecay = now;
+
+        // Auto-reactions when needs are low
+        const localBubble = document.getElementById('local-cat-bubble');
+        if (localBubble && !localBubble.classList.contains('visible')) {
+            if (needs.hunger < 25 && Math.random() < 0.4) {
+                showCatReaction('hungry');
+            } else if (needs.happiness < 25 && Math.random() < 0.4) {
+                showCatReaction('sad');
+            } else if (needs.hygiene < 25 && Math.random() < 0.4) {
+                showCatReaction('dirty');
+            }
+        }
+
+        updateNeedsIndicators();
+        saveState();
+    }, 30000);
+}
+
+function updateNeedsIndicators() {
+    const panel = document.getElementById('cat-needs-panel');
+    if (!panel) return;
+    const needs = appState.settings.cat.needs;
+    if (!needs) return;
+    panel.innerHTML = `
+        <div class="need-item"><span class="need-icon">🍖</span><div class="need-bar"><div class="need-fill" style="width:${needs.hunger}%;background:#e67e22"></div></div></div>
+        <div class="need-item"><span class="need-icon">❤️</span><div class="need-bar"><div class="need-fill" style="width:${needs.happiness}%;background:#e74c3c"></div></div></div>
+        <div class="need-item"><span class="need-icon">🛁</span><div class="need-bar"><div class="need-fill" style="width:${needs.hygiene}%;background:#3498db"></div></div></div>
+        <div class="need-item"><span class="need-icon">⚡</span><div class="need-bar"><div class="need-fill" style="width:${needs.energy}%;background:#f1c40f"></div></div></div>
+    `;
+}
+
+function feedCat() {
+    const needs = appState.settings.cat.needs;
+    needs.hunger = Math.min(100, needs.hunger + 30);
+    needs.lastDecay = Date.now();
+    showCatReaction('fed');
+    updateNeedsIndicators();
+    saveState();
+    CatAudio.playPurr(2);
+}
+
+function playWithCat() {
+    const needs = appState.settings.cat.needs;
+    needs.happiness = Math.min(100, needs.happiness + 25);
+    needs.energy = Math.max(0, needs.energy - 10);
+    needs.lastDecay = Date.now();
+    showCatReaction('played');
+    if (catApi.setAnimation) {
+        catApi.setAnimation('happy');
+        setTimeout(() => catApi.setAnimation('idle'), 2000);
+    }
+    updateNeedsIndicators();
+    saveState();
+}
+
+function batheCat() {
+    const needs = appState.settings.cat.needs;
+    needs.hygiene = Math.min(100, needs.hygiene + 35);
+    needs.happiness = Math.max(0, needs.happiness - 5);
+    needs.lastDecay = Date.now();
+    showCatReaction('bathed');
+    updateNeedsIndicators();
+    saveState();
+}
+
+function putCatToSleep() {
+    const needs = appState.settings.cat.needs;
+    needs.energy = Math.min(100, needs.energy + 40);
+    needs.happiness = Math.max(0, needs.happiness + 5);
+    needs.lastDecay = Date.now();
+    showCatReaction('sleepy');
+    if (catApi.setAnimation) {
+        catApi.setAnimation('sleep');
+        setTimeout(() => catApi.setAnimation('idle'), 5000);
+    }
+    updateNeedsIndicators();
+    saveState();
+}
+
+function showCatReaction(eventType) {
+    const localBubble = document.getElementById('local-cat-bubble');
+    const localWrapper = document.getElementById('local-cat-wrapper');
+    if (!localBubble || !localWrapper) return;
+    const text = getCatReaction(eventType);
+    if (localCatState.bubbleTimeout) clearTimeout(localCatState.bubbleTimeout);
+    clearTimeout(localCatState.walkTimeout);
+    localCatState.isWalking = false;
+
+    if (!localWrapper.classList.contains('state-sleep') && catApi.setAnimation) {
+        catApi.setAnimation('happy');
+    }
+    localBubble.textContent = text;
+    localBubble.classList.add('visible');
+    localCatState.bubbleTimeout = setTimeout(() => {
+        localBubble.classList.remove('visible');
+        if (!localWrapper.classList.contains('state-sleep') && catApi.setAnimation) {
+            catApi.setAnimation('idle');
+        }
+    }, 3500);
+}
+
+// Module-level reference for cat animation control
+let catApi = { setAnimation: null, showBubble: null };
+
 let localCatState = {
     x: 20,
     y: 80,
@@ -1564,6 +1792,66 @@ function initVirtualCat() {
         appState.settings.cat.hideInGames = false;
     }
 
+    // Initialize cat needs & accessories
+    initCatNeeds();
+    startCatDecayTimer();
+
+    // Create needs panel if not existing
+    if (!document.getElementById('cat-needs-panel')) {
+        const panel = document.createElement('div');
+        panel.id = 'cat-needs-panel';
+        panel.className = 'cat-needs-panel';
+        localContainer.parentNode.insertBefore(panel, localContainer);
+        updateNeedsIndicators();
+    }
+
+    // Wire cat action buttons
+    const btnFeed = document.getElementById('btn-cat-feed');
+    const btnPlay = document.getElementById('btn-cat-play');
+    const btnBathe = document.getElementById('btn-cat-bathe');
+    const btnSleep = document.getElementById('btn-cat-sleep');
+    if (btnFeed) btnFeed.addEventListener('click', feedCat);
+    if (btnPlay) btnPlay.addEventListener('click', playWithCat);
+    if (btnBathe) btnBathe.addEventListener('click', batheCat);
+    if (btnSleep) btnSleep.addEventListener('click', putCatToSleep);
+
+    // Wire accessory selectors
+    const selAccHat = document.getElementById('select-cat-hat');
+    const selAccBow = document.getElementById('select-cat-bow');
+    const selAccGlasses = document.getElementById('select-cat-glasses');
+    if (selAccHat) {
+        selAccHat.value = appState.settings.cat.accessories?.hat ? 'yes' : 'no';
+        selAccHat.addEventListener('change', () => {
+            appState.settings.cat.accessories.hat = selAccHat.value === 'yes';
+            applyCatAccessories();
+            saveState();
+        });
+    }
+    if (selAccBow) {
+        selAccBow.value = appState.settings.cat.accessories?.bow ? 'yes' : 'no';
+        selAccBow.addEventListener('change', () => {
+            appState.settings.cat.accessories.bow = selAccBow.value === 'yes';
+            applyCatAccessories();
+            saveState();
+        });
+    }
+    if (selAccGlasses) {
+        selAccGlasses.value = appState.settings.cat.accessories?.glasses ? 'yes' : 'no';
+        selAccGlasses.addEventListener('change', () => {
+            appState.settings.cat.accessories.glasses = selAccGlasses.value === 'yes';
+            applyCatAccessories();
+            saveState();
+        });
+    }
+
+    function applyCatAccessories() {
+        const acc = appState.settings.cat.accessories || {};
+        localContainer.classList.toggle('has-hat', acc.hat);
+        localContainer.classList.toggle('has-bow', acc.bow);
+        localContainer.classList.toggle('has-glasses', acc.glasses);
+    }
+    applyCatAccessories();
+
     // Apply settings to UI inputs
     const swLocal = document.getElementById('switch-cat-local');
     const swOverlay = document.getElementById('switch-cat-overlay');
@@ -1580,12 +1868,15 @@ function initVirtualCat() {
     // Update Cat presentation
     function applyCatVisualSettings() {
         const catSettings = appState.settings.cat;
+        const needsPanel = document.getElementById('cat-needs-panel');
         
         // Local Cat visibility
         if (catSettings.enabled) {
             localContainer.classList.remove('hidden');
+            if (needsPanel) needsPanel.classList.remove('hidden');
         } else {
             localContainer.classList.add('hidden');
+            if (needsPanel) needsPanel.classList.add('hidden');
         }
 
         // Apply skin & size classes to container
@@ -1663,6 +1954,7 @@ function initVirtualCat() {
             }, 1500);
         }
     }
+    catApi.setAnimation = setLocalCatAnimation;
 
     function walkLocalCat() {
         if (localCatState.isWalking) return;
@@ -1733,6 +2025,7 @@ function initVirtualCat() {
             setLocalCatAnimation('idle');
         }, duration);
     }
+    catApi.showBubble = showLocalCatBubble;
 
     let isLocalDragging = false;
     let dragStartX = 0;

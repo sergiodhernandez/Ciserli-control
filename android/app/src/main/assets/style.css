@@ -2061,3 +2061,62 @@ body {
     animation: spin 0.8s infinite linear;
     vertical-align: middle;
 }
+
+/* --- CAT NEEDS PANEL --- */
+.cat-needs-panel {
+    position: absolute;
+    right: 10px;
+    bottom: 170px;
+    z-index: 99;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid #000000;
+    border-radius: 12px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
+    width: 90px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cat-needs-panel.hidden {
+    display: none;
+}
+
+.need-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.need-icon {
+    font-size: 10px;
+    width: 14px;
+    text-align: center;
+}
+
+.need-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.need-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* --- CAT ACCESSORIES VISIBILITY --- */
+.local-cat-container.has-hat .accessory-hat { display: block !important; }
+.local-cat-container.has-bow .accessory-bow { display: block !important; }
+.local-cat-container.has-glasses .accessory-glasses { display: block !important; }
+
+.accessory-hat, .accessory-bow, .accessory-glasses {
+    pointer-events: none;
+}
