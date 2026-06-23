@@ -517,120 +517,175 @@
                         </radialGradient>
                     </defs>
 
-                    <!-- Tail -->
-                    <path class="cat-tail" d="M 64,72 C 72,73 79,68 81,60 C 83,52 79,47 75,47 C 73,47 73,50 75,52 C 79,54 77,59 75,63 C 73,67 69,69 64,69 Z" fill="var(--skin-primary)" />
-                    <path class="cat-patches tail-stripe-1" d="M 74,71 C 76,70 77,69 78,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches tail-stripe-2" d="M 78,64 C 79,62 80,60 80,58" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches tail-stripe-3" d="M 78,53 C 77,51 76,50 74,49" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                    <g class="cat-front-view">
+                        <!-- Tail -->
+                        <path class="cat-tail" d="M 64,72 C 72,73 79,68 81,60 C 83,52 79,47 75,47 C 73,47 73,50 75,52 C 79,54 77,59 75,63 C 73,67 69,69 64,69 Z" fill="var(--skin-primary)" />
+                        <path class="cat-patches tail-stripe-1" d="M 74,71 C 76,70 77,69 78,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <path class="cat-patches tail-stripe-2" d="M 78,64 C 79,62 80,60 80,58" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <path class="cat-patches tail-stripe-3" d="M 78,53 C 77,51 76,50 74,49" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
 
-                    <!-- Back Paws -->
-                    <g class="cat-paw paw-back-left">
-                        <path d="M 30,67 C 24,72 26,80 32,80 C 36,80 36,74 32,72" fill="var(--skin-primary)" />
-                        <ellipse cx="30" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
-                    </g>
-                    <g class="cat-paw paw-back-right">
-                        <path d="M 70,67 C 76,72 74,80 68,80 C 64,80 64,74 68,72" fill="var(--skin-primary)" />
-                        <ellipse cx="70" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
-                    </g>
+                        <!-- Back Paws -->
+                        <g class="cat-paw paw-back-left">
+                            <path d="M 30,67 C 24,72 26,80 32,80 C 36,80 36,74 32,72" fill="var(--skin-primary)" />
+                            <ellipse cx="30" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
+                        </g>
+                        <g class="cat-paw paw-back-right">
+                            <path d="M 70,67 C 76,72 74,80 68,80 C 64,80 64,74 68,72" fill="var(--skin-primary)" />
+                            <ellipse cx="70" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
+                        </g>
 
-                    <!-- Body -->
-                    <path class="cat-body" d="M 35,48 C 28,54 26,72 32,82 C 38,85 62,85 68,82 C 74,72 72,54 65,48 Z" fill="var(--skin-primary)" />
+                        <!-- Body -->
+                        <path class="cat-body" d="M 35,48 C 28,54 26,72 32,82 C 38,85 62,85 68,82 C 74,72 72,54 65,48 Z" fill="var(--skin-primary)" />
 
-                    <!-- Body stripes -->
-                    <path class="cat-patches body-stripe-l1" d="M 29,62 Q 32,63 34,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches body-stripe-l2" d="M 27,69 Q 30,70 33,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches body-stripe-r1" d="M 71,62 Q 68,63 66,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches body-stripe-r2" d="M 73,69 Q 70,70 67,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <!-- Body stripes -->
+                        <path class="cat-patches body-stripe-l1" d="M 29,62 Q 32,63 34,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <path class="cat-patches body-stripe-l2" d="M 27,69 Q 30,70 33,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <path class="cat-patches body-stripe-r1" d="M 71,62 Q 68,63 66,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <path class="cat-patches body-stripe-r2" d="M 73,69 Q 70,70 67,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
 
-                    <!-- Fluffy white chest bib -->
-                    <path class="cat-chest" d="M 42,48 C 42,50 39,56 43,62 C 46,66 54,66 57,62 C 61,56 58,50 58,48 C 55,50 45,50 42,48 Z" fill="var(--chest-color)" />
+                        <!-- Fluffy white chest bib -->
+                        <path class="cat-chest" d="M 42,48 C 42,50 39,56 43,62 C 46,66 54,66 57,62 C 61,56 58,50 58,48 C 55,50 45,50 42,48 Z" fill="var(--chest-color)" />
 
-                    <!-- Front Paws -->
-                    <g class="cat-paw paw-front-left">
-                        <path d="M 36,55 L 36,79 C 36,81 44,81 44,79 L 44,55 Z" fill="var(--skin-paw)" />
-                        <ellipse cx="40" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
-                    </g>
-                    <g class="cat-paw paw-front-right">
-                        <path d="M 56,55 L 56,79 C 56,81 64,81 64,79 L 64,55 Z" fill="var(--skin-paw)" />
-                        <ellipse cx="60" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
-                    </g>
+                        <!-- Front Paws -->
+                        <g class="cat-paw paw-front-left">
+                            <path d="M 36,55 L 36,79 C 36,81 44,81 44,79 L 44,55 Z" fill="var(--skin-paw)" />
+                            <ellipse cx="40" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
+                        </g>
+                        <g class="cat-paw paw-front-right">
+                            <path d="M 56,55 L 56,79 C 56,81 64,81 64,79 L 64,55 Z" fill="var(--skin-paw)" />
+                            <ellipse cx="60" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
+                        </g>
 
-                    <!-- Head Group -->
-                    <g class="cat-head">
-                        <path class="cat-head-base" d="M 50,13 C 42,13 36,19 33,27 C 32,33 34,42 40,46 L 60,46 C 66,42 68,33 67,27 C 64,19 58,13 50,13 Z" fill="var(--skin-primary)" />
+                        <!-- Head Group -->
+                        <g class="cat-head">
+                            <path class="cat-head-base" d="M 50,13 C 42,13 36,19 33,27 C 32,33 34,42 40,46 L 60,46 C 66,42 68,33 67,27 C 64,19 58,13 50,13 Z" fill="var(--skin-primary)" />
 
-                        <!-- Left Ear -->
-                        <path class="cat-ear ear-left" d="M 36,20 L 28,6 L 44,12 Z" fill="var(--skin-primary)" />
-                        <path class="cat-ear-inner ear-inner-left" d="M 36,18 L 30,9 L 42,13 Z" fill="var(--ear-inner)" />
-                        <!-- Right Ear -->
-                        <path class="cat-ear ear-right" d="M 64,20 L 72,6 L 56,12 Z" fill="var(--skin-primary)" />
-                        <path class="cat-ear-inner ear-inner-right" d="M 64,18 L 70,9 L 58,13 Z" fill="var(--ear-inner)" />
+                            <!-- Left Ear -->
+                            <path class="cat-ear ear-left" d="M 36,20 L 28,6 L 44,12 Z" fill="var(--skin-primary)" />
+                            <path class="cat-ear-inner ear-inner-left" d="M 36,18 L 30,9 L 42,13 Z" fill="var(--ear-inner)" />
+                            <!-- Right Ear -->
+                            <path class="cat-ear ear-right" d="M 64,20 L 72,6 L 56,12 Z" fill="var(--skin-primary)" />
+                            <path class="cat-ear-inner ear-inner-right" d="M 64,18 L 70,9 L 58,13 Z" fill="var(--ear-inner)" />
 
-                        <!-- Eyes -->
-                        <!-- Left Eye -->
-                        <g class="cat-eye-group eye-left">
-                            <g class="eye-open">
-                                <ellipse cx="42" cy="28" rx="4.2" ry="3" transform="rotate(-6 42 28)" fill="var(--eye-color)" />
-                                <ellipse cx="42" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
-                                <circle cx="41.5" cy="26.8" r="0.8" fill="#ffffff" />
+                            <!-- Eyes -->
+                            <!-- Left Eye -->
+                            <g class="cat-eye-group eye-left">
+                                <g class="eye-open">
+                                    <ellipse cx="42" cy="28" rx="4.2" ry="3" transform="rotate(-6 42 28)" fill="var(--eye-color)" />
+                                    <ellipse cx="42" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
+                                    <circle cx="41.5" cy="26.8" r="0.8" fill="#ffffff" />
+                                </g>
+                                <path class="eye-closed" d="M 38 29 Q 42 32 46 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                                <path class="eye-happy" d="M 38 30 Q 42 27 46 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
                             </g>
-                            <path class="eye-closed" d="M 38 29 Q 42 32 46 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                            <path class="eye-happy" d="M 38 30 Q 42 27 46 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                        </g>
-                        <!-- Right Eye -->
-                        <g class="cat-eye-group eye-right">
-                            <g class="eye-open">
-                                <ellipse cx="58" cy="28" rx="4.2" ry="3" transform="rotate(6 58 28)" fill="var(--eye-color)" />
-                                <ellipse cx="58" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
-                                <circle cx="57.5" cy="26.8" r="0.8" fill="#ffffff" />
+                            <!-- Right Eye -->
+                            <g class="cat-eye-group eye-right">
+                                <g class="eye-open">
+                                    <ellipse cx="58" cy="28" rx="4.2" ry="3" transform="rotate(6 58 28)" fill="var(--eye-color)" />
+                                    <ellipse cx="58" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
+                                    <circle cx="57.5" cy="26.8" r="0.8" fill="#ffffff" />
+                                </g>
+                                <path class="eye-closed" d="M 54 29 Q 58 32 62 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                                <path class="eye-happy" d="M 54 30 Q 58 27 62 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
                             </g>
-                            <path class="eye-closed" d="M 54 29 Q 58 32 62 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                            <path class="eye-happy" d="M 54 30 Q 58 27 62 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+
+                            <!-- Muzzle -->
+                            <ellipse cx="50" cy="36" rx="6" ry="4.5" fill="var(--muzzle-color)" />
+
+                            <!-- Nose -->
+                            <path d="M 49,34 L 51,34 L 50,36 Z" fill="var(--nose-color)" />
+
+                            <!-- Mouth -->
+                            <g class="cat-mouth-group">
+                                <path class="cat-mouth-closed" d="M 48,37 Q 49,38.5 50,37 Q 51,38.5 52,37" stroke="var(--face-details)" stroke-width="0.8" fill="none" stroke-linecap="round" />
+                                <ellipse class="cat-mouth-open" cx="50" cy="39" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.4" />
+                                <path class="cat-tongue" d="M 48.5 38.5 Q 50 41 51.5 38.5 Z" fill="#ffccd5" />
+                            </g>
+
+                            <!-- Whiskers -->
+                            <line x1="35" y1="35" x2="26" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                            <line x1="35" y1="37" x2="25" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                            <line x1="35" y1="39" x2="27" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                            <line x1="65" y1="35" x2="74" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                            <line x1="65" y1="37" x2="75" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                            <line x1="65" y1="39" x2="73" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+
+                            <!-- Forehead Stripes -->
+                            <path class="cat-patches forehead-stripe-mid" d="M 50,18 L 50,23" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" style="display: var(--has-patches);"/>
+                            <path class="cat-patches forehead-stripe-left" d="M 46,19 Q 47,21 47,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                            <path class="cat-patches forehead-stripe-right" d="M 54,19 Q 53,21 53,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+
+                            <!-- Accessories inside Head Group so they animate together -->
+                            <g class="cat-accessory accessory-hat">
+                                <ellipse cx="50" cy="10" rx="16" ry="4" fill="#2c3e50"/>
+                                <path d="M 38,10 C 38,0 42,-4 50,-6 C 58,-4 62,0 62,10 Z" fill="#2c3e50"/>
+                                <rect x="46" y="-8" width="8" height="3" rx="1" fill="#e74c3c"/>
+                            </g>
+                            <g class="cat-accessory accessory-bow">
+                                <path d="M 30,12 L 22,6 L 22,18 Z" fill="#e74c3c"/>
+                                <path d="M 30,12 L 38,6 L 38,18 Z" fill="#e74c3c"/>
+                                <circle cx="30" cy="12" r="2.5" fill="#c0392b"/>
+                            </g>
+                            <g class="cat-accessory accessory-glasses">
+                                <circle cx="42" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                                <circle cx="58" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                                <line x1="48" y1="28" x2="52" y2="28" stroke="#2c3e50" stroke-width="1.2"/>
+                                <line x1="36" y1="28" x2="32" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
+                                <line x1="64" y1="28" x2="68" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
+                            </g>
+                        </g>
+                    </g>
+
+                    <!-- Side View Group (Visible only during walk state) -->
+                    <g class="cat-side-view">
+                        <!-- Tail -->
+                        <path class="cat-side-tail" d="M 15 50 C 5 45 5 25 15 20 C 20 20 20 25 15 25 C 10 25 10 40 17 43 Z" fill="var(--skin-primary)"/>
+                        
+                        <!-- Back Paw Left (Backmost) -->
+                        <g class="cat-side-paw paw-back-left">
+                            <path d="M 28 55 L 25 80 C 25 82 31 82 31 80 L 32 55 Z" fill="var(--skin-secondary)"/>
+                            <ellipse cx="28" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
                         </g>
 
-                        <!-- Muzzle -->
-                        <ellipse cx="50" cy="36" rx="6" ry="4.5" fill="var(--muzzle-color)" />
-
-                        <!-- Nose -->
-                        <path d="M 49,34 L 51,34 L 50,36 Z" fill="var(--nose-color)" />
-
-                        <!-- Mouth -->
-                        <g class="cat-mouth-group">
-                            <path class="cat-mouth-closed" d="M 48,37 Q 49,38.5 50,37 Q 51,38.5 52,37" stroke="var(--face-details)" stroke-width="0.8" fill="none" stroke-linecap="round" />
-                            <ellipse class="cat-mouth-open" cx="50" cy="39" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.4" />
-                            <path class="cat-tongue" d="M 48.5 38.5 Q 50 41 51.5 38.5 Z" fill="#ffccd5" />
+                        <!-- Front Paw Left (Backmost) -->
+                        <g class="cat-side-paw paw-front-left">
+                            <path d="M 68 55 L 65 80 C 65 82 71 82 71 80 L 72 55 Z" fill="var(--skin-secondary)"/>
+                            <ellipse cx="68" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
                         </g>
 
-                        <!-- Whiskers -->
-                        <line x1="35" y1="35" x2="26" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                        <line x1="35" y1="37" x2="25" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                        <line x1="35" y1="39" x2="27" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                        <line x1="65" y1="35" x2="74" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                        <line x1="65" y1="37" x2="75" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                        <line x1="65" y1="39" x2="73" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
+                        <!-- Body (Side view profile) -->
+                        <path class="cat-side-body" d="M 22 45 C 22 35 78 35 78 45 C 78 55 22 58 22 45 Z" fill="var(--skin-primary)"/>
+                        <!-- White belly/chest patch -->
+                        <path class="cat-side-chest" d="M 65 38 C 72 38 78 43 78 48 C 78 52 70 54 62 48 Z" fill="var(--chest-color)"/>
 
-                        <!-- Forehead Stripes -->
-                        <path class="cat-patches forehead-stripe-mid" d="M 50,18 L 50,23" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" style="display: var(--has-patches);"/>
-                        <path class="cat-patches forehead-stripe-left" d="M 46,19 Q 47,21 47,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                        <path class="cat-patches forehead-stripe-right" d="M 54,19 Q 53,21 53,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+                        <!-- Back Paw Right (Foremost) -->
+                        <g class="cat-side-paw paw-back-right">
+                            <path d="M 38 55 L 38 80 C 38 82 44 82 44 80 L 44 55 Z" fill="var(--skin-primary)"/>
+                            <ellipse cx="41" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
+                        </g>
 
-                        <!-- Accessories inside Head Group so they animate together -->
-                        <g class="cat-accessory accessory-hat">
-                            <ellipse cx="50" cy="10" rx="16" ry="4" fill="#2c3e50"/>
-                            <path d="M 38,10 C 38,0 42,-4 50,-6 C 58,-4 62,0 62,10 Z" fill="#2c3e50"/>
-                            <rect x="46" y="-8" width="8" height="3" rx="1" fill="#e74c3c"/>
+                        <!-- Front Paw Right (Foremost) -->
+                        <g class="cat-side-paw paw-front-right">
+                            <path d="M 58 55 L 58 80 C 58 82 64 82 64 80 L 64 55 Z" fill="var(--skin-primary)"/>
+                            <ellipse cx="61" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
                         </g>
-                        <g class="cat-accessory accessory-bow">
-                            <path d="M 30,12 L 22,6 L 22,18 Z" fill="#e74c3c"/>
-                            <path d="M 30,12 L 38,6 L 38,18 Z" fill="#e74c3c"/>
-                            <circle cx="30" cy="12" r="2.5" fill="#c0392b"/>
-                        </g>
-                        <g class="cat-accessory accessory-glasses">
-                            <circle cx="42" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
-                            <circle cx="58" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
-                            <line x1="48" y1="28" x2="52" y2="28" stroke="#2c3e50" stroke-width="1.2"/>
-                            <line x1="36" y1="28" x2="32" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
-                            <line x1="64" y1="28" x2="68" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
+
+                        <!-- Head (Profile view) -->
+                        <g class="cat-side-head">
+                            <!-- Ear -->
+                            <path d="M 72 25 L 78 10 L 84 22 Z" fill="var(--skin-primary)"/>
+                            <path d="M 74 23 L 78 13 L 82 20 Z" fill="var(--ear-inner)"/>
+                            <!-- Head Base -->
+                            <circle cx="78" cy="32" r="14" fill="var(--skin-primary)"/>
+                            <!-- Eye -->
+                            <ellipse cx="84" cy="28" rx="2" ry="3" fill="var(--eye-color)"/>
+                            <ellipse cx="84.5" cy="28" rx="0.6" ry="2.5" fill="var(--face-details)"/>
+                            <!-- Snout/Nose -->
+                            <path d="M 90 32 C 94 32 94 36 90 36 Z" fill="var(--muzzle-color)"/>
+                            <polygon points="91,32 93,32 92,34" fill="var(--nose-color)"/>
+                            <!-- Whiskers -->
+                            <line x1="91" y1="35" x2="98" y2="35" stroke="var(--whisker-color)" stroke-width="0.5"/>
+                            <line x1="90" y1="37" x2="97" y2="38" stroke="var(--whisker-color)" stroke-width="0.5"/>
                         </g>
                     </g>
                 </svg>

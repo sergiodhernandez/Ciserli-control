@@ -1,6 +1,6 @@
 {
-  "versionCode": 29,
-  "versionName": "1.6.2",
+  "versionCode": 30,
+  "versionName": "1.6.3",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/app-debug.apk",
-  "whatsNew": "✨ Animaciones Mejoradas para Sheshe 🐱\n\n• Rediseñada la animación de caminata para que camine/marche levantando las patitas en lugar de abrir las piernas de lado (evitando la caminata tipo araña)\n• Corregida la visibilidad de los accesorios en la superposición nativa (ahora se ocultan correctamente cuando se selecciona \"No\" en los ajustes)"
+  "whatsNew": "✨ Caminata de Perfil Lateral para Sheshe 🐱\n\n• Ahora Sheshe se gira de perfil (caminata horizontal) al caminar, con movimientos realistas de patas y cola, inspirados en animaciones de GitHub.\n• Se ocultan temporalmente los accesorios durante la caminata para una visualización limpia."
 }
