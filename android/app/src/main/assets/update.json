@@ -1,6 +1,6 @@
 {
-  "versionCode": 28,
-  "versionName": "1.6.1",
+  "versionCode": 29,
+  "versionName": "1.6.2",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/app-debug.apk",
-  "whatsNew": "✨ Sheshe Corrección Completa 🐱\n\n• Corregida la animación de caminata para que sea fluida y natural\n• Corregido el posicionamiento de los accesorios (sombrero 🎩, moño 🎀 y lentes 👓) para que sigan el movimiento de la cabeza\n• Sincronización de botones de cuidado rápido en la superposición nativa de pantalla"
+  "whatsNew": "✨ Animaciones Mejoradas para Sheshe 🐱\n\n• Rediseñada la animación de caminata para que camine/marche levantando las patitas en lugar de abrir las piernas de lado (evitando la caminata tipo araña)\n• Corregida la visibilidad de los accesorios en la superposición nativa (ahora se ocultan correctamente cuando se selecciona \"No\" en los ajustes)"
 }

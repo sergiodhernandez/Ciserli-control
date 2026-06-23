@@ -1725,66 +1725,62 @@ body {
 /* Walk */
 .local-cat-container #local-cat-wrapper.state-walk .cat-body {
     transform-origin: 50% 91%;
-    animation: local-walk-body-bob 0.5s ease-in-out infinite;
+    animation: local-walk-body-bob 0.6s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .cat-head {
     transform-origin: 50% 33%;
-    animation: local-walk-head-bob 0.5s ease-in-out infinite;
+    animation: local-walk-head-bob 0.6s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .cat-tail {
     transform-origin: 64% 82%;
-    animation: local-walk-tail-wag 0.5s ease-in-out infinite;
+    animation: local-walk-tail-wag 0.6s ease-in-out infinite;
 }
 
 .local-cat-container #local-cat-wrapper.state-walk .paw-front-left {
     transform-origin: 40% 61%;
-    animation: local-walk-paw-front-l 0.5s linear infinite;
+    animation: local-walk-paw-front-l 0.6s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .paw-front-right {
     transform-origin: 60% 61%;
-    animation: local-walk-paw-front-r 0.5s linear infinite;
+    animation: local-walk-paw-front-r 0.6s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .paw-back-left {
     transform-origin: 30% 89%;
-    animation: local-walk-paw-back-l 0.5s linear infinite;
+    animation: local-walk-paw-back-l 0.6s ease-in-out infinite;
 }
 .local-cat-container #local-cat-wrapper.state-walk .paw-back-right {
     transform-origin: 70% 89%;
-    animation: local-walk-paw-back-r 0.5s linear infinite;
+    animation: local-walk-paw-back-r 0.6s ease-in-out infinite;
 }
 
 @keyframes local-walk-body-bob {
-    0%, 100% { transform: scaleX(1.04) scaleY(0.96) translateY(2px); }
-    50% { transform: scaleX(1.01) scaleY(0.99) translateY(1px); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
 }
 @keyframes local-walk-head-bob {
-    0%, 100% { transform: translate(1px, 2px) rotate(1deg); }
-    50% { transform: translate(0px, 0px) rotate(-1deg); }
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-2px) rotate(1deg); }
 }
 @keyframes local-walk-tail-wag {
-    0%, 100% { transform: rotate(15deg) translateX(-1px); }
-    50% { transform: rotate(5deg) translateX(0px); }
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(12deg); }
 }
 
 @keyframes local-walk-paw-front-l {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    25% { transform: translate(1px, -1px) rotate(5deg); }
-    50% { transform: translate(2px, 0) rotate(0deg); }
-    75% { transform: translate(1px, 1px) rotate(-4deg); }
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(10deg); }
 }
 @keyframes local-walk-paw-front-r {
-    0%, 100% { transform: translate(2px, 0) rotate(0deg); }
-    25% { transform: translate(1px, 1px) rotate(-4deg); }
-    50% { transform: translate(0, 0) rotate(0deg); }
-    75% { transform: translate(1px, -1px) rotate(5deg); }
+    0%, 100% { transform: translateY(-5px) rotate(-10deg); }
+    50% { transform: translateY(0) rotate(0deg); }
 }
 @keyframes local-walk-paw-back-l {
-    0%, 100% { transform: translate(1.5px, 0); }
-    50% { transform: translate(-1.5px, -0.5px); }
+    0%, 100% { transform: translateY(-4px); }
+    50% { transform: translateY(0); }
 }
 @keyframes local-walk-paw-back-r {
-    0%, 100% { transform: translate(-1.5px, -0.5px); }
-    50% { transform: translate(1.5px, 0); }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
 }
 
 /* Sleep */
