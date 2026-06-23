@@ -35,6 +35,9 @@ class FloatingCatService : Service() {
     private var catSizeDp = 80
     private var skin = "patched"
     private var sizeStr = "medium"
+    private var hat = false
+    private var bow = false
+    private var glasses = false
 
     private val expandedWidthDp = 240
     private val expandedHeightDp = 180
@@ -173,9 +176,19 @@ class FloatingCatService : Service() {
             startForeground(1001, notification)
         }
 
+        val action = intent?.getStringExtra("action")
+        if (action != null) {
+            if (::webView.isInitialized) {
+                webView.post {
+                    webView.evaluateJavascript("javascript:if(window.triggerOverlayReaction) window.triggerOverlayReaction('$action');", null)
+                }
+            }
+            return START_NOT_STICKY
+        }
+
         // Parse new intent parameters
-        val newSkin = intent?.getStringExtra("skin") ?: "patched"
-        val newSize = intent?.getStringExtra("size") ?: "medium"
+        val newSkin = intent?.getStringExtra("skin") ?: skin
+        val newSize = intent?.getStringExtra("size") ?: sizeStr
         
         skin = newSkin
         sizeStr = newSize
@@ -183,6 +196,16 @@ class FloatingCatService : Service() {
             "small" -> 60
             "large" -> 100
             else -> 80
+        }
+
+        if (intent != null && intent.hasExtra("hat")) {
+            hat = intent.getBooleanExtra("hat", false)
+        }
+        if (intent != null && intent.hasExtra("bow")) {
+            bow = intent.getBooleanExtra("bow", false)
+        }
+        if (intent != null && intent.hasExtra("glasses")) {
+            glasses = intent.getBooleanExtra("glasses", false)
         }
 
         if (!::webView.isInitialized) {
@@ -199,7 +222,7 @@ class FloatingCatService : Service() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            webView.loadUrl("file:///android_asset/cat_overlay.html?skin=$skin&size=$sizeStr")
+            webView.loadUrl("file:///android_asset/cat_overlay.html?skin=$skin&size=$sizeStr&hat=$hat&bow=$bow&glasses=$glasses")
         }
 
         return START_NOT_STICKY
@@ -217,7 +240,7 @@ class FloatingCatService : Service() {
             setBackgroundColor(Color.TRANSPARENT)
             webViewClient = WebViewClient()
             addJavascriptInterface(OverlayInterface(), "AndroidAppOverlay")
-            loadUrl("file:///android_asset/cat_overlay.html?skin=$skin&size=$sizeStr")
+            loadUrl("file:///android_asset/cat_overlay.html?skin=$skin&size=$sizeStr&hat=$hat&bow=$bow&glasses=$glasses")
         }
 
         var initialX = 0

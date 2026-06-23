@@ -177,7 +177,7 @@
 
         /* Tail sway */
         .cat-tail {
-            transform-origin: 64px 74px;
+            transform-origin: 64% 82%;
             animation: tail-sway 3s ease-in-out infinite;
         }
 
@@ -201,7 +201,7 @@
         }
 
         .state-idle .cat-head {
-            transform-origin: 50px 30px;
+            transform-origin: 50% 33%;
             animation: head-nod 4s ease-in-out infinite;
         }
 
@@ -210,12 +210,12 @@
         }
 
         .state-idle .ear-left, .state-idle .ear-inner-left {
-            transform-origin: 36px 18px;
+            transform-origin: 36% 20%;
             animation: ear-twitch-left 6s infinite;
         }
 
         .state-idle .ear-right, .state-idle .ear-inner-right {
-            transform-origin: 64px 18px;
+            transform-origin: 64% 20%;
             animation: ear-twitch-right 6s infinite;
         }
 
@@ -244,69 +244,76 @@
             50% { transform: scaleY(1.015); }
         }
 
+        .cat-paw,
+        .cat-head,
+        .cat-body,
+        .cat-tail {
+            transform-box: view-box;
+        }
+
         /* Walk state */
         .state-walk .cat-body {
-            transform-origin: 50px 82px;
+            transform-origin: 50% 91%;
             animation: walk-body-bob 0.5s ease-in-out infinite;
         }
         .state-walk .cat-head {
-            transform-origin: 50px 30px;
+            transform-origin: 50% 33%;
             animation: walk-head-bob 0.5s ease-in-out infinite;
         }
         .state-walk .cat-tail {
-            transform-origin: 64px 74px;
+            transform-origin: 64% 82%;
             animation: walk-tail-wag 0.5s ease-in-out infinite;
         }
 
         .state-walk .paw-front-left {
-            transform-origin: 40px 55px;
+            transform-origin: 40% 61%;
             animation: walk-paw-front-l 0.5s linear infinite;
         }
         .state-walk .paw-front-right {
-            transform-origin: 60px 55px;
+            transform-origin: 60% 61%;
             animation: walk-paw-front-r 0.5s linear infinite;
         }
         .state-walk .paw-back-left {
-            transform-origin: 30px 80px;
+            transform-origin: 30% 89%;
             animation: walk-paw-back-l 0.5s linear infinite;
         }
         .state-walk .paw-back-right {
-            transform-origin: 70px 80px;
+            transform-origin: 70% 89%;
             animation: walk-paw-back-r 0.5s linear infinite;
         }
 
         @keyframes walk-body-bob {
-            0%, 100% { transform: scaleX(1.08) scaleY(0.92) translateY(3px); }
-            50% { transform: scaleX(1.04) scaleY(0.96) translateY(2px); }
+            0%, 100% { transform: scaleX(1.04) scaleY(0.96) translateY(2px); }
+            50% { transform: scaleX(1.01) scaleY(0.99) translateY(1px); }
         }
         @keyframes walk-head-bob {
-            0%, 100% { transform: translate(5px, 4px) rotate(1.5deg); }
-            50% { transform: translate(2px, 2px) rotate(-1.5deg); }
+            0%, 100% { transform: translate(1px, 2px) rotate(1deg); }
+            50% { transform: translate(0px, 0px) rotate(-1deg); }
         }
         @keyframes walk-tail-wag {
-            0%, 100% { transform: rotate(30deg) translateX(-3px); }
-            50% { transform: rotate(20deg) translateX(-1px); }
+            0%, 100% { transform: rotate(15deg) translateX(-1px); }
+            50% { transform: rotate(5deg) translateX(0px); }
         }
 
         @keyframes walk-paw-front-l {
             0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(3px, -2px) rotate(10deg); }
-            50% { transform: translate(6px, 0) rotate(0deg); }
-            75% { transform: translate(3px, 1px) rotate(-8deg); }
+            25% { transform: translate(1px, -1px) rotate(5deg); }
+            50% { transform: translate(2px, 0) rotate(0deg); }
+            75% { transform: translate(1px, 1px) rotate(-4deg); }
         }
         @keyframes walk-paw-front-r {
-            0%, 100% { transform: translate(6px, 0) rotate(0deg); }
-            25% { transform: translate(3px, 1px) rotate(-8deg); }
+            0%, 100% { transform: translate(2px, 0) rotate(0deg); }
+            25% { transform: translate(1px, 1px) rotate(-4deg); }
             50% { transform: translate(0, 0) rotate(0deg); }
-            75% { transform: translate(3px, -2px) rotate(10deg); }
+            75% { transform: translate(1px, -1px) rotate(5deg); }
         }
         @keyframes walk-paw-back-l {
-            0%, 100% { transform: translate(3px, 0); }
-            50% { transform: translate(-3px, -1px); }
+            0%, 100% { transform: translate(1.5px, 0); }
+            50% { transform: translate(-1.5px, -0.5px); }
         }
         @keyframes walk-paw-back-r {
-            0%, 100% { transform: translate(-3px, -1px); }
-            50% { transform: translate(3px, 0); }
+            0%, 100% { transform: translate(-1.5px, -0.5px); }
+            50% { transform: translate(1.5px, 0); }
         }
 
         /* Sleep state */
@@ -354,23 +361,23 @@
         .state-stretch .cat-mouth-open { display: block; animation: stretch-mouth 3s ease-in-out infinite; }
         .state-stretch .cat-mouth-closed { display: none; }
         .state-stretch .cat-body {
-            transform-origin: 50px 82px;
+            transform-origin: 50% 91%;
             animation: stretch-body 3s ease-in-out infinite;
         }
         .state-stretch .cat-head {
-            transform-origin: 50px 30px;
+            transform-origin: 50% 33%;
             animation: stretch-head 3s ease-in-out infinite;
         }
         .state-stretch .cat-tail {
-            transform-origin: 64px 74px;
+            transform-origin: 64% 82%;
             animation: stretch-tail 3s ease-in-out infinite;
         }
         .state-stretch .paw-front-left {
-            transform-origin: 40px 55px;
+            transform-origin: 40% 61%;
             animation: stretch-paw-left 3s ease-in-out infinite;
         }
         .state-stretch .paw-front-right {
-            transform-origin: 60px 55px;
+            transform-origin: 60% 61%;
             animation: stretch-paw-right 3s ease-in-out infinite;
         }
 
@@ -407,13 +414,13 @@
         .state-lick .eye-open { display: none; }
         .state-lick .eye-closed { display: block; }
         .state-lick .cat-mouth-closed { display: none; }
-        .state-lick .cat-tongue { display: block; transform-origin: 50px 44px; animation: lick-tongue 3s ease-in-out infinite; }
+        .state-lick .cat-tongue { display: block; transform-origin: 50% 49%; animation: lick-tongue 3s ease-in-out infinite; }
         .state-lick .cat-head {
-            transform-origin: 50px 30px;
+            transform-origin: 50% 33%;
             animation: lick-head 3s ease-in-out infinite;
         }
         .state-lick .paw-front-left {
-            transform-origin: 40px 55px;
+            transform-origin: 40% 61%;
             animation: lick-paw 3s ease-in-out infinite;
         }
 
@@ -435,11 +442,11 @@
         .state-scratch .eye-open { display: none; }
         .state-scratch .eye-closed { display: block; }
         .state-scratch .cat-head {
-            transform-origin: 50px 30px;
+            transform-origin: 50% 33%;
             animation: scratch-head 2s ease-in-out infinite;
         }
         .state-scratch .paw-back-right {
-            transform-origin: 70px 80px;
+            transform-origin: 70% 89%;
             animation: scratch-paw 0.15s linear infinite;
         }
 
@@ -605,6 +612,25 @@
                 <path class="cat-patches forehead-stripe-mid" d="M 50,18 L 50,23" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" style="display: var(--has-patches);"/>
                 <path class="cat-patches forehead-stripe-left" d="M 46,19 Q 47,21 47,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
                 <path class="cat-patches forehead-stripe-right" d="M 54,19 Q 53,21 53,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
+
+                <!-- Accessories inside Head Group so they animate together -->
+                <g class="cat-accessory accessory-hat">
+                    <ellipse cx="50" cy="10" rx="16" ry="4" fill="#2c3e50"/>
+                    <path d="M 38,10 C 38,0 42,-4 50,-6 C 58,-4 62,0 62,10 Z" fill="#2c3e50"/>
+                    <rect x="46" y="-8" width="8" height="3" rx="1" fill="#e74c3c"/>
+                </g>
+                <g class="cat-accessory accessory-bow">
+                    <path d="M 30,12 L 22,6 L 22,18 Z" fill="#e74c3c"/>
+                    <path d="M 30,12 L 38,6 L 38,18 Z" fill="#e74c3c"/>
+                    <circle cx="30" cy="12" r="2.5" fill="#c0392b"/>
+                </g>
+                <g class="cat-accessory accessory-glasses">
+                    <circle cx="42" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                    <circle cx="58" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                    <line x1="48" y1="28" x2="52" y2="28" stroke="#2c3e50" stroke-width="1.2"/>
+                    <line x1="36" y1="28" x2="32" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
+                    <line x1="64" y1="28" x2="68" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
+                </g>
             </g>
         </svg>
     </div>
@@ -802,7 +828,7 @@
         "¡Miauuu! Eres lo más hermoso de mi vida."
     ];
 
-    // Read URL parameters to apply skin and size
+    // Read URL parameters to apply skin, size, and accessories
     function applyUrlParameters() {
         const params = new URLSearchParams(window.location.search);
         
@@ -812,9 +838,62 @@
         currentSkin = skin;
         
         document.body.className = `skin-${skin} size-${size}`;
+        document.body.classList.toggle('has-hat', params.get('hat') === 'true');
+        document.body.classList.toggle('has-bow', params.get('bow') === 'true');
+        document.body.classList.toggle('has-glasses', params.get('glasses') === 'true');
     }
 
     applyUrlParameters();
+
+    // Trigger overlay action reaction from Android service
+    window.triggerOverlayReaction = function(actionType) {
+        let savedClass = wrapper.className;
+        if (savedClass === 'state-sleep') {
+            savedClass = 'state-idle';
+        }
+
+        // Trigger animations and bubbles based on action
+        if (actionType === 'fed') {
+            wrapper.className = 'state-happy';
+            CatAudio.playPurr(3.0);
+            bubble.textContent = "¡Ñam ñam! 🍖 ¡Gracias! ❤️";
+        } else if (actionType === 'played') {
+            wrapper.className = 'state-happy';
+            CatAudio.playPurr(3.0);
+            bubble.textContent = "¡Qué divertido! 🎾 Wheee! ✨";
+        } else if (actionType === 'bathed') {
+            wrapper.className = 'state-happy';
+            CatAudio.playPurr(3.0);
+            bubble.textContent = "¡Qué limpio! 🛁 Brillito brillito ✨";
+        } else if (actionType === 'sleepy') {
+            wrapper.className = 'state-sleep';
+            CatAudio.playPurr(4.0);
+            bubble.textContent = "Buenas noches... 💤 Zzz... 😴";
+            startZzzLoop();
+        }
+
+        bubble.classList.add('visible');
+
+        // Notify Android to expand layout for bubble
+        if (window.AndroidAppOverlay && window.AndroidAppOverlay.onCatTapped) {
+            window.AndroidAppOverlay.onCatTapped();
+        }
+
+        clearTimeout(bubbleTimeout);
+        bubbleTimeout = setTimeout(() => {
+            bubble.classList.remove('visible');
+            
+            // Restore previous state if not sleeping
+            if (actionType !== 'sleepy') {
+                wrapper.className = savedClass;
+            }
+
+            // Notify Android to shrink layout back
+            if (window.AndroidAppOverlay && window.AndroidAppOverlay.onBubbleHidden) {
+                window.AndroidAppOverlay.onBubbleHidden();
+            }
+        }, 4000);
+    };
 
     // Trigger state changes from Kotlin service
     window.setCatState = function(state, direction) {

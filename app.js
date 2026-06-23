@@ -1745,6 +1745,12 @@ function showCatReaction(eventType) {
     }
     localBubble.textContent = text;
     localBubble.classList.add('visible');
+
+    // Sync action with native overlay cat
+    if (window.AndroidApp && window.AndroidApp.triggerOverlayAction) {
+        window.AndroidApp.triggerOverlayAction(eventType);
+    }
+
     localCatState.bubbleTimeout = setTimeout(() => {
         localBubble.classList.remove('visible');
         if (!localWrapper.classList.contains('state-sleep') && catApi.setAnimation) {
@@ -1825,6 +1831,7 @@ function initVirtualCat() {
             appState.settings.cat.accessories.hat = selAccHat.value === 'yes';
             applyCatAccessories();
             saveState();
+            syncOverlayCatNative();
         });
     }
     if (selAccBow) {
@@ -1833,6 +1840,7 @@ function initVirtualCat() {
             appState.settings.cat.accessories.bow = selAccBow.value === 'yes';
             applyCatAccessories();
             saveState();
+            syncOverlayCatNative();
         });
     }
     if (selAccGlasses) {
@@ -1841,6 +1849,7 @@ function initVirtualCat() {
             appState.settings.cat.accessories.glasses = selAccGlasses.value === 'yes';
             applyCatAccessories();
             saveState();
+            syncOverlayCatNative();
         });
     }
 
@@ -2246,10 +2255,14 @@ function initVirtualCat() {
                 window.AndroidApp.saveSetting("hideInGames", catSettings.hideInGames || false);
             }
 
+            const acc = catSettings.accessories || {};
             window.AndroidApp.toggleOverlayCat(
                 catSettings.overlayEnabled,
                 catSettings.skin,
-                catSettings.size
+                catSettings.size,
+                acc.hat || false,
+                acc.bow || false,
+                acc.glasses || false
             );
         }
     }

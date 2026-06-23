@@ -1,6 +1,6 @@
 {
-  "versionCode": 27,
-  "versionName": "1.6.0",
+  "versionCode": 28,
+  "versionName": "1.6.1",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/app-debug.apk",
-  "whatsNew": "✨ Sheshe ahora tiene emociones y necesidades! 🐱\n\n• Sistema de hambre, felicidad, higiene y energía\n• Reacciones según su estado (hambriento, feliz, triste, etc.)\n• Indicadores visuales de sus necesidades\n• Accesorios: sombrero 🎩, moño 🎀 y lentes 👓\n• Botones de cuidado rápido: alimentar, jugar, bañar, dormir\n\nInspirado en el sistema de mascotas virtuales de Lilly's Box. ❤️"
+  "whatsNew": "✨ Sheshe Corrección Completa 🐱\n\n• Corregida la animación de caminata para que sea fluida y natural\n• Corregido el posicionamiento de los accesorios (sombrero 🎩, moño 🎀 y lentes 👓) para que sigan el movimiento de la cabeza\n• Sincronización de botones de cuidado rápido en la superposición nativa de pantalla"
 }

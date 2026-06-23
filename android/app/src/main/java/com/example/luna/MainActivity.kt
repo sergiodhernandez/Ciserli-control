@@ -326,10 +326,13 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
-        fun toggleOverlayCat(enabled: Boolean, skin: String, size: String) {
+        fun toggleOverlayCat(enabled: Boolean, skin: String, size: String, hat: Boolean, bow: Boolean, glasses: Boolean) {
             val intent = Intent(activity, FloatingCatService::class.java).apply {
                 putExtra("skin", skin)
                 putExtra("size", size)
+                putExtra("hat", hat)
+                putExtra("bow", bow)
+                putExtra("glasses", glasses)
             }
             if (enabled) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -339,6 +342,18 @@ class MainActivity : ComponentActivity() {
                 }
             } else {
                 activity.stopService(intent)
+            }
+        }
+
+        @JavascriptInterface
+        fun triggerOverlayAction(action: String) {
+            val intent = Intent(activity, FloatingCatService::class.java).apply {
+                putExtra("action", action)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                activity.startForegroundService(intent)
+            } else {
+                activity.startService(intent)
             }
         }
 
