@@ -1,6 +1,6 @@
 {
-  "versionCode": 30,
-  "versionName": "1.6.3",
+  "versionCode": 31,
+  "versionName": "1.6.4",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/app-debug.apk",
-  "whatsNew": "✨ Caminata de Perfil Lateral para Sheshe 🐱\n\n• Ahora Sheshe se gira de perfil (caminata horizontal) al caminar, con movimientos realistas de patas y cola, inspirados en animaciones de GitHub.\n• Se ocultan temporalmente los accesorios durante la caminata para una visualización limpia."
+  "whatsNew": "✨ Sheshe Caminata Realista y Estable 🐱\n\n• Se corrigen las articulaciones de las patas para evitar que el gato se desarme o se desprenda de su cuerpo al caminar.\n• Animaciones laterales suaves y sincronizadas de perfil."
 }

@@ -1748,36 +1748,50 @@ body {
     transform-origin: 15% 45%;
     animation: local-side-walk-tail 0.6s ease-in-out infinite;
 }
-.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-back-left,
-.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-front-left {
-    transform-origin: 50% 55%;
-    animation: local-side-walk-paw-1 0.6s ease-in-out infinite;
+.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-back-left {
+    transform-origin: 28px 55px;
+    animation: local-side-walk-paw-back-l 0.6s ease-in-out infinite;
 }
-.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-back-right,
+.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-back-right {
+    transform-origin: 38px 55px;
+    animation: local-side-walk-paw-back-r 0.6s ease-in-out infinite;
+}
+.local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-front-left {
+    transform-origin: 68px 55px;
+    animation: local-side-walk-paw-front-l 0.6s ease-in-out infinite;
+}
 .local-cat-container #local-cat-wrapper.state-walk .cat-side-paw.paw-front-right {
-    transform-origin: 50% 55%;
-    animation: local-side-walk-paw-2 0.6s ease-in-out infinite;
+    transform-origin: 58px 55px;
+    animation: local-side-walk-paw-front-r 0.6s ease-in-out infinite;
 }
 
 @keyframes local-side-walk-body {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
+    0%, 100% { transform: translateY(0) scaleY(1); }
+    50% { transform: translateY(-1.5px) scaleY(0.97); }
 }
 @keyframes local-side-walk-head {
     0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-1.5px) rotate(1.5deg); }
+    50% { transform: translateY(-1px) rotate(1.5deg); }
 }
 @keyframes local-side-walk-tail {
     0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(-8deg); }
+    50% { transform: rotate(-6deg); }
 }
-@keyframes local-side-walk-paw-1 {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-4px) rotate(12deg); }
+@keyframes local-side-walk-paw-back-l {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(12deg); }
 }
-@keyframes local-side-walk-paw-2 {
-    0%, 100% { transform: translateY(-4px) rotate(-12deg); }
-    50% { transform: translateY(0) rotate(0deg); }
+@keyframes local-side-walk-paw-back-r {
+    0%, 100% { transform: rotate(12deg); }
+    50% { transform: rotate(-10deg); }
+}
+@keyframes local-side-walk-paw-front-l {
+    0%, 100% { transform: rotate(12deg); }
+    50% { transform: rotate(-12deg); }
+}
+@keyframes local-side-walk-paw-front-r {
+    0%, 100% { transform: rotate(-12deg); }
+    50% { transform: rotate(12deg); }
 }
 
 /* Sleep */

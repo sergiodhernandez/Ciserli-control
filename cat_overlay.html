@@ -277,36 +277,50 @@
             transform-origin: 15% 45%;
             animation: side-walk-tail 0.6s ease-in-out infinite;
         }
-        .state-walk .cat-side-paw.paw-back-left,
-        .state-walk .cat-side-paw.paw-front-left {
-            transform-origin: 50% 55%;
-            animation: side-walk-paw-1 0.6s ease-in-out infinite;
+        .state-walk .cat-side-paw.paw-back-left {
+            transform-origin: 28px 55px;
+            animation: side-walk-paw-back-l 0.6s ease-in-out infinite;
         }
-        .state-walk .cat-side-paw.paw-back-right,
+        .state-walk .cat-side-paw.paw-back-right {
+            transform-origin: 38px 55px;
+            animation: side-walk-paw-back-r 0.6s ease-in-out infinite;
+        }
+        .state-walk .cat-side-paw.paw-front-left {
+            transform-origin: 68px 55px;
+            animation: side-walk-paw-front-l 0.6s ease-in-out infinite;
+        }
         .state-walk .cat-side-paw.paw-front-right {
-            transform-origin: 50% 55%;
-            animation: side-walk-paw-2 0.6s ease-in-out infinite;
+            transform-origin: 58px 55px;
+            animation: side-walk-paw-front-r 0.6s ease-in-out infinite;
         }
 
         @keyframes side-walk-body {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-2px); }
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(-1.5px) scaleY(0.97); }
         }
         @keyframes side-walk-head {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-1.5px) rotate(1.5deg); }
+            50% { transform: translateY(-1px) rotate(1.5deg); }
         }
         @keyframes side-walk-tail {
             0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-8deg); }
+            50% { transform: rotate(-6deg); }
         }
-        @keyframes side-walk-paw-1 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-4px) rotate(12deg); }
+        @keyframes side-walk-paw-back-l {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(12deg); }
         }
-        @keyframes side-walk-paw-2 {
-            0%, 100% { transform: translateY(-4px) rotate(-12deg); }
-            50% { transform: translateY(0) rotate(0deg); }
+        @keyframes side-walk-paw-back-r {
+            0%, 100% { transform: rotate(12deg); }
+            50% { transform: rotate(-10deg); }
+        }
+        @keyframes side-walk-paw-front-l {
+            0%, 100% { transform: rotate(12deg); }
+            50% { transform: rotate(-12deg); }
+        }
+        @keyframes side-walk-paw-front-r {
+            0%, 100% { transform: rotate(-12deg); }
+            50% { transform: rotate(12deg); }
         }
 
         /* Sleep state */
