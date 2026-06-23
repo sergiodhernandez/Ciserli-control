@@ -1887,6 +1887,7 @@ function initVirtualCat() {
     }
 
     applyCatVisualSettings();
+    applyCatAccessories();
     syncOverlayCatNative();
 
     // Trigger local movement loop if enabled
@@ -2147,6 +2148,7 @@ function initVirtualCat() {
             appState.settings.cat.enabled = swLocal.checked;
             saveState();
             applyCatVisualSettings();
+            applyCatAccessories();
             if (swLocal.checked) {
                 startLocalMovement();
             } else {
@@ -2218,6 +2220,7 @@ function initVirtualCat() {
             appState.settings.cat.skin = selSkin.value;
             saveState();
             applyCatVisualSettings();
+            applyCatAccessories();
             syncOverlayCatNative();
         });
     }
@@ -2227,6 +2230,7 @@ function initVirtualCat() {
             appState.settings.cat.size = selSize.value;
             saveState();
             applyCatVisualSettings();
+            applyCatAccessories();
             syncOverlayCatNative();
         });
     }
