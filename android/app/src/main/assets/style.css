@@ -1514,76 +1514,83 @@ body {
 
 .local-cat-container.size-large { width: 100px; height: 100px; }
 .local-cat-container.size-large .local-cat-bubble { bottom: 102px; }
-
 .local-cat-container.skin-patched {
-    --skin-primary: #1a1a1a;
-    --skin-secondary: #242424;
+    --skin-primary: #fcfaf2;
+    --skin-secondary: #f4f0e6;
     --skin-paw: #ffffff;
-    --patch-1-color: #3a3a3a;
-    --patch-2-color: #3a3a3a;
-    --has-patches: none;
-    --ear-inner: #ffb6c1;
-    --eye-color: #ffd700;
-    --face-details: #0a0a0a;
-    --chest-color: #ffffff;
-    --muzzle-color: #ffffff;
-    --nose-color: #ffb6c1;
-    --whisker-color: #999999;
-}
-
-.local-cat-container.skin-orange {
-    --skin-primary: #e67e22;
-    --skin-secondary: #d35400;
-    --skin-paw: #e67e22;
-    --patch-1-color: #a04000;
-    --patch-2-color: #a04000;
+    --patch-1-color: #5d4037;
+    --patch-2-color: #8d6e63;
     --has-patches: block;
     --ear-inner: #ffccd5;
     --eye-color: #2ecc71;
-    --face-details: #5d4037;
-    --chest-color: #f5cba7;
-    --muzzle-color: #f5cba7;
-    --nose-color: #e8a0a0;
-    --whisker-color: #777777;
+    --face-details: #2c1e14;
+    --chest-color: #ffffff;
+    --muzzle-color: #ffffff;
+    --nose-color: #ff8a9e;
+    --whisker-color: #7f8c8d;
+    --blush-color: #ffb6c1;
+    --stroke-color: #2c1e14;
+}
+
+.local-cat-container.skin-orange {
+    --skin-primary: #f39c12;
+    --skin-secondary: #d35400;
+    --skin-paw: #fef9e7;
+    --patch-1-color: #b03a2e;
+    --patch-2-color: #e67e22;
+    --has-patches: block;
+    --ear-inner: #ffccd5;
+    --eye-color: #3498db;
+    --face-details: #4a2711;
+    --chest-color: #fef9e7;
+    --muzzle-color: #fef9e7;
+    --nose-color: #ff8a9e;
+    --whisker-color: #b03a2e;
+    --blush-color: #f1948a;
+    --stroke-color: #4a2711;
 }
 
 .local-cat-container.skin-white {
-    --skin-primary: #f8f9fa;
-    --skin-secondary: #eeeeee;
-    --skin-paw: #f8f9fa;
+    --skin-primary: #ffffff;
+    --skin-secondary: #f2f4f4;
+    --skin-paw: #ffffff;
     --patch-1-color: transparent;
     --patch-2-color: transparent;
     --has-patches: none;
     --ear-inner: #ffccd5;
-    --eye-color: #00cec9;
-    --face-details: #7f8c8d;
+    --eye-color: #0984e3;
+    --face-details: #2d3436;
     --chest-color: #ffffff;
     --muzzle-color: #ffffff;
     --nose-color: #ffb6c1;
-    --whisker-color: #aaaaaa;
+    --whisker-color: #bdc3c7;
+    --blush-color: #ffb6c1;
+    --stroke-color: #2d3436;
 }
 
 .local-cat-container.skin-black {
-    --skin-primary: #1a1a1a;
-    --skin-secondary: #111111;
-    --skin-paw: #1a1a1a;
+    --skin-primary: #2c3e50;
+    --skin-secondary: #1a252f;
+    --skin-paw: #ffffff;
     --patch-1-color: transparent;
     --patch-2-color: transparent;
     --has-patches: none;
     --ear-inner: #ff8a9e;
-    --eye-color: #fdcb6e;
-    --face-details: #000000;
-    --chest-color: #2a2a2a;
-    --muzzle-color: #2a2a2a;
-    --nose-color: #8a6a6a;
-    --whisker-color: #666666;
+    --eye-color: #f1c40f;
+    --face-details: #ffffff;
+    --chest-color: #ffffff;
+    --muzzle-color: #ffffff;
+    --nose-color: #ff8a9e;
+    --whisker-color: #ffffff;
+    --blush-color: #ff8a9e;
+    --stroke-color: #1a252f;
 }
 
 .local-cat-container.skin-calico {
     --skin-primary: #ffffff;
     --skin-secondary: #f0f0f0;
     --skin-paw: #ffffff;
-    --patch-1-color: #1a1a1a;
+    --patch-1-color: #2d3436;
     --patch-2-color: #e67e22;
     --has-patches: block;
     --ear-inner: #ffccd5;
@@ -1592,7 +1599,9 @@ body {
     --chest-color: #ffffff;
     --muzzle-color: #ffffff;
     --nose-color: #ffb6c1;
-    --whisker-color: #888888;
+    --whisker-color: #7f8c8d;
+    --blush-color: #ffccd5;
+    --stroke-color: #2d3436;
 }
 
 #local-cat-wrapper {
