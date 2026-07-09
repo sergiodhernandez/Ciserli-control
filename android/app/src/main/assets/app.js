@@ -1131,6 +1131,22 @@ els.btnSaveSettings.addEventListener('click', () => {
 function loadSettingsUI() {
     els.inputCycleLength.value = appState.settings.cycleLength;
     els.inputPeriodLength.value = appState.settings.periodLength;
+    
+    // Display current version information
+    const currentVersionSpan = document.getElementById('app-current-version');
+    if (currentVersionSpan) {
+        if (window.AndroidApp) {
+            try {
+                const code = window.AndroidApp.getAppVersionCode();
+                const name = window.AndroidApp.getAppVersionName();
+                currentVersionSpan.textContent = `Versión actual: v${name} (Código ${code})`;
+            } catch (err) {
+                currentVersionSpan.textContent = `Versión actual: Error al leer versión`;
+            }
+        } else {
+            currentVersionSpan.textContent = "Versión actual: Modo Web (Sin app)";
+        }
+    }
 }
 
 // Data Export
