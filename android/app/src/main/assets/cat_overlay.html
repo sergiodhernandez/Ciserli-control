@@ -168,303 +168,107 @@
         body.size-large #cat-wrapper { width: 100px; height: 100px; }
         body.size-large #bubble { bottom: 102px; }
 
-        .cat-svg {
+        .cat-image-wrapper {
+            position: relative;
             width: 100%;
             height: 100%;
         }
 
+        .cat-sprite {
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            transition: background-image 0.2s ease;
+        }
+        
+        /* State image mappings to generated realistic assets */
+        .state-idle .cat-sprite {
+            background-image: url('cat_idle.png');
+        }
+        .state-walk .cat-sprite {
+            background-image: url('cat_walk.png');
+        }
+        .state-sleep .cat-sprite {
+            background-image: url('cat_sleep.png');
+        }
+        .state-happy .cat-sprite {
+            background-image: url('cat_idle.png');
+        }
+        .state-stretch .cat-sprite {
+            background-image: url('cat_walk.png');
+        }
+        .state-lick .cat-sprite {
+            background-image: url('cat_idle.png');
+        }
+        .state-scratch .cat-sprite {
+            background-image: url('cat_idle.png');
+        }
+
         /* --- ANIMATIONS --- */
 
-        /* Tail sway */
-        .cat-tail {
-            transform-origin: 64% 82%;
-            animation: tail-sway 3s ease-in-out infinite;
+        /* Idle breathing */
+        .state-idle .cat-sprite {
+            animation: png-breath 3s ease-in-out infinite;
         }
-
-        @keyframes tail-sway {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-8deg); }
-        }
-
-        /* Eyes state */
-        .eye-closed, .eye-happy {
-            display: none;
-        }
-
-        .cat-mouth-open, .cat-tongue {
-            display: none;
-        }
-
-        /* Idle state */
-        .state-idle .eye-open {
-            animation: eye-blink 5s infinite;
-        }
-
-        .state-idle .cat-head {
-            transform-origin: 50% 33%;
-            animation: head-nod 4s ease-in-out infinite;
-        }
-
-        .state-idle .cat-body {
-            animation: body-breath 2.5s ease-in-out infinite;
-        }
-
-        .state-idle .ear-left, .state-idle .ear-inner-left {
-            transform-origin: 36% 20%;
-            animation: ear-twitch-left 6s infinite;
-        }
-
-        .state-idle .ear-right, .state-idle .ear-inner-right {
-            transform-origin: 64% 20%;
-            animation: ear-twitch-right 6s infinite;
-        }
-
-        @keyframes ear-twitch-left {
-            0%, 93%, 96%, 99%, 100% { transform: rotate(0deg); }
-            94%, 97% { transform: rotate(-5deg); }
-        }
-
-        @keyframes ear-twitch-right {
-            0%, 93%, 96%, 99%, 100% { transform: rotate(0deg); }
-            94%, 97% { transform: rotate(5deg); }
-        }
-
-        @keyframes eye-blink {
-            0%, 92%, 100% { transform: scaleY(1); }
-            96% { transform: scaleY(0.1); }
-        }
-
-        @keyframes head-nod {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(0.3px) rotate(0.5deg); }
-        }
-
-        @keyframes body-breath {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.015); }
-        }
-
-        .cat-paw,
-        .cat-head,
-        .cat-body,
-        .cat-tail {
-            transform-box: view-box;
-        }
-
-        /* Walk state */
-        .cat-side-view {
-            display: none;
-        }
-        .state-walk .cat-front-view {
-            display: none;
-        }
-        .state-walk .cat-side-view {
-            display: block;
-        }
-        .state-walk .cat-accessory {
-            display: none !important;
-        }
-
-        .state-walk .cat-side-body {
-            transform-origin: 50% 50%;
-            animation: side-walk-body 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-head {
-            transform-origin: 78% 32%;
-            animation: side-walk-head 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-tail {
-            transform-origin: 15% 45%;
-            animation: side-walk-tail 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-paw.paw-back-left {
-            transform-origin: 28px 55px;
-            animation: side-walk-paw-back-l 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-paw.paw-back-right {
-            transform-origin: 38px 55px;
-            animation: side-walk-paw-back-r 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-paw.paw-front-left {
-            transform-origin: 68px 55px;
-            animation: side-walk-paw-front-l 0.6s ease-in-out infinite;
-        }
-        .state-walk .cat-side-paw.paw-front-right {
-            transform-origin: 58px 55px;
-            animation: side-walk-paw-front-r 0.6s ease-in-out infinite;
-        }
-
-        @keyframes side-walk-body {
-            0%, 100% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(-1.5px) scaleY(0.97); }
-        }
-        @keyframes side-walk-head {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-1px) rotate(1.5deg); }
-        }
-        @keyframes side-walk-tail {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-6deg); }
-        }
-        @keyframes side-walk-paw-back-l {
-            0%, 100% { transform: rotate(-10deg); }
-            50% { transform: rotate(12deg); }
-        }
-        @keyframes side-walk-paw-back-r {
-            0%, 100% { transform: rotate(12deg); }
-            50% { transform: rotate(-10deg); }
-        }
-        @keyframes side-walk-paw-front-l {
-            0%, 100% { transform: rotate(12deg); }
-            50% { transform: rotate(-12deg); }
-        }
-        @keyframes side-walk-paw-front-r {
-            0%, 100% { transform: rotate(-12deg); }
-            50% { transform: rotate(12deg); }
-        }
-
-        /* Sleep state */
-        .state-sleep .eye-open { display: none; }
-        .state-sleep .eye-closed { display: block; }
-        .state-sleep .cat-body {
-            animation: body-breath 3.5s ease-in-out infinite;
-        }
-        .state-sleep .cat-head {
-            transform-origin: 50px 30px;
-            transform: translateY(3px) rotate(3deg);
-        }
-        .state-sleep .cat-tail {
-            animation: tail-sway-slow 6s ease-in-out infinite;
-        }
-
-        @keyframes tail-sway-slow {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-4deg); }
-        }
-
-        /* Happy state */
-        .state-happy .eye-open { display: none; }
-        .state-happy .eye-happy { display: block; }
-        .state-happy #cat-wrapper {
-            animation: happy-purr 0.4s ease-in-out infinite;
-        }
-        .state-happy .cat-tail {
-            animation: tail-sway-fast 0.4s linear infinite;
-        }
-
-        @keyframes happy-purr {
-            0%, 100% { transform: scale(1.03) rotate(0deg); }
-            50% { transform: scale(1.02) translateY(-0.5px) rotate(0.5deg); }
-        }
-
-        @keyframes tail-sway-fast {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-20deg); }
-        }
-
-        /* Stretch state */
-        .state-stretch .eye-open { display: none; }
-        .state-stretch .eye-closed { display: block; animation: stretch-eyes 3s ease-in-out infinite; }
-        .state-stretch .cat-mouth-open { display: block; animation: stretch-mouth 3s ease-in-out infinite; }
-        .state-stretch .cat-mouth-closed { display: none; }
-        .state-stretch .cat-body {
-            transform-origin: 50% 91%;
-            animation: stretch-body 3s ease-in-out infinite;
-        }
-        .state-stretch .cat-head {
-            transform-origin: 50% 33%;
-            animation: stretch-head 3s ease-in-out infinite;
-        }
-        .state-stretch .cat-tail {
-            transform-origin: 64% 82%;
-            animation: stretch-tail 3s ease-in-out infinite;
-        }
-        .state-stretch .paw-front-left {
-            transform-origin: 40% 61%;
-            animation: stretch-paw-left 3s ease-in-out infinite;
-        }
-        .state-stretch .paw-front-right {
-            transform-origin: 60% 61%;
-            animation: stretch-paw-right 3s ease-in-out infinite;
-        }
-
-        @keyframes stretch-body {
+        @keyframes png-breath {
             0%, 100% { transform: scale(1) translateY(0); }
-            25%, 75% { transform: scaleY(0.88) scaleX(1.03) translateY(3px); }
-        }
-        @keyframes stretch-head {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25%, 75% { transform: translate(2px, 4px) rotate(6deg); }
-        }
-        @keyframes stretch-tail {
-            0%, 100% { transform: rotate(0deg); }
-            25%, 75% { transform: rotate(-45deg); }
-        }
-        @keyframes stretch-paw-left {
-            0%, 100% { transform: translate(0, 0) scaleY(1); }
-            25%, 75% { transform: translate(-5px, 2px) rotate(-12deg) scaleY(0.85); }
-        }
-        @keyframes stretch-paw-right {
-            0%, 100% { transform: translate(0, 0) scaleY(1); }
-            25%, 75% { transform: translate(-2px, 2px) scaleY(0.85); }
-        }
-        @keyframes stretch-mouth {
-            0%, 20%, 80%, 100% { transform: scale(0); }
-            30%, 70% { transform: scale(1.1); }
-        }
-        @keyframes stretch-eyes {
-            0%, 100% { transform: scaleY(1); }
-            25%, 75% { transform: scaleY(0.8); }
+            50% { transform: scale(1.03, 0.97) translateY(1.5px); }
         }
 
-        /* Lick state */
-        .state-lick .eye-open { display: none; }
-        .state-lick .eye-closed { display: block; }
-        .state-lick .cat-mouth-closed { display: none; }
-        .state-lick .cat-tongue { display: block; transform-origin: 50% 49%; animation: lick-tongue 3s ease-in-out infinite; }
-        .state-lick .cat-head {
-            transform-origin: 50% 33%;
-            animation: lick-head 3s ease-in-out infinite;
+        /* Walk sway */
+        .state-walk .cat-sprite {
+            animation: png-walk 0.6s ease-in-out infinite alternate;
         }
-        .state-lick .paw-front-left {
-            transform-origin: 40% 61%;
-            animation: lick-paw 3s ease-in-out infinite;
+        @keyframes png-walk {
+            0% { transform: translateY(0) rotate(-2deg); }
+            100% { transform: translateY(-4px) rotate(2deg); }
         }
 
-        @keyframes lick-head {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            20%, 80% { transform: translate(-2px, 3px) rotate(-12deg); }
+        /* Sleep deep breathing */
+        .state-sleep .cat-sprite {
+            animation: png-sleep-breath 4.5s ease-in-out infinite;
         }
-        @keyframes lick-paw {
-            0%, 100% { transform: translate(0, 0) rotate(0); }
-            20%, 80% { transform: translate(10px, -16px) rotate(40deg); }
-        }
-        @keyframes lick-tongue {
-            0%, 20%, 80%, 100% { transform: scale(0) translate(0, 0); }
-            30%, 70% { transform: scale(1) translate(-1px, 1px) rotate(-8deg); }
-            40%, 60% { transform: scale(1) translate(0, 2px) rotate(-4deg); }
+        @keyframes png-sleep-breath {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.02, 0.98) translateY(1px); }
         }
 
-        /* Scratch state */
-        .state-scratch .eye-open { display: none; }
-        .state-scratch .eye-closed { display: block; }
-        .state-scratch .cat-head {
-            transform-origin: 50% 33%;
-            animation: scratch-head 2s ease-in-out infinite;
+        /* Happy purr vibration */
+        .state-happy #cat-wrapper {
+            animation: png-purr-vibrate 0.12s ease-in-out infinite alternate;
         }
-        .state-scratch .paw-back-right {
-            transform-origin: 70% 89%;
-            animation: scratch-paw 0.15s linear infinite;
+        @keyframes png-purr-vibrate {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
         }
 
-        @keyframes scratch-head {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            10%, 90% { transform: translate(-1px, 3px) rotate(-6deg); }
+        /* Stretch animation */
+        .state-stretch .cat-sprite {
+            animation: png-stretch 3s ease-in-out infinite;
         }
-        @keyframes scratch-paw {
-            0%, 100% { transform: translate(0, 0) rotate(0); }
-            33% { transform: translate(4px, -20px) rotate(-30deg); }
-            66% { transform: translate(6px, -22px) rotate(-25deg); }
+        @keyframes png-stretch {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scaleX(1.06) scaleY(0.9) translateY(2.5px); }
+        }
+
+        /* Lick animation */
+        .state-lick .cat-sprite {
+            animation: png-lick 3s ease-in-out infinite;
+        }
+        @keyframes png-lick {
+            0%, 100% { transform: rotate(0); }
+            50% { transform: rotate(-6deg) translateY(1.5px); }
+        }
+
+        /* Scratch animation */
+        .state-scratch .cat-sprite {
+            animation: png-scratch 0.15s ease-in-out infinite alternate;
+        }
+        @keyframes png-scratch {
+            0% { transform: rotate(0) translate(0, 0); }
+            100% { transform: rotate(2deg) translate(1px, -1px); }
         }
 
         /* Hearts effect */
@@ -502,7 +306,17 @@
             100% { transform: translate(25px, -55px) scale(1.3); opacity: 0; }
         }
 
-        /* Accessories visibility */
+        /* SVG overlay for accessories scaling to wrapper coordinates */
+        .accessories-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
         .cat-accessory {
             display: none;
             pointer-events: none;
@@ -511,6 +325,11 @@
         body.has-hat .accessory-hat { display: inline !important; }
         body.has-bow .accessory-bow { display: inline !important; }
         body.has-glasses .accessory-glasses { display: inline !important; }
+
+        /* Hide accessories during sleep */
+        .state-sleep .accessories-svg {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="skin-patched size-medium">
@@ -521,190 +340,31 @@
 
     <!-- Cat wrapper -->
     <div id="cat-wrapper" class="state-idle">
-        <svg class="cat-svg" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="body-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="var(--skin-primary)" />
-                    <stop offset="100%" stop-color="var(--skin-secondary)" />
-                </linearGradient>
-                <radialGradient id="head-grad" cx="50%" cy="40%" r="50%" fx="30%" fy="30%">
-                    <stop offset="0%" stop-color="var(--skin-primary)" />
-                    <stop offset="100%" stop-color="var(--skin-secondary)" />
-                </radialGradient>
-            </defs>
-
-            <g class="cat-front-view">
-                <!-- Tail -->
-                <path class="cat-tail" d="M 64,72 C 72,73 79,68 81,60 C 83,52 79,47 75,47 C 73,47 73,50 75,52 C 79,54 77,59 75,63 C 73,67 69,69 64,69 Z" fill="var(--skin-primary)" />
-                <path class="cat-patches tail-stripe-1" d="M 74,71 C 76,70 77,69 78,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                <path class="cat-patches tail-stripe-2" d="M 78,64 C 79,62 80,60 80,58" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                <path class="cat-patches tail-stripe-3" d="M 78,53 C 77,51 76,50 74,49" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-
-                <!-- Back Paws -->
-                <g class="cat-paw paw-back-left">
-                    <path d="M 30,67 C 24,72 26,80 32,80 C 36,80 36,74 32,72" fill="var(--skin-primary)" />
-                    <ellipse cx="30" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
+        <div class="cat-image-wrapper">
+            <div class="cat-sprite"></div>
+            <svg class="accessories-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Hat adapted to the head position of the PNG cat -->
+                <g class="cat-accessory accessory-hat">
+                    <ellipse cx="48" cy="22" rx="16" ry="4" fill="#2c3e50"/>
+                    <path d="M 32,22 C 32,12 36,8 48,6 C 60,8 64,12 64,22 Z" fill="#2c3e50"/>
+                    <rect x="44" y="16" width="8" height="3" rx="1" fill="#e74c3c"/>
                 </g>
-                <g class="cat-paw paw-back-right">
-                    <path d="M 70,67 C 76,72 74,80 68,80 C 64,80 64,74 68,72" fill="var(--skin-primary)" />
-                    <ellipse cx="70" cy="80" rx="4.5" ry="2.5" fill="var(--skin-paw)"/>
+                <!-- Bow adapted -->
+                <g class="cat-accessory accessory-bow">
+                    <path d="M 32,36 L 24,30 L 24,42 Z" fill="#e74c3c"/>
+                    <path d="M 32,36 L 40,30 L 40,42 Z" fill="#e74c3c"/>
+                    <circle cx="32" cy="36" r="2.5" fill="#c0392b"/>
                 </g>
-
-                <!-- Body -->
-                <path class="cat-body" d="M 35,48 C 28,54 26,72 32,82 C 38,85 62,85 68,82 C 74,72 72,54 65,48 Z" fill="var(--skin-primary)" />
-
-                <!-- Body stripes -->
-                <path class="cat-patches body-stripe-l1" d="M 29,62 Q 32,63 34,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                <path class="cat-patches body-stripe-l2" d="M 27,69 Q 30,70 33,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                <path class="cat-patches body-stripe-r1" d="M 71,62 Q 68,63 66,61" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                <path class="cat-patches body-stripe-r2" d="M 73,69 Q 70,70 67,67" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-
-                <!-- Fluffy white chest bib -->
-                <path class="cat-chest" d="M 42,48 C 42,50 39,56 43,62 C 46,66 54,66 57,62 C 61,56 58,50 58,48 C 55,50 45,50 42,48 Z" fill="var(--chest-color)" />
-
-                <!-- Front Paws -->
-                <g class="cat-paw paw-front-left">
-                    <path d="M 36,55 L 36,79 C 36,81 44,81 44,79 L 44,55 Z" fill="var(--skin-paw)" />
-                    <ellipse cx="40" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
+                <!-- Glasses adapted to the face position of the PNG cat -->
+                <g class="cat-accessory accessory-glasses">
+                    <circle cx="40" cy="32" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                    <circle cx="56" cy="32" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
+                    <line x1="46" y1="32" x2="50" y2="32" stroke="#2c3e50" stroke-width="1.2"/>
+                    <line x1="34" y1="32" x2="30" y2="28" stroke="#2c3e50" stroke-width="0.8"/>
+                    <line x1="62" y1="32" x2="66" y2="28" stroke="#2c3e50" stroke-width="0.8"/>
                 </g>
-                <g class="cat-paw paw-front-right">
-                    <path d="M 56,55 L 56,79 C 56,81 64,81 64,79 L 64,55 Z" fill="var(--skin-paw)" />
-                    <ellipse cx="60" cy="80" rx="5" ry="3" fill="var(--skin-paw)"/>
-                </g>
-
-                <!-- Head Group -->
-                <g class="cat-head">
-                    <path class="cat-head-base" d="M 50,13 C 42,13 36,19 33,27 C 32,33 34,42 40,46 L 60,46 C 66,42 68,33 67,27 C 64,19 58,13 50,13 Z" fill="var(--skin-primary)" />
-
-                    <!-- Left Ear -->
-                    <path class="cat-ear ear-left" d="M 36,20 L 28,6 L 44,12 Z" fill="var(--skin-primary)" />
-                    <path class="cat-ear-inner ear-inner-left" d="M 36,18 L 30,9 L 42,13 Z" fill="var(--ear-inner)" />
-                    <!-- Right Ear -->
-                    <path class="cat-ear ear-right" d="M 64,20 L 72,6 L 56,12 Z" fill="var(--skin-primary)" />
-                    <path class="cat-ear-inner ear-inner-right" d="M 64,18 L 70,9 L 58,13 Z" fill="var(--ear-inner)" />
-
-                    <!-- Eyes -->
-                    <!-- Left Eye -->
-                    <g class="cat-eye-group eye-left">
-                        <g class="eye-open">
-                            <ellipse cx="42" cy="28" rx="4.2" ry="3" transform="rotate(-6 42 28)" fill="var(--eye-color)" />
-                            <ellipse cx="42" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
-                            <circle cx="41.5" cy="26.8" r="0.8" fill="#ffffff" />
-                        </g>
-                        <path class="eye-closed" d="M 38 29 Q 42 32 46 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                        <path class="eye-happy" d="M 38 30 Q 42 27 46 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                    </g>
-                    <!-- Right Eye -->
-                    <g class="cat-eye-group eye-right">
-                        <g class="eye-open">
-                            <ellipse cx="58" cy="28" rx="4.2" ry="3" transform="rotate(6 58 28)" fill="var(--eye-color)" />
-                            <ellipse cx="58" cy="28" rx="1.2" ry="2.8" fill="var(--face-details)" />
-                            <circle cx="57.5" cy="26.8" r="0.8" fill="#ffffff" />
-                        </g>
-                        <path class="eye-closed" d="M 54 29 Q 58 32 62 29" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                        <path class="eye-happy" d="M 54 30 Q 58 27 62 30" stroke="var(--face-details)" stroke-width="1.5" fill="none" stroke-linecap="round" />
-                    </g>
-
-                    <!-- Muzzle -->
-                    <ellipse cx="50" cy="36" rx="6" ry="4.5" fill="var(--muzzle-color)" />
-
-                    <!-- Nose -->
-                    <path d="M 49,34 L 51,34 L 50,36 Z" fill="var(--nose-color)" />
-
-                    <!-- Mouth -->
-                    <g class="cat-mouth-group">
-                        <path class="cat-mouth-closed" d="M 48,37 Q 49,38.5 50,37 Q 51,38.5 52,37" stroke="var(--face-details)" stroke-width="0.8" fill="none" stroke-linecap="round" />
-                        <ellipse class="cat-mouth-open" cx="50" cy="39" rx="2" ry="2.8" fill="#d63031" stroke="var(--face-details)" stroke-width="0.4" />
-                        <path class="cat-tongue" d="M 48.5 38.5 Q 50 41 51.5 38.5 Z" fill="#ffccd5" />
-                    </g>
-
-                    <!-- Whiskers -->
-                    <line x1="35" y1="35" x2="26" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                    <line x1="35" y1="37" x2="25" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                    <line x1="35" y1="39" x2="27" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                    <line x1="65" y1="35" x2="74" y2="33" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                    <line x1="65" y1="37" x2="75" y2="37" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-                    <line x1="65" y1="39" x2="73" y2="41" stroke="var(--whisker-color)" stroke-width="0.5" stroke-linecap="round" />
-
-                    <!-- Forehead Stripes -->
-                    <path class="cat-patches forehead-stripe-mid" d="M 50,18 L 50,23" stroke="var(--patch-1-color)" stroke-width="1.5" stroke-linecap="round" style="display: var(--has-patches);"/>
-                    <path class="cat-patches forehead-stripe-left" d="M 46,19 Q 47,21 47,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-                    <path class="cat-patches forehead-stripe-right" d="M 54,19 Q 53,21 53,23" stroke="var(--patch-1-color)" stroke-width="1.2" stroke-linecap="round" fill="none" style="display: var(--has-patches);"/>
-
-                    <!-- Accessories inside Head Group so they animate together -->
-                    <g class="cat-accessory accessory-hat">
-                        <ellipse cx="50" cy="10" rx="16" ry="4" fill="#2c3e50"/>
-                        <path d="M 38,10 C 38,0 42,-4 50,-6 C 58,-4 62,0 62,10 Z" fill="#2c3e50"/>
-                        <rect x="46" y="-8" width="8" height="3" rx="1" fill="#e74c3c"/>
-                    </g>
-                    <g class="cat-accessory accessory-bow">
-                        <path d="M 30,12 L 22,6 L 22,18 Z" fill="#e74c3c"/>
-                        <path d="M 30,12 L 38,6 L 38,18 Z" fill="#e74c3c"/>
-                        <circle cx="30" cy="12" r="2.5" fill="#c0392b"/>
-                    </g>
-                    <g class="cat-accessory accessory-glasses">
-                        <circle cx="42" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
-                        <circle cx="58" cy="28" r="6" fill="none" stroke="#2c3e50" stroke-width="1.2"/>
-                        <line x1="48" y1="28" x2="52" y2="28" stroke="#2c3e50" stroke-width="1.2"/>
-                        <line x1="36" y1="28" x2="32" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
-                        <line x1="64" y1="28" x2="68" y2="24" stroke="#2c3e50" stroke-width="0.8"/>
-                    </g>
-                </g>
-            </g>
-
-            <!-- Side View Group (Visible only during walk state) -->
-            <g class="cat-side-view">
-                <!-- Tail -->
-                <path class="cat-side-tail" d="M 15 50 C 5 45 5 25 15 20 C 20 20 20 25 15 25 C 10 25 10 40 17 43 Z" fill="var(--skin-primary)"/>
-                
-                <!-- Back Paw Left (Backmost) -->
-                <g class="cat-side-paw paw-back-left">
-                    <path d="M 28 55 L 25 80 C 25 82 31 82 31 80 L 32 55 Z" fill="var(--skin-secondary)"/>
-                    <ellipse cx="28" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
-                </g>
-
-                <!-- Front Paw Left (Backmost) -->
-                <g class="cat-side-paw paw-front-left">
-                    <path d="M 68 55 L 65 80 C 65 82 71 82 71 80 L 72 55 Z" fill="var(--skin-secondary)"/>
-                    <ellipse cx="68" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
-                </g>
-
-                <!-- Body (Side view profile) -->
-                <path class="cat-side-body" d="M 22 45 C 22 35 78 35 78 45 C 78 55 22 58 22 45 Z" fill="var(--skin-primary)"/>
-                <!-- White belly/chest patch -->
-                <path class="cat-side-chest" d="M 65 38 C 72 38 78 43 78 48 C 78 52 70 54 62 48 Z" fill="var(--chest-color)"/>
-
-                <!-- Back Paw Right (Foremost) -->
-                <g class="cat-side-paw paw-back-right">
-                    <path d="M 38 55 L 38 80 C 38 82 44 82 44 80 L 44 55 Z" fill="var(--skin-primary)"/>
-                    <ellipse cx="41" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
-                </g>
-
-                <!-- Front Paw Right (Foremost) -->
-                <g class="cat-side-paw paw-front-right">
-                    <path d="M 58 55 L 58 80 C 58 82 64 82 64 80 L 64 55 Z" fill="var(--skin-primary)"/>
-                    <ellipse cx="61" cy="80" rx="3.5" ry="2" fill="var(--skin-paw)"/>
-                </g>
-
-                <!-- Head (Profile view) -->
-                <g class="cat-side-head">
-                    <!-- Ear -->
-                    <path d="M 72 25 L 78 10 L 84 22 Z" fill="var(--skin-primary)"/>
-                    <path d="M 74 23 L 78 13 L 82 20 Z" fill="var(--ear-inner)"/>
-                    <!-- Head Base -->
-                    <circle cx="78" cy="32" r="14" fill="var(--skin-primary)"/>
-                    <!-- Eye -->
-                    <ellipse cx="84" cy="28" rx="2" ry="3" fill="var(--eye-color)"/>
-                    <ellipse cx="84.5" cy="28" rx="0.6" ry="2.5" fill="var(--face-details)"/>
-                    <!-- Snout/Nose -->
-                    <path d="M 90 32 C 94 32 94 36 90 36 Z" fill="var(--muzzle-color)"/>
-                    <polygon points="91,32 93,32 92,34" fill="var(--nose-color)"/>
-                    <!-- Whiskers -->
-                    <line x1="91" y1="35" x2="98" y2="35" stroke="var(--whisker-color)" stroke-width="0.5"/>
-                    <line x1="90" y1="37" x2="97" y2="38" stroke="var(--whisker-color)" stroke-width="0.5"/>
-                </g>
-            </g>
-        </svg>
+            </svg>
+        </div>
     </div>
 </div>
 

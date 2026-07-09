@@ -282,27 +282,7 @@ class MainActivity : ComponentActivity() {
 
         @JavascriptInterface
         fun downloadApk(url: String) {
-            try {
-                val request = DownloadManager.Request(Uri.parse(url))
-                request.setTitle("Ciserli Actualización")
-                request.setDescription("Descargando actualizacion...")
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                
-                // Save to downloads directory with unique name
-                val fileName = "ciserli-update-${System.currentTimeMillis()}.apk"
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-                
-                val manager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                manager.enqueue(request)
-                
-                activity.runOnUiThread {
-                    Toast.makeText(activity, "Iniciando descarga en segundo plano...", Toast.LENGTH_LONG).show()
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                // Fallback to opening in browser
-                openInBrowser(url)
-            }
+            openInBrowser(url)
         }
 
         @JavascriptInterface
