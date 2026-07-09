@@ -1,6 +1,6 @@
 {
-  "versionCode": 32,
-  "versionName": "1.6.5",
+  "versionCode": 33,
+  "versionName": "1.6.6",
   "apkUrl": "https://raw.githubusercontent.com/sergiodhernandez/Ciserli-control/main/app-debug.apk",
   "whatsNew": "✨ Mascota Realista 🐱\n\n• ¡Nuevo diseño 3D realista para el gatito!\n• Movimientos, respiración suave y animaciones adaptadas para el nuevo sprite."
 }
